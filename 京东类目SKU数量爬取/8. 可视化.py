@@ -51,19 +51,23 @@ pio.write_image(fig1,'JD类目SKU占比树状图.png','png',width=1400,height=80
 
 
 #  JD 热力图
-bins = [0,1,20000,50000,100000,150000,200000,300000,400000,500000,99999999999]
-groups1 = ['0','2万','5万','10万','15万','20万','30万','40万','50万','50万以上']
+bins = [0,1,3000,8000,20000,50000,100000,250000,500000,700000,99999999999]
+groups1 = ['0','3千','8千','2万','5万','10万','25万','50万','70万','70万以上']
+bins2= [0,10,20,30,40,50,60,70,80,90,999]
 groups2 = [.1,.2,.3,.4,.5,.6,.7,.8,.9,1.0]
 df1['SKU数级别'] = pd.cut(df1['转换后SKU数'],bins,labels=groups1)
 df1['SKU数级别'] = df1['SKU数级别'].fillna('0')
 
-data = df1.groupby(['大分类名','SKU数级别'])['转换后SKU数'].sum().reset_index()
+data = df1.groupby(['大分类名','SKU数级别'])['转换后SKU数'].count().reset_index()
 data = pd.pivot(data,values='转换后SKU数',index='大分类名',columns='SKU数级别')
+data = data.div(data.sum(axis=1), axis=0)
+data = data.apply(lambda x:round(x * 100,1))
+data.rename(index={'男装':'男女装'},inplace=True)
 
-data2 = data.apply(lambda x:pd.cut(x,bins,labels=groups2))
+data2 = data.apply(lambda x:pd.cut(x,bins2,labels=groups2))
 data2 = data2.fillna(.1)
 
-data = data.applymap(lambda x:str(round(x / 10000,2)) + ' 万')
+# data = data.applymap(lambda x:str(round(x / 10000,2)) + ' 万')
 
 data.drop(index='众筹',columns='0',inplace=True)
 data2.drop(index='众筹',columns='0',inplace=True)
@@ -73,21 +77,25 @@ y = list(data.index)
 z = data2.values.tolist()
 z_text = data.fillna('').values.tolist()
 
-#  自定义色卡
-# colorscale = [[0.0,'rgb(0,153,102)'],
-#               [.1,'rgb(211,207,99)'],
-#               [.3,'rgb(255,153,51)'],
-#               [.4,'rgb(204,97,51)'],
-#               [.5,'rgb(102,0,153)'],
-#               [1.0,'rgb(126,0,35)']]
+# 自定义色卡
+colorscale = [[0.0,'rgb(0,153,102)'],
+              [.2,'rgb(211,207,99)'],
+              [.4,'rgb(255,153,51)'],
+              [.6,'rgb(204,97,51)'],
+              [.8,'rgb(102,0,153)'],
+              [1.0,'rgb(126,0,35)']]
 
 fig2 = ff.create_annotated_heatmap(z,
                                    x=x,
                                    y=y,
                                    annotation_text=z_text,
-                                   # colorscale=colorscale
+                                   colorscale=colorscale
                                    )
-fig2.update_layout(title='京东类目SKU占比热力图')
-fig2.update_xaxes(side='top')
+# 字体大小设置
+for i in range(len(fig2.layout.annotations)):
+    fig2.layout.annotations[i].font.size=20
+fig2.update_layout(title='JD类目SKU(%)占比热力图')
+fig2.update_xaxes(side='top',tickfont={'size': 18})
+fig2.update_yaxes(tickfont={'size': 18})
 pio.write_html(fig2,'JD类目SKU占比热力图.html')
 pio.write_image(fig2,'JD类目SKU占比热力图.png','png',width=1400,height=800)

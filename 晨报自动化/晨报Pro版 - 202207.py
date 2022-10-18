@@ -33,23 +33,26 @@ df1['边际利润达成率'] = df1['边际利润达成率'].astype(float)
 df1['频道'] = df1['频道'].str.replace('频道','')
 df1['频道'] = df1['频道'].astype(float)
 
+df_minutes = df1['希望播放（分）'].sum()
+df_amount = df1['On-Air金额'].sum()
+
 df_live = df1 [ (df1['播放类型'] != '再播放')]
 # df_live = df1.copy()
 df_unlive = df1 [ (df1['播放类型'] == '再播放')]
   
 df_best5 = df_live.sort_values(by = '节目达成率' , ascending= False ).reset_index(drop = True)
 df_best5 = df_best5.iloc[:10,:]
-df_best5 = df_best5[['频道','商品播放开始时间','商品名称','On-Air数量','On-Air金额','节目达成率','边际利润额','边际利润达成率']]
+df_best5 = df_best5[['频道','商品播放开始时间','商品名称','On-Air数量','On-Air金额','节目达成率','边际利润额','边际利润达成率','希望播放（分）']]
 
 df_worst5 = df_live.sort_values(by = '节目达成率' , ascending= True ).reset_index(drop = True)
 df_worst5 = df_worst5.iloc[:10,:]
-df_worst5 = df_worst5[['频道','商品播放开始时间','商品名称','On-Air数量','On-Air金额','节目达成率','边际利润额','边际利润达成率']]
+df_worst5 = df_worst5[['频道','商品播放开始时间','商品名称','On-Air数量','On-Air金额','节目达成率','边际利润额','边际利润达成率','希望播放（分）']]
 
 df_old = df1[df1['商品名称'].str.contains('暖心选')]
 df_old = df_old.sort_values(by = '节目达成率' , ascending= False ).reset_index(drop = True)
 df_old = df_old[['频道','商品播放开始时间','商品名称','On-Air数量','On-Air金额','节目达成率','边际利润额','边际利润达成率','MD','SH','PD','希望播放（分）','播放类型']] 
 
-df_new_product = df1[df1['播放类型'] == '直播新商品']
+df_new_product = df1[df1['播放类型'].str.contains('新商品')]
 df_new_product = df_new_product.sort_values(by = '节目达成率' , ascending= False ).reset_index(drop = True)
 df_new_product = df_new_product[['频道','商品播放开始时间','商品名称','On-Air数量','On-Air金额','节目达成率','边际利润额','边际利润达成率','MD','SH','PD','希望播放（分）','播放类型']] 
 
@@ -80,8 +83,8 @@ with pd.ExcelWriter(target_file) as writer:
     df_old.to_excel(writer,sheet_name='暖心选清单', index=False)
     df_new_product.to_excel(writer,sheet_name='新品清单', index=False)
     
-print('暖心选商品占直播时间比重 {:.1%},占直播贡献比重 {:.1%}'.format(df_old_live_minutes/df_live_minutes,df_old_live_amount/df_live_amount))
-print('暖心选商品占节目带时间比重 {:.1%},占节目带贡献比重 {:.1%}\n'.format(df_old_unlive_minutes/df_unlive_minutes,df_old_unlive_amount/df_unlive_amount))
+print('\n暖心选商品占直播时间比重 {:.1%},占直播贡献比重 {:.1%}'.format(df_old_live_minutes/df_minutes,df_old_live_amount/df_amount))
+print('暖心选商品占节目带时间比重 {:.1%},占节目带贡献比重 {:.1%}\n'.format(df_old_unlive_minutes/df_minutes,df_old_unlive_amount/df_amount))
 
 print('--------------------')
 print('3. 双频on-air未税金额 {:.1f} 万，节目整体达成率 {:.0%}，占购物公司比重 {:.0%}；'.format(df1['On-Air金额'].sum()/10000,df1['On-Air金额'].sum()/df1['节目目标金额'].sum(),df1['On-Air金额'].sum()/10000*1.12/order_amt))

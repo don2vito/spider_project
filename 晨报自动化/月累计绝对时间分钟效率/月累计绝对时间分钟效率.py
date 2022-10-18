@@ -28,6 +28,7 @@ df = df.apply(pd.to_numeric,errors='ignore')
 df['播放开始小时']= df['播放开始小时'].astype(int)
 df['播放日期'] = pd.to_datetime(df['播放日期'])
 df = df[ ( df['md名'] != '房产服务') & ( df['md名'] != '全装修工程') & ( df['md名'] != '汽车整车') & ( df['md名'] != '寿险')]
+df = df [ (df['播放开始小时'] > 4 ) | (df['播放开始小时'] == 0 )]
 
 
 # In[4]:

@@ -3,6 +3,7 @@ import pandas as pd
 import json
 import requests
 import chardet
+import time
 
 
 def zhengzhou(date):
@@ -61,7 +62,8 @@ def shanghai(date):
 
     
 if __name__ == '__main__':
-    date = '20221202'
+    now = datetime.datetime.now()
+    date = now.strftime('%Y%m%d')
     zhengzhou(date)
     dalian(date)
     shanghai(date)

@@ -1,0 +1,1 @@
+nuitka --standalone --show-memory --nofollow-imports --show-progress --output-dir=out --windows-icon-from-ico=./cloud.png --windows-disable-console --onefile cangdan_v2.3.py

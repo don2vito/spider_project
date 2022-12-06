@@ -82,6 +82,8 @@ def gui():
     layout = [
              [sg.Text('请输入起始年月日（yyyymmdd）:',font=("微软雅黑", 10)),sg.InputText(font=("微软雅黑", 10))],
              [sg.Text('请输入结束年月日（yyyymmdd）:',font=("微软雅黑", 10)),sg.InputText(font=("微软雅黑", 10))],          
+             # [sg.Text('任务完成进度',font=("微软雅黑", 10))],
+             # [sg.ProgressBar(100, orientation='h', size=(77, 20),key='progressbar')],
              [sg.Button('确定',font=("微软雅黑", 10)),sg.Button("取消",font=("微软雅黑", 10))]
              ]    
   

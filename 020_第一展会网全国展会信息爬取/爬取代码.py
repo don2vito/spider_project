@@ -35,9 +35,7 @@ for page in range(1, 36):  # 从第1页到第35页
             # 提取展会时间和展馆信息
             details = item.find_all('em', class_='cgree1')
             if len(details) >= 2:
-                # 第一个 <em> 包含展会时间
                 exhibition_time = details[1].text.split("展馆：")[0].strip("展会时间：")
-                # 第二个 <em> 包含展馆信息
                 exhibition_venue = details[1].text.split("展馆：")[1].strip()
             else:
                 exhibition_time = "未找到展会时间"

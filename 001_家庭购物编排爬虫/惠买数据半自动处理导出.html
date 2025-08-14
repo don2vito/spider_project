@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>优购物数据提取工具</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #f8fafc;
+            line-height: 1.6;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+        .card {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1), 0 12px 15px -6px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+        }
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .empty-state {
+            background-color: #f1f5f9;
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+        }
+        .pagination-btn {
+            transition: all 0.2s ease;
+        }
+        .pagination-btn:hover:not(:disabled) {
+            background-color: #e2e8f0;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    <!-- 顶部导航 -->
+    <header class="hero-gradient text-white py-6">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-shopping-cart text-2xl"></i>
+                    <h1 class="text-2xl font-bold">优购物数据提取工具</h1>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="#features" class="text-white hover:text-blue-100 transition">功能特点</a>
+                    <a href="#usage" class="text-white hover:text-blue-100 transition">使用说明</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- 简介部分 -->
+        <section class="mb-16 text-center">
+            <div class="max-w-3xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">高效提取优购物JSON数据</h2>
+                <p class="text-lg text-gray-600 mb-8">一键转换JSON为结构化Excel表格，提升数据处理效率</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="#demo" class="px-6 py-3 bg-white text-blue-600 font-medium rounded-lg shadow hover:shadow-md transition">立即体验</a>
+                    <a href="#features" class="px-6 py-3 border border-white text-white font-medium rounded-lg hover:bg-white hover:text-blue-600 transition">了解功能</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心功能卡片 -->
+        <section id="demo" class="mb-16">
+            <div class="bg-white rounded-xl card p-6 mb-8">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+                        <i class="fas fa-file-import text-blue-500"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold">数据输入</h3>
+                </div>
+                
+                <textarea id="jsonInput" class="w-full h-64 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4" placeholder="请在此粘贴优购物JSON数据..."></textarea>
+                
+                <div class="flex flex-wrap items-center gap-4 mb-4">
+                    <label class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg cursor-pointer transition flex items-center hover:bg-gray-200">
+                        <i class="fas fa-upload mr-2"></i>
+                        <span>选择JSON文件</span>
+                        <input type="file" id="fileUpload" class="hidden" accept=".json,.txt">
+                    </label>
+                    <span id="fileName" class="text-gray-500 text-sm">未选择文件</span>
+                </div>
+                
+                <div class="flex flex-wrap gap-3">
+                    <button id="processBtn" class="px-5 py-2.5 btn-primary text-white rounded-lg flex items-center">
+                        <i class="fas fa-cogs mr-2"></i>
+                        <span>处理数据</span>
+                    </button>
+                    <button id="exampleBtn" class="px-5 py-2.5 bg-purple-600 text-white rounded-lg flex items-center hover:bg-purple-700">
+                        <i class="fas fa-file-code mr-2"></i>
+                        <span>加载示例</span>
+                    </button>
+                    <button id="clearBtn" class="px-5 py-2.5 bg-gray-600 text-white rounded-lg flex items-center hover:bg-gray-700">
+                        <i class="fas fa-eraser mr-2"></i>
+                        <span>清除内容</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 结果展示区域 -->
+            <div class="bg-white rounded-xl card p-6">
+                <div class="flex flex-wrap justify-between items-center mb-6">
+                    <div class="flex items-center mb-4 sm:mb-0">
+                        <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                            <i class="fas fa-table text-green-500"></i>
+                        </div>
+                        <h3 class="text-2xl font-semibold">数据提取结果</h3>
+                    </div>
+                    
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div class="flex items-center bg-gray-100 rounded-lg overflow-hidden">
+                            <button id="prevPage" class="px-3 py-1.5 bg-gray-200 pagination-btn disabled:opacity-50" disabled>
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <span class="px-3 text-sm text-gray-700">第 <span id="currentPage">1</span> 页</span>
+                            <button id="nextPage" class="px-3 py-1.5 bg-gray-200 pagination-btn disabled:opacity-50" disabled>
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <button id="exportBtn" class="px-4 py-2 btn-secondary text-white rounded-lg flex items-center disabled:opacity-50" disabled>
+                            <i class="fas fa-file-excel mr-2"></i>
+                            <span>导出Excel</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 空状态 -->
+                <div id="resultsMessage" class="empty-state p-8 text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-info-circle text-blue-500 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-700 mb-1">请先输入JSON数据</h3>
+                    <p class="text-gray-500 mb-3">点击"处理数据"按钮开始提取信息</p>
+                    <p id="processTimestamp" class="text-sm text-gray-400"></p>
+                </div>
+                
+                <!-- 表格区域 -->
+                <div id="resultsTable" class="hidden">
+                    <div class="table-responsive rounded-lg border border-gray-200 mt-6">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">频道名称</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">开始时间</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">结束时间</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">品牌</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">商品名称</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">价格</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">市场价</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">商品图片</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsBody" class="bg-white divide-y divide-gray-200">
+                                <!-- 动态生成行 -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- 统计信息 -->
+                    <div class="flex justify-between items-center mt-4 text-sm text-gray-500">
+                        <div id="rowCount">共提取 0 条记录</div>
+                        <div id="processTime">处理时间: -</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 功能特点 -->
+        <section id="features" class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-center">核心功能特点</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-xl card p-6">
+                    <div class="feature-icon bg-blue-100 text-blue-500">
+                        <i class="fas fa-upload text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">多源数据输入</h3>
+                    <p class="text-gray-600">支持直接粘贴JSON内容或上传JSON文件，满足不同场景需求</p>
+                </div>
+                <div class="bg-white rounded-xl card p-6">
+                    <div class="feature-icon bg-green-100 text-green-500">
+                        <i class="fas fa-cogs text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">智能数据处理</h3>
+                    <p class="text-gray-600">自动提取8个关键字段，智能转换时间戳格式，确保数据准确性</p>
+                </div>
+                <div class="bg-white rounded-xl card p-6">
+                    <div class="feature-icon bg-purple-100 text-purple-500">
+                        <i class="fas fa-file-excel text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">专业Excel导出</h3>
+                    <p class="text-gray-600">一键导出标准Excel文件，自动生成规范文件名，便于后续分析</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 使用说明 -->
+        <section id="usage" class="mb-16">
+            <div class="bg-white rounded-xl card p-6">
+                <h2 class="text-3xl font-bold mb-6">使用说明</h2>
+                <div class="space-y-6">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                                <i class="fas fa-check text-blue-500 text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-lg font-medium text-gray-900">数据输入</h3>
+                            <p class="mt-1 text-gray-600">在文本框中粘贴优购物JSON数据或点击"选择JSON文件"上传本地文件</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                                <i class="fas fa-check text-blue-500 text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-lg font-medium text-gray-900">数据处理</h3>
+                            <p class="mt-1 text-gray-600">点击"处理数据"按钮，系统将自动提取JSON中的关键字段并格式化显示</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                                <i class="fas fa-check text-blue-500 text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-lg font-medium text-gray-900">数据导出</h3>
+                            <p class="mt-1 text-gray-600">确认数据无误后，点击"导出Excel"按钮下载数据文件，文件名格式为"惠买_YYYYMMDD_编排数据.xlsx"</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                                <i class="fas fa-check text-blue-500 text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-lg font-medium text-gray-900">其他功能</h3>
+                            <p class="mt-1 text-gray-600">可使用"加载示例"查看演示数据，或"清除内容"重新开始</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 提取字段说明 -->
+        <section class="mb-16">
+            <div class="bg-white rounded-xl card p-6">
+                <h2 class="text-3xl font-bold mb-6">提取字段说明</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">字段名</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">JSON路径</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">说明</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">处理方式</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">频道名称</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">channelName</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">商品所属电视频道</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">直接提取</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">开始时间</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">beginTime</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">商品展示开始时间</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">时间戳转换</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">结束时间</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">endTime</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">商品展示结束时间</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">时间戳转换</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">品牌</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">brand_brand_name</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">商品所属品牌</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">直接提取</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">商品名称</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">goodsName</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">商品全称</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">直接提取</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">价格</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">price</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">商品销售价格</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">直接提取</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">市场价</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">comPrice</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">商品市场参考价</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">直接提取</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">商品图片</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">goodsThumbPic</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">商品缩略图URL</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">直接提取</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-50 py-8">
+        <div class="container mx-auto px-4">
+            <div class="text-center text-gray-500 text-sm">
+                <p>网页由问小白AI生成，仅供参考</p>
+                <p class="mt-1">最后更新时间为2025-08-13 ，星期三</p>
+                <p class="mt-1">问小白的网址：wenxiaobai.com</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM元素
+            const jsonInput = document.getElementById('jsonInput');
+            const fileUpload = document.getElementById('fileUpload');
+            const fileName = document.getElementById('fileName');
+            const processBtn = document.getElementById('processBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const exampleBtn = document.getElementById('exampleBtn');
+            const exportBtn = document.getElementById('exportBtn');
+            const prevPage = document.getElementById('prevPage');
+            const nextPage = document.getElementById('nextPage');
+            const currentPage = document.getElementById('currentPage');
+            const resultsBody = document.getElementById('resultsBody');
+            const resultsTable = document.getElementById('resultsTable');
+            const resultsMessage = document.getElementById('resultsMessage');
+            const processTimestamp = document.getElementById('processTimestamp');
+            const rowCount = document.getElementById('rowCount');
+            const processTime = document.getElementById('processTime');
+            
+            // 数据变量
+            let extractedData = [];
+            let currentPageNum = 1;
+            const rowsPerPage = 10;
+            
+            // 文件上传处理
+            fileUpload.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    fileName.textContent = file.name;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        jsonInput.value = e.target.result;
+                    };
+                    reader.readAsText(file);
+                } else {
+                    fileName.textContent = '未选择文件';
+                }
+            });
+            
+            // 时间戳转换函数
+            function formatTimestamp(timestampStr) {
+                const timestamp = parseInt(timestampStr) * 1000;
+                const date = new Date(timestamp);
+                
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                const seconds = String(date.getSeconds()).padStart(2, '0');
+                
+                return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+            }
+            
+            // 处理数据按钮点击事件
+            processBtn.addEventListener('click', function() {
+                const startTime = performance.now();
+                
+                try {
+                    const jsonData = JSON.parse(jsonInput.value);
+                    
+                    // 检查数据结构
+                    if (!jsonData.data || !jsonData.data.tvItemList) {
+                        showMessage("错误：JSON结构不符合要求，缺少tvItemList数据", true);
+                        return;
+                    }
+                    
+                    // 提取数据
+                    extractedData = [];
+                    jsonData.data.tvItemList.forEach(itemArray => {
+                        if (itemArray.length > 0) {
+                            const item = itemArray[0];
+                            extractedData.push({
+                                channelName: item.channelName,
+                                beginTime: formatTimestamp(item.beginTime),
+                                endTime: formatTimestamp(item.endTime),
+                                brand: item.brand_brand_name,
+                                goodsName: item.goodsName,
+                                price: item.price,
+                                marketPrice: item.comPrice,
+                                goodsThumbPic: item.goodsThumbPic
+                            });
+                        }
+                    });
+                    
+                    if (extractedData.length === 0) {
+                        showMessage("未找到包含商品信息的有效数据", true);
+                        return;
+                    }
+                    
+                    // 显示结果
+                    currentPageNum = 1;
+                    displayResults();
+                    
+                    // 更新统计信息
+                    const endTime = performance.now();
+                    const processDuration = (endTime - startTime).toFixed(2);
+                    processTime.textContent = `处理时间: ${processDuration} ms`;
+                    
+                    // 更新处理时间戳
+                    const now = new Date();
+                    processTimestamp.textContent = `处理时间: ${now.toLocaleString()}`;
+                    
+                } catch (error) {
+                    showMessage(`解析JSON时出错: ${error.message}`, true);
+                }
+            });
+            
+            // 显示结果
+            function displayResults() {
+                // 更新分页按钮状态
+                updatePaginationControls();
+                
+                // 计算当前页的数据范围
+                const startIndex = (currentPageNum - 1) * rowsPerPage;
+                const endIndex = Math.min(startIndex + rowsPerPage, extractedData.length);
+                const pageData = extractedData.slice(startIndex, endIndex);
+                
+                // 清空表格
+                resultsBody.innerHTML = '';
+                
+                // 填充表格数据
+                pageData.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-gray-50';
+                    
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${item.channelName || '--'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.beginTime || '--'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.endTime || '--'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.brand || '--'}</td>
+                        <td class="px-6 py-4 text-sm text-gray-900">${item.goodsName || '--'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-blue-600">¥${item.price || '0'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 line-through">${item.marketPrice || '--'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            ${item.goodsThumbPic ? 
+                                `<img src="${item.goodsThumbPic}" alt="商品图片" class="w-16 h-16 object-cover rounded border border-gray-200">` : 
+                                '--'}
+                        </td>
+                    `;
+                    
+                    resultsBody.appendChild(row);
+                });
+                
+                // 显示表格
+                resultsTable.classList.remove('hidden');
+                resultsMessage.classList.add('hidden');
+                
+                // 更新统计信息
+                rowCount.textContent = `共提取 ${extractedData.length} 条记录`;
+                exportBtn.disabled = false;
+            }
+            
+            // 更新分页控件
+            function updatePaginationControls() {
+                const totalPages = Math.ceil(extractedData.length / rowsPerPage);
+                currentPage.textContent = currentPageNum;
+                
+                prevPage.disabled = currentPageNum <= 1;
+                nextPage.disabled = currentPageNum >= totalPages;
+            }
+            
+            // 显示消息
+            function showMessage(message, isError = false) {
+                resultsMessage.classList.remove('hidden');
+                resultsTable.classList.add('hidden');
+                
+                resultsMessage.innerHTML = `
+                    <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${isError ? 'bg-red-100' : 'bg-blue-100'}">
+                        <i class="fas ${isError ? 'fa-exclamation-triangle text-red-500' : 'fa-info-circle text-blue-500'} text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium ${isError ? 'text-red-700' : 'text-gray-700'} mb-1">${isError ? '处理失败' : '处理成功'}</h3>
+                    <p class="text-gray-600 mb-3">${message}</p>
+                    <p id="processTimestamp" class="text-sm text-gray-400">${processTimestamp.textContent}</p>
+                `;
+                
+                exportBtn.disabled = true;
+                prevPage.disabled = true;
+                nextPage.disabled = true;
+            }
+            
+            // 清除按钮点击事件
+            clearBtn.addEventListener('click', function() {
+                jsonInput.value = '';
+                fileName.textContent = '未选择文件';
+                fileUpload.value = '';
+                resultsMessage.classList.remove('hidden');
+                resultsTable.classList.add('hidden');
+                exportBtn.disabled = true;
+                prevPage.disabled = true;
+                nextPage.disabled = true;
+                resultsMessage.innerHTML = `
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-info-circle text-blue-500 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-700 mb-1">内容已清除</h3>
+                    <p class="text-gray-500 mb-3">请输入新的JSON数据</p>
+                `;
+                rowCount.textContent = '共提取 0 条记录';
+                processTime.textContent = '处理时间: -';
+                processTimestamp.textContent = '';
+                extractedData = [];
+            });
+            
+            // 示例按钮点击事件
+            exampleBtn.addEventListener('click', function() {
+                jsonInput.value = `{
+  "code": 0,
+  "msg": "",
+  "data": {
+    "clickTime": "1754668800",
+    "date": "2025-08-13",
+    "displayNum": 3,
+    "goodsList": [],
+    "hasNext": false,
+    "loadTrailer": false,
+    "resultOptions": {
+      "categoryList": [
+        {
+          "key": "92",
+          "value": "美食"
+        },
+        {
+          "key": "257",
+          "value": "服饰"
+        },
+        {
+          "key": "22",
+          "value": "厨房"
+        },
+        {
+          "key": "1",
+          "value": "家居"
+        },
+        {
+          "key": "58",
+          "value": "美妆"
+        },
+        {
+          "key": "281",
+          "value": "珠宝"
+        }
+      ],
+      "channelList": [
+        {
+          "key": "UGO1",
+          "value": "优购物"
+        },
+        {
+          "key": "SSG1",
+          "value": "时尚购"
+        },
+        {
+          "key": "BTV1",
+          "value": "爱家购物"
+        }
+      ]
+    },
+    "showWebLive": true,
+    "tvItemList": [
+      [
+        {
+          "actLabelDesc": "有赠品|有赠品",
+          "actLabelList": {
+            "firStep": [],
+            "secStep": [
+              "手机专享",
+              "有赠品"
+            ],
+            "thirdStep": [
+              "满次赠"
+            ]
+          },
+          "actList": [],
+          "actTagDesc": "赠品",
+          "channelName": "优购物",
+          "beginTime": "1754668800",
+          "endTime": "1754671199",
+          "brand_brand_name": "自然之臻",
+          "goodsName": "自然之臻野生有机刺梨原液升级限量组",
+          "price": "469",
+          "comPrice": "¥599",
+          "goodsThumbPic": "https://assets.ugoshop.com/proimage/da9c00e995a30375e7390956539de484.jpg!p158"
+        }
+      ],
+      [
+        {
+          "actLabelDesc": "有赠品",
+          "actLabelList": {
+            "firStep": [],
+            "secStep": [
+              "手机专享",
+              "有赠品"
+            ],
+            "thirdStep": [
+              "满次赠"
+            ]
+          },
+          "actList": [],
+          "actTagDesc": "赠品",
+          "channelName": "优购物",
+          "beginTime": "1754671200",
+          "endTime": "1754673599",
+          "brand_brand_name": "YOHOKA",
+          "goodsName": "YOHOKA纯钛多功能养生壶",
+          "price": "669",
+          "comPrice": "¥699",
+          "goodsThumbPic": "https://assets.ugoshop.com/proimage/d4c1cc63d904093f46a7d5c59ab9af4d.jpg!p158"
+        }
+      ],
+      [
+        {
+          "actLabelDesc": "有赠品",
+          "actLabelList": {
+            "firStep": [],
+            "secStep": [
+              "手机专享",
+              "有赠品"
+            ],
+            "thirdStep": [
+              "满次赠"
+            ]
+          },
+          "actList": [],
+          "actTagDesc": "赠品",
+          "channelName": "优购物",
+          "beginTime": "1754673600",
+          "endTime": "1754675399",
+          "brand_brand_name": "羊王",
+          "goodsName": "羊王冻干纯羊奶粉",
+          "price": "569",
+          "comPrice": "¥599",
+          "goodsThumbPic": "https://assets.ugoshop.com/proimage/34213e230e0180676d3b3a602b699e70.jpg!p158"
+        }
+      ]
+    ]
+  }
+}`;
+                fileName.textContent = '示例数据已加载';
+            });
+            
+            // 导出按钮点击事件
+            exportBtn.addEventListener('click', function() {
+                try {
+                    // 准备Excel数据
+                    const excelData = extractedData.map(item => ({
+                        '频道名称': item.channelName,
+                        '开始时间': item.beginTime,
+                        '结束时间': item.endTime,
+                        '品牌': item.brand,
+                        '商品名称': item.goodsName,
+                        '价格': item.price,
+                        '市场价': item.marketPrice,
+                        '商品图片': item.goodsThumbPic
+                    }));
+                    
+                    // 创建工作簿
+                    const wb = XLSX.utils.book_new();
+                    const ws = XLSX.utils.json_to_sheet(excelData);
+                    
+                    // 设置列宽
+                    const colWidths = [
+                        { wch: 15 }, // 频道名称
+                        { wch: 20 }, // 开始时间
+                        { wch: 20 }, // 结束时间
+                        { wch: 20 }, // 品牌
+                        { wch: 40 }, // 商品名称
+                        { wch: 10 }, // 价格
+                        { wch: 15 }, // 市场价
+                        { wch: 80 }  // 商品图片
+                    ];
+                    ws['!cols'] = colWidths;
+                    
+                    // 添加工作表
+                    XLSX.utils.book_append_sheet(wb, ws, "优购物数据");
+                    
+                    // 生成文件名
+                    const now = new Date();
+                    const dateString = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+                    const fileName = `惠买_编排数据.xlsx`;
+                    
+                    // 导出文件
+                    XLSX.writeFile(wb, fileName);
+                    
+                    // 显示成功消息
+                    showMessage("数据已成功导出为Excel文件", false);
+                    
+                } catch (error) {
+                    showMessage(`导出Excel时出错: ${error.message}`, true);
+                }
+            });
+            
+            // 分页按钮事件
+            prevPage.addEventListener('click', function() {
+                if (currentPageNum > 1) {
+                    currentPageNum--;
+                    displayResults();
+                }
+            });
+            
+            nextPage.addEventListener('click', function() {
+                const totalPages = Math.ceil(extractedData.length / rowsPerPage);
+                if (currentPageNum < totalPages) {
+                    currentPageNum++;
+                    displayResults();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>环球购物数据提取工具 - 优化版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #f8fafc;
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #3b82f6, #6366f1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .card-shadow {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .input-highlight {
+            transition: all 0.3s ease;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+        .input-highlight:focus {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+        .table-row-hover:hover {
+            background-color: #f1f5f9;
+        }
+        .pagination-btn {
+            transition: all 0.2s ease;
+        }
+        .pagination-btn:hover {
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- 头部区域 -->
+        <header class="text-center mb-12">
+            <div class="inline-block bg-gradient-to-r from-blue-500 to-indigo-500 p-1 rounded-full mb-4">
+                <div class="bg-white p-2 rounded-full">
+                    <i class="fas fa-globe-asia text-3xl text-blue-500"></i>
+                </div>
+            </div>
+            <h1 class="text-4xl font-bold gradient-text mb-2">环球购物数据提取工具</h1>
+            <p class="text-lg text-gray-600">高效提取JSON数据并生成Excel文件</p>
+        </header>
+
+        <!-- 主卡片区域 -->
+        <div class="bg-white rounded-xl card-shadow overflow-hidden mb-8">
+            <!-- 输入区域 -->
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center mb-4">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                        <i class="fas fa-file-import text-blue-500"></i>
+                    </div>
+                    <h2 class="text-xl font-semibold text-gray-800">数据输入</h2>
+                </div>
+                
+                <textarea id="jsonInput" class="w-full h-64 p-4 border border-gray-300 rounded-lg focus:outline-none input-highlight" placeholder="请在此粘贴JSON数据..."></textarea>
+                
+                <div class="mt-4 flex flex-wrap items-center gap-4">
+                    <label class="px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600 transition flex items-center">
+                        <i class="fas fa-upload mr-2"></i>
+                        <span>选择JSON文件</span>
+                        <input type="file" id="fileUpload" class="hidden" accept=".json,.txt">
+                    </label>
+                    <span id="fileName" class="text-gray-500 text-sm">未选择文件</span>
+                </div>
+                
+                <div class="mt-6 flex flex-wrap gap-3">
+                    <button id="processBtn" class="px-5 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center">
+                        <i class="fas fa-cogs mr-2"></i>
+                        <span>处理数据</span>
+                    </button>
+                    <button id="exampleBtn" class="px-5 py-2.5 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition flex items-center">
+                        <i class="fas fa-file-code mr-2"></i>
+                        <span>加载示例</span>
+                    </button>
+                    <button id="clearBtn" class="px-5 py-2.5 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition flex items-center">
+                        <i class="fas fa-eraser mr-2"></i>
+                        <span>清除内容</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 结果展示区域 -->
+            <div class="p-6">
+                <div class="flex flex-wrap justify-between items-center mb-6">
+                    <div class="flex items-center mb-4 sm:mb-0">
+                        <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                            <i class="fas fa-table text-green-500"></i>
+                        </div>
+                        <h2 class="text-xl font-semibold text-gray-800">数据提取结果</h2>
+                    </div>
+                    
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div class="flex items-center bg-gray-100 rounded-lg overflow-hidden">
+                            <button id="prevPage" class="px-3 py-1.5 bg-gray-200 pagination-btn disabled:opacity-50" disabled>
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <span class="px-3 text-sm text-gray-700">第 <span id="currentPage">1</span> 页</span>
+                            <button id="nextPage" class="px-3 py-1.5 bg-gray-200 pagination-btn disabled:opacity-50" disabled>
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <button id="exportBtn" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center disabled:opacity-50" disabled>
+                            <i class="fas fa-file-excel mr-2"></i>
+                            <span>导出Excel</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 空状态 -->
+                <div id="resultsMessage" class="bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl p-8 text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-info-circle text-blue-500 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-700 mb-1">请先输入JSON数据</h3>
+                    <p class="text-gray-500 mb-3">点击"处理数据"按钮开始提取信息</p>
+                    <p id="processTimestamp" class="text-sm text-gray-400"></p>
+                </div>
+                
+                <!-- 表格区域 -->
+                <div id="resultsTable" class="hidden overflow-x-auto rounded-lg border border-gray-200 mt-6">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">日期</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">开始时间</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">结束时间</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">商品名称</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">价格</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">市场价</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">商品图片</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsBody" class="bg-white divide-y divide-gray-200">
+                            <!-- 动态生成行 -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 统计信息 -->
+                <div class="flex justify-between items-center mt-4 text-sm text-gray-500">
+                    <div id="rowCount">共提取 0 条记录</div>
+                    <div id="processTime">处理时间: -</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 使用说明卡片 -->
+        <div class="bg-white rounded-xl card-shadow p-6 mb-8">
+            <div class="flex items-center mb-4">
+                <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center mr-3">
+                    <i class="fas fa-info-circle text-indigo-500"></i>
+                </div>
+                <h2 class="text-xl font-semibold text-gray-800">使用说明</h2>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 h-5 w-5 text-blue-500 mt-0.5">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <p class="ml-3 text-gray-600">
+                        在文本框中粘贴包含节目数据的JSON内容或上传JSON文件
+                    </p>
+                </div>
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 h-5 w-5 text-blue-500 mt-0.5">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <p class="ml-3 text-gray-600">
+                        点击<span class="font-medium text-blue-500">"处理数据"</span>按钮提取信息并显示结果
+                    </p>
+                </div>
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 h-5 w-5 text-blue-500 mt-0.5">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <p class="ml-3 text-gray-600">
+                        点击<span class="font-medium text-green-500">"导出Excel"</span>按钮下载数据到本地，文件名格式为"环球购物_YYYYMMDD_编排数据.xlsx"
+                    </p>
+                </div>
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 h-5 w-5 text-blue-500 mt-0.5">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <p class="ml-3 text-gray-600">
+                        JSON结构需包含<span class="font-medium text-indigo-500">program_data</span>数组，其中每个元素应有<span class="font-medium text-indigo-500">real_date</span>、<span class="font-medium text-indigo-500">start_time</span>、<span class="font-medium text-indigo-500">end_time</span>和<span class="font-medium text-indigo-500">goods</span>对象
+                    </p>
+                </div>
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 h-5 w-5 text-blue-500 mt-0.5">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <p class="ml-3 text-gray-600">
+                        时间戳会自动转换为<span class="font-medium text-indigo-500">HH:mm:ss</span>格式
+                    </p>
+                </div>
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 h-5 w-5 text-blue-500 mt-0.5">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <p class="ml-3 text-gray-600">
+                        使用分页按钮可浏览多页数据
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 功能亮点 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-xl card-shadow p-6">
+                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-3">
+                    <i class="fas fa-upload text-blue-500"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">文件上传功能</h3>
+                <p class="text-gray-600">支持直接上传JSON文件或粘贴内容，操作便捷</p>
+            </div>
+            <div class="bg-white rounded-xl card-shadow p-6">
+                <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mb-3">
+                    <i class="fas fa-brain text-green-500"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">智能数据处理</h3>
+                <p class="text-gray-600">自动提取指定字段并转换时间格式</p>
+            </div>
+            <div class="bg-white rounded-xl card-shadow p-6">
+                <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center mb-3">
+                    <i class="fas fa-file-excel text-purple-500"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Excel导出优化</h3>
+                <p class="text-gray-600">文件名自动包含当前日期，格式规范</p>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="text-center text-gray-500 text-sm pt-6 border-t border-gray-200">
+            <p>网页由问小白AI生成，仅供参考</p>
+            <p class="mt-1">最后更新时间为2025-08-13 ，星期三</p>
+            <p class="mt-1">问小白的网址：wenxiaobai.com</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM元素
+            const jsonInput = document.getElementById('jsonInput');
+            const fileUpload = document.getElementById('fileUpload');
+            const fileName = document.getElementById('fileName');
+            const processBtn = document.getElementById('processBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const exampleBtn = document.getElementById('exampleBtn');
+            const exportBtn = document.getElementById('exportBtn');
+            const prevPage = document.getElementById('prevPage');
+            const nextPage = document.getElementById('nextPage');
+            const currentPage = document.getElementById('currentPage');
+            const resultsBody = document.getElementById('resultsBody');
+            const resultsTable = document.getElementById('resultsTable');
+            const resultsMessage = document.getElementById('resultsMessage');
+            const processTimestamp = document.getElementById('processTimestamp');
+            const rowCount = document.getElementById('rowCount');
+            const processTime = document.getElementById('processTime');
+            
+            // 数据变量
+            let extractedData = [];
+            let currentPageNum = 1;
+            const rowsPerPage = 10;
+            
+            // 文件上传处理
+            fileUpload.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    fileName.textContent = file.name;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        jsonInput.value = e.target.result;
+                    };
+                    reader.readAsText(file);
+                } else {
+                    fileName.textContent = '未选择文件';
+                }
+            });
+            
+            // 处理数据按钮点击事件
+            processBtn.addEventListener('click', function() {
+                const startTime = performance.now();
+                
+                try {
+                    const jsonData = JSON.parse(jsonInput.value);
+                    
+                    // 检查数据结构
+                    if (!jsonData.data || !jsonData.data.returndata || !jsonData.data.returndata.program_data) {
+                        showMessage("错误：JSON结构不符合要求，缺少program_data数据", true);
+                        return;
+                    }
+                    
+                    // 提取数据
+                    extractedData = [];
+                    jsonData.data.returndata.program_data.forEach(item => {
+                        if (item.goods) {
+                            const startTime = convertTimestamp(item.start_time);
+                            const endTime = convertTimestamp(item.end_time);
+                            
+                            extractedData.push({
+                                real_date: item.real_date,
+                                start_time: startTime,
+                                end_time: endTime,
+                                name: item.goods.name,
+                                price: item.goods.price,
+                                marketprice: item.goods.marketprice,
+                                image: item.goods.image
+                            });
+                        }
+                    });
+                    
+                    if (extractedData.length === 0) {
+                        showMessage("未找到包含商品信息的有效数据", true);
+                        return;
+                    }
+                    
+                    // 显示结果
+                    currentPageNum = 1;
+                    displayResults();
+                    
+                    // 更新统计信息
+                    const endTime = performance.now();
+                    const processDuration = (endTime - startTime).toFixed(2);
+                    processTime.textContent = `处理时间: ${processDuration} ms`;
+                    
+                    // 更新处理时间戳
+                    const now = new Date();
+                    processTimestamp.textContent = `处理时间: ${now.toLocaleString()}`;
+                    
+                } catch (error) {
+                    showMessage(`解析JSON时出错: ${error.message}`, true);
+                }
+            });
+            
+            // 清除按钮点击事件
+            clearBtn.addEventListener('click', function() {
+                jsonInput.value = '';
+                fileName.textContent = '未选择文件';
+                fileUpload.value = '';
+                resultsMessage.classList.remove('hidden');
+                resultsTable.classList.add('hidden');
+                exportBtn.disabled = true;
+                prevPage.disabled = true;
+                nextPage.disabled = true;
+                resultsMessage.innerHTML = `
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-info-circle text-blue-500 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-700 mb-1">内容已清除</h3>
+                    <p class="text-gray-500 mb-3">请输入新的JSON数据</p>
+                `;
+                rowCount.textContent = '共提取 0 条记录';
+                processTime.textContent = '处理时间: -';
+                processTimestamp.textContent = '';
+            });
+            
+            // 示例按钮点击事件
+            exampleBtn.addEventListener('click', function() {
+                jsonInput.value = `{
+  "rsp": "succ",
+  "res": "",
+  "status": "succ",
+  "data": {
+    "status": true,
+    "message": "successful",
+    "returndata": {
+      "color": "",
+      "channel": {
+        "tv_id": "1000001",
+        "tv_logo": "http://mallpic.ghs.net/oss/xin_prod/image/100104/0421111326-2x_85dc15a3.png",
+        "channel_name": "聚鲨环球精选",
+        "live_url": "http://app.c01.live.sharkselection.com/beijing.m3u8"
+      },
+      "banner": null,
+      "program_data": [
+        {
+          "show_date": "8月12日",
+          "real_date": "2025-08-12",
+          "start_time": 1754928000,
+          "current_time": 1755051324,
+          "end_time": 1754930400,
+          "cat_name": "营养成分",
+          "brand_name": "云杉",
+          "is_remind": 0,
+          "is_next_live": 0,
+          "goods": {
+            "sku": "97090925",
+            "name": "美国云杉新一代真菌百痒灵",
+            "goods_id": "6810384",
+            "price": "399",
+            "marketprice": "399",
+            "price_flag": null,
+            "image": "http://mallpic.ghs.net/oss/045d2/2e054/a6ba104591d29f4a5bfbe809cc12e054.png",
+            "kj_flag": "1",
+            "ld_kj_flag": "1",
+            "is_deposit_gifts": "0",
+            "description": "",
+            "limit_nums": "0",
+            "if_activity": "0",
+            "goods_type": "0",
+            "product_id": "8014761",
+            "goods_service": {
+              "promise_name": "无质量问题，不支持30天免费退换货",
+              "if_support": 0
+            },
+            "jz_label": null,
+            "wbjf_label": null,
+            "discount_label": null,
+            "activity_label": null,
+            "kj_label": {
+              "labelName": "跨境商品",
+              "labelBgUrl": "http://mallpic.ghs.net/oss/xin_prod/image/100308/0405002107-1112_391e8b69.png"
+            },
+            "price_pre": "",
+            "price_mobile": "手机价",
+            "hotsale_label": null,
+            "returnScore": "",
+            "marketable": 0,
+            "is_tv_flag": 1,
+            "tag_desc_list": [],
+            "wapUrl": "http://wp.sharkshopping.com/product/97090925",
+            "product_first": "保健营养",
+            "product_second": "营养成分",
+            "product_third": "其他营养",
+            "product_fourth": null,
+            "product_brand": "云杉（Spruce）",
+            "product_type": "全部渠道",
+            "if_kjt": "1",
+            "pre_sale_label": null,
+            "price_pre_sale": null
+          },
+          "relGoodsList": null
+        },
+        {
+          "show_date": "8月12日",
+          "real_date": "2025-08-12",
+          "start_time": 1754930400,
+          "current_time": 1755051324,
+          "end_time": 1754932800,
+          "cat_name": "时尚饰品",
+          "brand_name": "保丽金",
+          "is_remind": 0,
+          "is_next_live": 0,
+          "goods": {
+            "sku": "97090924",
+            "name": "保丽金红运添香饰品套组",
+            "goods_id": "6810535",
+            "price": "559",
+            "marketprice": "599",
+            "price_flag": null,
+            "image": "http://mallpic.ghs.net/oss/6c3d6/37926/ae2626c3b6d6e34ede6811052d437926.png",
+            "kj_flag": "0",
+            "ld_kj_flag": "0",
+            "is_deposit_gifts": "0",
+            "description": "立减40",
+            "limit_nums": "0",
+            "if_activity": "1",
+            "goods_type": "极速开发中",
+            "product_id": "8014945",
+            "goods_service": {
+              "promise_name": "无质量问题，不支持30天免费退换货",
+              "if_support": 0
+            },
+            "jz_label": {
+              "labelName": "立减40",
+              "labelBgUrl": "http://mallpic.ghs.net/oss/xin_prod/image/100998/0830164326-9_328df极速开发中"
+            },
+            "wbjf_label": null,
+            "discount_label": null,
+            "activity_label": null,
+            "kj_label": null,
+            "price_pre": "TV价",
+            "price_mobile": "手机价",
+            "hotsale_label": null,
+            "returnScore": "",
+            "marketable": 0,
+            "is_tv_flag": 1,
+            "tag_desc_list": [
+              "8.8活动"
+            ],
+            "wapUrl": "http://wp.sharkshopping.com/product/97090924",
+            "product_first": "珠宝钟表",
+            "product_second": "时尚饰品",
+            "product_third": "吊坠/项链",
+            "product_fourth": null,
+            "product_brand": "保丽金（BAOLIJIN）",
+            "product_type": "全部渠道",
+            "if_kjt": "0",
+            "pre_sale_label": null,
+            "price_pre_sale": null
+          },
+          "relGoodsList": null
+        }
+      ]
+    }
+  }
+}`;
+                showMessage("示例数据已加载，点击'处理数据'按钮查看结果");
+            });
+            
+            // 分页按钮事件
+            prevPage.addEventListener('click', function() {
+                if (currentPageNum > 1) {
+                    currentPageNum--;
+                    displayResults();
+                }
+            });
+            
+            nextPage.addEventListener('click', function() {
+                const totalPages = Math.ceil(extractedData.length / rowsPerPage);
+                if (currentPageNum < totalPages) {
+                    currentPageNum++;
+                    displayResults();
+                }
+            });
+            
+            // 导出按钮点击事件
+            exportBtn.addEventListener('click', function() {
+                if (extractedData.length === 0) {
+                    showMessage("没有可导出的数据", true);
+                    return;
+                }
+                
+                // 创建工作簿
+                const wb = XLSX.utils.book_new();
+                
+                // 准备工作表数据
+                const wsData = [
+                    ['日期', '开始时间', '结束时间', '商品名称', '价格', '市场价', '商品图片URL']
+                ];
+                
+                extractedData.forEach(item => {
+                    wsData.push([
+                        item.real_date,
+                        item.start_time,
+                        item.end_time,
+                        item.name,
+                        item.price,
+                        item.marketprice,
+                        item.image
+                    ]);
+                });
+                
+                // 创建工作表
+                const ws = XLSX.utils.aoa_to_sheet(wsData);
+                
+                // 设置列宽
+                const colWidths = [
+                    { wch: 12 }, // 日期
+                    { wch: 10 }, // 开始时间
+                    { wch: 10 }, // 结束时间
+                    { wch: 40 }, // 商品名称
+                    { wch: 8 },  // 价格
+                    { wch: 10 }, // 市场价
+                    { wch: 30 }  // 商品图片URL
+                ];
+                ws['!cols'] = colWidths;
+                
+                // 将工作表添加到工作簿
+                XLSX.utils.book_append_sheet(wb, ws, "商品数据");
+                
+                // 生成文件名，包含当前日期
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const formattedDate = `${year}${month}${day}`;
+                const fileName = `环球购物_${formattedDate}_编排数据.xlsx`;
+                
+                // 导出Excel文件
+                XLSX.writeFile(wb, fileName);
+            });
+            
+            // 时间戳转换函数
+            function convertTimestamp(timestamp) {
+                if (timestamp === 0) return "00:00:00";
+                
+                const date = new Date(timestamp * 1000);
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                const seconds = String(date.getSeconds()).padStart(2, '0');
+                return `${hours}:${minutes}:${seconds}`;
+            }
+            
+            // 显示结果函数
+            function displayResults() {
+                resultsBody.innerHTML = '';
+                
+                const totalPages = Math.ceil(extractedData.length / rowsPerPage);
+                const startIndex = (currentPageNum - 1) * rowsPerPage;
+                const endIndex = Math.min(startIndex + rowsPerPage, extractedData.length);
+                const pageData = extractedData.slice(startIndex, endIndex);
+                
+                pageData.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.className = 'table-row-hover';
+                    
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.real_date}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.start_time}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.end_time}</td>
+                        <td class="px-6 py-4 text-sm text-gray-900">${item.name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-red-500 font-medium">¥${item.price}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">¥${item.marketprice}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <img src="${item.image}" alt="${item.name}" class="h-12 w-12 rounded object-cover" onerror="this.src='https://via.placeholder.com/100?text=Image+Not+Available'">
+                        </td>
+                    `;
+                    
+                    resultsBody.appendChild(row);
+                });
+                
+                // 更新分页控件
+                currentPage.textContent = currentPageNum;
+                prevPage.disabled = currentPageNum <= 1;
+                nextPage.disabled = currentPageNum >= totalPages;
+                
+                // 显示表格
+                resultsMessage.classList.add('hidden');
+                resultsTable.classList.remove('hidden');
+                exportBtn.disabled = false;
+                
+                // 更新行数统计
+                rowCount.textContent = `共提取 ${extractedData.length} 条记录`;
+            }
+            
+            // 显示消息函数
+            function showMessage(message, isError = false) {
+                resultsMessage.innerHTML = `
+                    <div class="w-16 h-16 ${isError ? 'bg-red-100' : 'bg-blue-100'} rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-info-circle'} ${isError ? 'text-red-500' : 'text-blue-500'} text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium ${isError ? 'text-red-700' : 'text-gray-700'} mb-1">${message}</h3>
+                    ${!isError ? '<p class="text-gray-500 mb-3">点击"处理数据"按钮开始提取信息</p>' : ''}
+                `;
+                resultsMessage.classList.remove('hidden');
+                resultsTable.classList.add('hidden');
+                exportBtn.disabled = true;
+                prevPage.disabled = true;
+                nextPage.disabled = true;
+                
+                if (isError) {
+                    resultsMessage.classList.remove('bg-gray-50', 'border-gray-300');
+                    resultsMessage.classList.add('bg-red-50', 'border-red-200');
+                } else {
+                    resultsMessage.classList.remove('bg-red-50', 'border-red-200');
+                    resultsMessage.classList.add('bg-gray-50', 'border-gray-300');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

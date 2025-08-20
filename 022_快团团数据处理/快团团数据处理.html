@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>快团团数据分析平台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  
+  <!-- Tailwind配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#3B82F6',
+            secondary: '#10B981',
+            accent: '#8B5CF6',
+            neutral: '#1F2937',
+            'neutral-light': '#F3F4F6',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .shadow-soft {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      }
+      .transition-all-300 {
+        transition: all 300ms ease-in-out;
+      }
+      .table-hover-effect tr:hover {
+        @apply bg-blue-50/50 transition-all-300;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 font-sans text-neutral">
+  <!-- 顶部导航 -->
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
+      <div class="flex items-center space-x-2 mb-4 md:mb-0">
+        <i class="fa fa-line-chart text-primary text-2xl"></i>
+        <h1 class="text-xl md:text-2xl font-bold text-neutral">快团团数据分析平台</h1>
+      </div>
+      <div class="flex items-center space-x-4">
+        <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 transition-all-300">
+          <i class="fa fa-moon-o text-neutral"></i>
+        </button>
+        <button id="help-btn" class="p-2 rounded-full hover:bg-gray-100 transition-all-300">
+          <i class="fa fa-question text-neutral"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <main class="container mx-auto px-4 py-8">
+    <!-- 介绍卡片 -->
+    <div class="bg-gradient-to-r from-primary/90 to-accent/90 text-white rounded-xl p-6 mb-8 shadow-soft transform hover:scale-[1.01] transition-all-300">
+      <h2 class="text-xl font-bold mb-2">数据解析与汇总工具</h2>
+      <p class="opacity-90">自动解析快团团日报数据，生成汇总表格并支持下载功能。系统会自动合并相同日期的数据，保留最新记录。</p>
+    </div>
+    
+    <!-- 输入区域 -->
+    <div class="bg-white rounded-xl p-6 mb-8 shadow-soft">
+      <h3 class="text-lg font-semibold mb-4 flex items-center">
+        <i class="fa fa-file-text-o text-primary mr-2"></i>数据输入
+      </h3>
+      <div class="mb-4">
+        <textarea id="data-input" class="w-full h-40 p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all-300 resize-none" placeholder="请粘贴快团团数据内容到这里..."></textarea>
+      </div>
+      <div class="flex justify-end">
+        <button id="parse-btn" class="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-lg font-medium flex items-center transition-all-300 shadow-md hover:shadow-lg">
+          <i class="fa fa-cogs mr-2"></i>解析数据
+        </button>
+      </div>
+    </div>
+    
+    <!-- 统计概览 -->
+    <div id="stats-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 hidden">
+      <div class="bg-white rounded-xl p-6 shadow-soft border-l-4 border-primary">
+        <p class="text-gray-500 text-sm mb-1">总记录数</p>
+        <h4 id="total-records" class="text-2xl font-bold">0</h4>
+      </div>
+      <div class="bg-white rounded-xl p-6 shadow-soft border-l-4 border-secondary">
+        <p class="text-gray-500 text-sm mb-1">总订购数量</p>
+        <h4 id="total-orders" class="text-2xl font-bold">0</h4>
+      </div>
+      <div class="bg-white rounded-xl p-6 shadow-soft border-l-4 border-accent">
+        <p class="text-gray-500 text-sm mb-1">总订购金额</p>
+        <h4 id="total-amount" class="text-2xl font-bold">¥0</h4>
+      </div>
+      <div class="bg-white rounded-xl p-6 shadow-soft border-l-4 border-amber-500">
+        <p class="text-gray-500 text-sm mb-1">总利润</p>
+        <h4 id="total-profit" class="text-2xl font-bold">¥0</h4>
+      </div>
+    </div>
+    
+    <!-- 图表区域 -->
+    <div id="chart-container" class="bg-white rounded-xl p-6 mb-8 shadow-soft hidden">
+      <h3 class="text-lg font-semibold mb-4 flex items-center">
+        <i class="fa fa-bar-chart text-primary mr-2"></i>利润趋势图
+      </h3>
+      <div class="h-80">
+        <canvas id="profit-chart"></canvas>
+      </div>
+    </div>
+    
+    <!-- 表格区域 -->
+    <div id="table-container" class="bg-white rounded-xl shadow-soft overflow-hidden mb-8 hidden">
+      <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+        <h3 class="text-lg font-semibold flex items-center">
+          <i class="fa fa-table text-primary mr-2"></i>汇总数据
+        </h3>
+        <button id="download-btn" class="bg-secondary hover:bg-secondary/90 text-white px-5 py-2 rounded-lg font-medium flex items-center transition-all-300">
+          <i class="fa fa-download mr-2"></i>下载数据
+        </button>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full table-hover-effect">
+          <thead>
+            <tr class="bg-neutral-light">
+              <th class="px-6 py-3 text-left text-sm font-semibold text-neutral">日期</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-neutral">订购数量</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-neutral">订购人数</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-neutral">订购金额(元)</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-neutral">利润(元)</th>
+            </tr>
+          </thead>
+          <tbody id="data-table-body">
+            <!-- 表格内容将通过JavaScript动态生成 -->
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="p-4 border-t border-gray-100 flex justify-between items-center">
+        <div class="text-sm text-gray-500">显示 <span id="shown-records">0</span> 条记录</div>
+        <div class="flex space-x-2">
+          <button id="prev-page" class="px-3 py-1 rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            <i class="fa fa-chevron-left"></i>
+          </button>
+          <span id="page-info" class="px-3 py-1">第 1 页</span>
+          <button id="next-page" class="px-3 py-1 rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            <i class="fa fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 空状态提示 -->
+    <div id="empty-state" class="bg-white rounded-xl p-12 text-center shadow-soft">
+      <i class="fa fa-file-text-o text-5xl text-gray-300 mb-4"></i>
+      <h3 class="text-xl font-semibold mb-2">尚未解析数据</h3>
+      <p class="text-gray-500 mb-6">请在上方输入框粘贴数据并点击"解析数据"按钮</p>
+      <div class="inline-flex items-center text-sm text-gray-500">
+        <i class="fa fa-lightbulb-o text-amber-500 mr-2"></i>
+        <span>系统会自动处理重复日期，保留最新记录</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-neutral text-white py-8">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-4 md:mb-0">
+          <div class="flex items-center space-x-2">
+            <i class="fa fa-line-chart text-primary text-xl"></i>
+            <span class="font-semibold">快团团数据分析平台</span>
+          </div>
+          <p class="text-gray-400 text-sm mt-2">高效解析数据，助力业务决策</p>
+        </div>
+        <div class="flex space-x-6">
+          <a href="#" class="text-gray-400 hover:text-white transition-all-300">
+            <i class="fa fa-question-circle"></i>
+            <span class="ml-1">帮助中心</span>
+          </a>
+          <a href="#" class="text-gray-400 hover:text-white transition-all-300">
+            <i class="fa fa-envelope"></i>
+            <span class="ml-1">联系我们</span>
+          </a>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400 text-sm">
+        &copy; 2024 快团团数据分析平台 - 保留所有权利
+      </div>
+    </div>
+  </footer>
+
+  <!-- 帮助模态框 -->
+  <div id="help-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-xl max-w-lg w-full mx-4 max-h-[80vh] overflow-y-auto">
+      <div class="p-6 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white">
+        <h3 class="text-xl font-bold">使用帮助</h3>
+        <button id="close-help" class="text-gray-500 hover:text-gray-700">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+      <div class="p-6">
+        <div class="mb-6">
+          <h4 class="font-semibold text-lg mb-2">如何使用本工具？</h4>
+          <ol class="list-decimal pl-5 space-y-2 text-gray-700">
+            <li>将快团团数据文本粘贴到输入框中</li>
+            <li>点击"解析数据"按钮</li>
+            <li>系统会自动处理数据并生成汇总表格</li>
+            <li>可通过"下载数据"按钮将表格导出为CSV文件</li>
+          </ol>
+        </div>
+        <div>
+          <h4 class="font-semibold text-lg mb-2">数据处理规则</h4>
+          <ul class="list-disc pl-5 space-y-2 text-gray-700">
+            <li>系统会自动合并东方购物和番茄团的数据</li>
+            <li>如果存在相同日期的多条记录，将保留最后一次出现的数据</li>
+            <li>汇总计算方式：
+              <ul class="list-circle pl-5 mt-1">
+                <li>总订购数量 = 东方购物订购数量 + 番茄团订购数量</li>
+                <li>总订购人数 = 东方购物订购人数 + 番茄团订购人数</li>
+                <li>总订购金额 = 东方购物订购金额 + 番茄团订购金额</li>
+                <li>总利润 = 东方购物利润 + 番茄团利润</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 全局变量
+    let parsedData = [];
+    let currentPage = 1;
+    const recordsPerPage = 15;
+    let profitChart = null;
+    
+    // DOM元素
+    const dataInput = document.getElementById('data-input');
+    const parseBtn = document.getElementById('parse-btn');
+    const dataTableBody = document.getElementById('data-table-body');
+    const tableContainer = document.getElementById('table-container');
+    const emptyState = document.getElementById('empty-state');
+    const statsContainer = document.getElementById('stats-container');
+    const chartContainer = document.getElementById('chart-container');
+    const downloadBtn = document.getElementById('download-btn');
+    const totalRecordsEl = document.getElementById('total-records');
+    const totalOrdersEl = document.getElementById('total-orders');
+    const totalAmountEl = document.getElementById('total-amount');
+    const totalProfitEl = document.getElementById('total-profit');
+    const shownRecordsEl = document.getElementById('shown-records');
+    const prevPageBtn = document.getElementById('prev-page');
+    const nextPageBtn = document.getElementById('next-page');
+    const pageInfoEl = document.getElementById('page-info');
+    const helpBtn = document.getElementById('help-btn');
+    const helpModal = document.getElementById('help-modal');
+    const closeHelpBtn = document.getElementById('close-help');
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    
+    // 初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      // 尝试从localStorage加载示例数据
+      try {
+        const sampleData = localStorage.getItem('kuaiduantuan_sample_data');
+        if (!sampleData) {
+          // 这里可以放置示例数据，方便用户测试
+        } else {
+          dataInput.value = sampleData;
+        }
+      } catch (e) {
+        console.error('无法加载示例数据:', e);
+      }
+      
+      // 事件监听
+      parseBtn.addEventListener('click', parseData);
+      downloadBtn.addEventListener('click', downloadData);
+      prevPageBtn.addEventListener('click', goToPrevPage);
+      nextPageBtn.addEventListener('click', goToNextPage);
+      helpBtn.addEventListener('click', () => helpModal.classList.remove('hidden'));
+      closeHelpBtn.addEventListener('click', () => helpModal.classList.add('hidden'));
+      themeToggleBtn.addEventListener('click', toggleTheme);
+      
+      // 点击模态框外部关闭
+      helpModal.addEventListener('click', (e) => {
+        if (e.target === helpModal) {
+          helpModal.classList.add('hidden');
+        }
+      });
+    });
+    
+    // 解析数据
+    function parseData() {
+      const input = dataInput.value.trim();
+      if (!input) {
+        showToast('请输入数据内容', 'error');
+        return;
+      }
+      
+      // 保存数据到localStorage
+      try {
+        localStorage.setItem('kuaiduantuan_sample_data', input);
+      } catch (e) {
+        console.error('无法保存数据:', e);
+      }
+      
+      // 显示加载状态
+      parseBtn.disabled = true;
+      parseBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i>解析中...';
+      
+      // 使用setTimeout模拟异步处理，避免UI冻结
+      setTimeout(() => {
+        try {
+          // 正则表达式匹配快团团日报数据
+          const regex = /快团团日报：(\d{4}\d{2}\d{2})[\s\S]*?东方购物（订阅领🧧）,订购数量：(\d+)单，订购人数：(\d+)个，订购金额：([\d.]+)元，利润：([\d.-]+)元；[\s\S]*?【东方购物】番茄团,订购数量：(\d+)单，订购人数：(\d+)个，订购金额：([\d.]+)元，利润：([\d.-]+)元./g;
+          
+          const dataMap = new Map();
+          let match;
+          
+          // 查找所有匹配项
+          while ((match = regex.exec(input)) !== null) {
+            const date = match[1];
+            // 东方购物数据
+            const dgOrders = parseInt(match[2]);
+            const dgPeople = parseInt(match[3]);
+            const dgAmount = parseFloat(match[4]);
+            const dgProfit = parseFloat(match[5]);
+            
+            // 番茄团数据
+            const fmOrders = parseInt(match[6]);
+            const fmPeople = parseInt(match[7]);
+            const fmAmount = parseFloat(match[8]);
+            const fmProfit = parseFloat(match[9]);
+            
+            // 计算汇总数据
+            const totalOrders = dgOrders + fmOrders;
+            const totalPeople = dgPeople + fmPeople;
+            const totalAmount = dgAmount + fmAmount;
+            const totalProfit = dgProfit + fmProfit;
+            
+            // 格式化日期 (YYYYMMDD -> YYYY-MM-DD)
+            const formattedDate = `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}`;
+            
+            // 存储数据，覆盖重复日期（保留最后一条）
+            dataMap.set(date, {
+              date: formattedDate,
+              originalDate: date,
+              dgOrders,
+              dgPeople,
+              dgAmount,
+              dgProfit,
+              fmOrders,
+              fmPeople,
+              fmAmount,
+              fmProfit,
+              totalOrders,
+              totalPeople,
+              totalAmount,
+              totalProfit
+            });
+          }
+          
+          // 转换为数组并按日期排序
+          parsedData = Array.from(dataMap.values()).sort((a, b) => {
+            return a.originalDate.localeCompare(b.originalDate);
+          });
+          
+          // 更新UI
+          updateTable();
+          updateStats();
+          renderChart();
+          
+          // 显示结果区域，隐藏空状态
+          tableContainer.classList.remove('hidden');
+          statsContainer.classList.remove('hidden');
+          chartContainer.classList.remove('hidden');
+          emptyState.classList.add('hidden');
+          
+          showToast(`成功解析 ${parsedData.length} 条记录`, 'success');
+        } catch (error) {
+          console.error('解析数据出错:', error);
+          showToast('解析数据失败，请检查输入格式', 'error');
+        } finally {
+          // 恢复按钮状态
+          parseBtn.disabled = false;
+          parseBtn.innerHTML = '<i class="fa fa-cogs mr-2"></i>解析数据';
+        }
+      }, 300);
+    }
+    
+    // 更新表格
+    function updateTable() {
+      // 清空表格
+      dataTableBody.innerHTML = '';
+      
+      // 计算分页
+      const totalPages = Math.ceil(parsedData.length / recordsPerPage);
+      const startIndex = (currentPage - 1) * recordsPerPage;
+      const endIndex = Math.min(startIndex + recordsPerPage, parsedData.length);
+      const currentRecords = parsedData.slice(startIndex, endIndex);
+      
+      // 更新分页信息
+      pageInfoEl.textContent = `第 ${currentPage} / ${totalPages} 页`;
+      prevPageBtn.disabled = currentPage === 1;
+      nextPageBtn.disabled = currentPage === totalPages;
+      shownRecordsEl.textContent = parsedData.length;
+      
+      // 添加记录
+      currentRecords.forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.className = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+        
+        // 格式化金额和利润，保留两位小数
+        const amountFormatted = item.totalAmount.toFixed(2);
+        const profitFormatted = item.totalProfit.toFixed(2);
+        
+        row.innerHTML = `
+          <td class="px-6 py-4">${item.date}</td>
+          <td class="px-6 py-4">${item.totalOrders}</td>
+          <td class="px-6 py-4">${item.totalPeople}</td>
+          <td class="px-6 py-4">¥${amountFormatted}</td>
+          <td class="px-6 py-4 font-medium ${item.totalProfit >= 0 ? 'text-secondary' : 'text-red-500'}">
+            ¥${profitFormatted}
+          </td>
+        `;
+        
+        dataTableBody.appendChild(row);
+      });
+      
+      // 如果当前页没有数据，尝试前一页
+      if (currentRecords.length === 0 && currentPage > 1) {
+        currentPage--;
+        updateTable();
+      }
+    }
+    
+    // 更新统计信息
+    function updateStats() {
+      // 计算总计
+      const totalRecords = parsedData.length;
+      const totalOrders = parsedData.reduce((sum, item) => sum + item.totalOrders, 0);
+      const totalAmount = parsedData.reduce((sum, item) => sum + item.totalAmount, 0);
+      const totalProfit = parsedData.reduce((sum, item) => sum + item.totalProfit, 0);
+      
+      // 更新UI
+      totalRecordsEl.textContent = totalRecords;
+      totalOrdersEl.textContent = totalOrders.toLocaleString();
+      totalAmountEl.textContent = `¥${totalAmount.toFixed(2)}`;
+      totalProfitEl.textContent = `¥${totalProfit.toFixed(2)}`;
+    }
+    
+    // 渲染利润趋势图
+    function renderChart() {
+      // 销毁现有图表
+      if (profitChart) {
+        profitChart.destroy();
+      }
+      
+      // 准备图表数据
+      // 为了图表可读性，只取最近30天的数据
+      const chartData = parsedData.slice(-30);
+      const labels = chartData.map(item => item.date);
+      const profits = chartData.map(item => item.totalProfit);
+      
+      // 创建图表
+      const ctx = document.getElementById('profit-chart').getContext('2d');
+      profitChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: '每日利润',
+            data: profits,
+            borderColor: '#3B82F6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            borderWidth: 2,
+            tension: 0.3,
+            fill: true,
+            pointBackgroundColor: '#3B82F6',
+            pointRadius: 3,
+            pointHoverRadius: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `利润: ¥${context.raw.toFixed(2)}`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return '¥' + value;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    // 下载数据
+    function downloadData() {
+      if (parsedData.length === 0) {
+        showToast('没有可下载的数据', 'warning');
+        return;
+      }
+      
+      // 构建CSV内容
+      let csvContent = "日期,订购数量,订购人数,订购金额(元),利润(元)\n";
+      
+      parsedData.forEach(item => {
+        csvContent += `${item.date},${item.totalOrders},${item.totalPeople},${item.totalAmount.toFixed(2)},${item.totalProfit.toFixed(2)}\n`;
+      });
+      
+      // 创建下载链接
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `快团团数据汇总_${new Date().toLocaleDateString()}.csv`);
+      link.style.visibility = 'hidden';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      showToast('数据已成功下载', 'success');
+    }
+    
+    // 分页控制
+    function goToPrevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        updateTable();
+      }
+    }
+    
+    function goToNextPage() {
+      const totalPages = Math.ceil(parsedData.length / recordsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        updateTable();
+      }
+    }
+    
+    // 显示提示消息
+    function showToast(message, type = 'info') {
+      // 创建toast元素
+      const toast = document.createElement('div');
+      toast.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 flex items-center transition-all duration-300 transform translate-y-10 opacity-0`;
+      
+      // 根据类型设置样式
+      switch (type) {
+        case 'success':
+          toast.classList.add('bg-green-50', 'text-green-800', 'border-l-4', 'border-green-500');
+          toast.innerHTML = `<i class="fa fa-check-circle mr-2 text-green-500"></i>${message}`;
+          break;
+        case 'error':
+          toast.classList.add('bg-red-50', 'text-red-800', 'border-l-4', 'border-red-500');
+          toast.innerHTML = `<i class="fa fa-exclamation-circle mr-2 text-red-500"></i>${message}`;
+          break;
+        case 'warning':
+          toast.classList.add('bg-yellow-50', 'text-yellow-800', 'border-l-4', 'border-yellow-500');
+          toast.innerHTML = `<i class="fa fa-exclamation-triangle mr-2 text-yellow-500"></i>${message}`;
+          break;
+        default:
+          toast.classList.add('bg-blue-50', 'text-blue-800', 'border-l-4', 'border-blue-500');
+          toast.innerHTML = `<i class="fa fa-info-circle mr-2 text-blue-500"></i>${message}`;
+      }
+      
+      // 添加到页面
+      document.body.appendChild(toast);
+      
+      // 显示动画
+      setTimeout(() => {
+        toast.classList.remove('translate-y-10', 'opacity-0');
+      }, 10);
+      
+      // 自动消失
+      setTimeout(() => {
+        toast.classList.add('translate-y-10', 'opacity-0');
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+    }
+    
+    // 切换主题
+    function toggleTheme() {
+      const isDarkMode = document.documentElement.classList.toggle('dark');
+      const icon = themeToggleBtn.querySelector('i');
+      
+      if (isDarkMode) {
+        icon.classList.remove('fa-moon-o');
+        icon.classList.add('fa-sun-o');
+        document.body.classList.add('bg-gray-900', 'text-white');
+        document.body.classList.remove('bg-gray-50', 'text-neutral');
+      } else {
+        icon.classList.remove('fa-sun-o');
+        icon.classList.add('fa-moon-o');
+        document.body.classList.remove('bg-gray-900', 'text-white');
+        document.body.classList.add('bg-gray-50', 'text-neutral');
+      }
+    }
+  </script>
+</body>
+</html>

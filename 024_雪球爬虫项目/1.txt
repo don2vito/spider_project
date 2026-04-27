@@ -1,0 +1,904 @@
+{
+  "count": 20,
+  "total": 79,
+  "page": 3,
+  "list": [
+    {
+      "is_private": false,
+      "timeBefore": "2022-11-15 10:11",
+      "created_at": 1668478318000,
+      "description": "【前情提要】 <a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a> <br/>具有转折性意义的嘉心源公司战略会终于落下帷幕，改变战略之后，嘉心源产品未来命运如何？“老酒老蔡”在这之中又发挥了什么作用？<br/>PS： 点击 <a href=\"https://xueqiu.com/1676206424/column\" title=\"https://xueqiu.com/1676206424/column\" target=\"_blank\">⌈正片集锦⌋</a>，可回顾《进阶吧！投资者》第一话至第七话...",
+      "pic_sizes": [
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/1847544fded44ad83fe14c3e.jpg,https://xqimg.imedao.com/1847547503644ef83fe3c2b7.jpg,https://xqimg.imedao.com/18475476494452ea3fdff106.jpg,https://xqimg.imedao.com/184754bf515456de3fec781a.jpg,https://xqimg.imedao.com/18475477aa944efb3fe41d2b.jpg,https://xqimg.imedao.com/184754786f7452233fc461e3.jpg,https://xqimg.imedao.com/184754c230944b9f3fe9e21b.jpg,https://xqimg.imedao.com/1847547a0d0456c53fc14082.jpg,https://xqimg.imedao.com/1847547b186456c63fc27c45.jpg,https://xqimg.imedao.com/184754c50f844f1d3faa31a2.jpg,https://xqimg.imedao.com/1847547cf08448cb3fd0f43c.jpg,https://xqimg.imedao.com/1847547d9c944ae83fee5778.jpg,https://xqimg.imedao.com/184754c7f8f44f223fe3dab1.jpg,https://xqimg.imedao.com/1847547fe79452ee3fe1cfb5.jpg,https://xqimg.imedao.com/1847548131044efe3fcf91ea.jpg,https://xqimg.imedao.com/184754b2a7744fbf3fc834ee.jpg,https://xqimg.imedao.com/1847548301f44a183fecdc7c.jpg,https://xqimg.imedao.com/18475483d68448ce3fd2cb26.jpg,https://xqimg.imedao.com/184754cc28e4524c3feaeac6.jpg,https://xqimg.imedao.com/18475486289452f03fe85eb2.jpg,https://xqimg.imedao.com/1847548650844bb43fe0a3b0.jpg,https://xqimg.imedao.com/184754ac342452333fe9511d.jpg,https://xqimg.imedao.com/184754d98d2456f63f765c4c.jpg,https://xqimg.imedao.com/184754daa7844f343fde6d75.jpg,https://xqimg.imedao.com/184754dbde644bb43feebe6a.jpg",
+      "title": "第八话 改变公司战略后 嘉心源产品还能找到“小时候的味道”吗？",
+      "target": "/1676206424/235393850",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 235393850,
+      "mark": 5,
+      "view_count": 650658
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2022-11-08 10:23",
+      "created_at": 1667874183000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a> <br/>经过一番谈话，郭老向陈丙伸承诺，将在嘉心源公司战略会议上提出自己的改革提案。甄真和陈丙伸也来到了会议现场，“大战”一触即发……<br/>PS：点击 <a href=\"https://xueqiu.com/1676206424/column\" title=\"https://xueqiu.com/1676206424/column\" target=\"_blank\">⌈正片集锦⌋</a> ，可回顾《进阶吧！投资者》第一话至第六...",
+      "pic_sizes": [
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/1843bf9191433eb73fa8d1b1.jpg,https://xqimg.imedao.com/1843bf6b2f333b203fef4230.jpg,https://xqimg.imedao.com/1843bf6bcfb33dbf3fe4739c.jpg,https://xqimg.imedao.com/1843bf6c606338543fc29164.jpg,https://xqimg.imedao.com/1843bf6cdc7338553fccb92b.jpg,https://xqimg.imedao.com/1843bf6d82c3390a3fe5a0a4.jpg,https://xqimg.imedao.com/1843bf6e2c733ea33fb0b009.jpg,https://xqimg.imedao.com/1843bf6ed1a336d83fe4ca43.jpg,https://xqimg.imedao.com/1843bf6faea33ea43fcacc88.jpg,https://xqimg.imedao.com/1843bf70687338563fd72523.jpg,https://xqimg.imedao.com/1843bf7708333b5c3fd4a82e.jpg,https://xqimg.imedao.com/1843bf77d2433b243fee916f.jpg,https://xqimg.imedao.com/1843bf7889533ea83fed0134.jpg,https://xqimg.imedao.com/1843bf7960b3390d3fd99fa1.jpg,https://xqimg.imedao.com/1843bf7a6fe33b5e3fde726c.jpg,https://xqimg.imedao.com/1843bf7b67d33b263fed18d5.jpg,https://xqimg.imedao.com/1843bf7c62a338b23fe64537.jpg,https://xqimg.imedao.com/1843bf7d38f338b43fd848bf.jpg,https://xqimg.imedao.com/1843bf7e81f339103fe48e78.jpg,https://xqimg.imedao.com/1843bf7f86733b663fe0ceaf.jpg,https://xqimg.imedao.com/1843bf8097233b683fe6af51.jpg,https://xqimg.imedao.com/1843bf81aa933b6a3fd5945b.jpg,https://xqimg.imedao.com/1843bf82c2a33b6c3fe7477a.jpg,https://xqimg.imedao.com/1843bf83a2333b2a3fb9f2d2.jpg,https://xqimg.imedao.com/1843bf8473f339153fe8f27f.jpg,https://xqimg.imedao.com/1845504b71c3ae493fe256be.jpg,https://xqimg.imedao.com/184550503513b2bf3fef3f04.jpg,https://xqimg.imedao.com/184550531f53b2263fccfb0e.jpg",
+      "title": "第七话 激烈交锋，这场会议成了公司战略转折点！",
+      "target": "/1676206424/234786091",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 234786091,
+      "mark": 5,
+      "view_count": 1061168
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2022-11-01 10:05",
+      "created_at": 1667268334000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a> <br/>郭老、苏夏的一席话，让甄真重新理解了整个食品行业的投资逻辑。舟车劳顿到达湖南平江，陈丙伸难道只为了“一顿饭”？他到底在“卖什么关子”？<br/>下周二11月8日10点，继续关注《进阶吧！投资者》，嘉心源战略会上，好戏即将上演！",
+      "pic_sizes": [
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/1841de361fb2aab13fdcbfbc.jpg,https://xqimg.imedao.com/1841de3933c2a9653fe47fbf.jpg,https://xqimg.imedao.com/1841de3a2e72a9663fd0b2d2.jpg,https://xqimg.imedao.com/1841de3d75c2acef3febaa90.jpg,https://xqimg.imedao.com/1841de3f3742ad5b3fcf6952.jpg,https://xqimg.imedao.com/1841de41a2b2b0973fe7471a.jpg,https://xqimg.imedao.com/1841de451992a92e3feb3f48.jpg,https://xqimg.imedao.com/1841de47eab2acf73fbe0b0a.jpg,https://xqimg.imedao.com/1841de49fa62aab93fe1cc5b.jpg,https://xqimg.imedao.com/1841de4c0c12acfb3fedff74.jpg,https://xqimg.imedao.com/1841de4d5552a8e93fea4096.jpg,https://xqimg.imedao.com/1841de4fa512aedf3fd4071f.jpg,https://xqimg.imedao.com/1841de50f5c2ad023fdea2f5.jpg,https://xqimg.imedao.com/1841de53cee2a8f23fe9b393.jpg,https://xqimg.imedao.com/1841de54d752aa443fcd8884.jpg,https://xqimg.imedao.com/1841de568b72b0ad3fbec549.jpg,https://xqimg.imedao.com/1841de577952a8f63fe558cc.jpg,https://xqimg.imedao.com/1841de5a7832ad753fe16197.jpg,https://xqimg.imedao.com/1841de5b5a72aee73fce0b62.jpg,https://xqimg.imedao.com/1841de5dd922b0b43fecfb91.jpg,https://xqimg.imedao.com/1841de5f9ce2ad143fbf43e9.jpg,https://xqimg.imedao.com/1841de6196d2b0b93fef5acf.jpg,https://xqimg.imedao.com/1841de629202a9783fc3f145.jpg",
+      "title": "第六话 解开嘉心源“变味儿”的秘密，甄真实地调研嘉心源工厂",
+      "target": "/1676206424/234183951",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 234183951,
+      "mark": 5,
+      "view_count": 472401
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2022-10-25 09:56",
+      "created_at": 1666662998000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a> <br/>“永远不要投资你不了解的领域”。为了调研嘉心源，甄真和陈丙伸来到辣条发源地——湖南平江，似乎约见了一位重要人士……<br/>下周二11月1日10点，继续关注《进阶吧！投资者》，一起揭开嘉心源的秘密……",
+      "pic_sizes": [
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/183f99150371f4a13fe8673e.jpg,https://xqimg.imedao.com/183f99020071f5353fe1815a.jpg,https://xqimg.imedao.com/18ca5a5ac6a623933fdd5a0d.jpg,https://xqimg.imedao.com/18ca5a5d005623953fef3fad.jpg,https://xqimg.imedao.com/18ca5a62832623963fce5a61.jpg,https://xqimg.imedao.com/18ca5a6496e7c5143feee5d4.jpg,https://xqimg.imedao.com/18ca5a66ae3623973fcdeb1b.jpg,https://xqimg.imedao.com/18ca5a68dac7c5183fe47d0d.jpg,https://xqimg.imedao.com/18ca5a73b0f5635d3fc6a939.jpg,https://xqimg.imedao.com/18ca5a794957c5323fe8fa75.jpg,https://xqimg.imedao.com/18ca5a7ac0550bbe3fdf8e83.jpg,https://xqimg.imedao.com/18ca5a7e180530113fcbe2fa.jpg,https://xqimg.imedao.com/18ca5a7f4de7c53e3fe6e269.jpg,https://xqimg.imedao.com/18ca5aeff6e5ac893feeaf98.jpg,https://xqimg.imedao.com/18ca5ac81fa7c57c3fef6ca6.jpg,https://xqimg.imedao.com/18ca5ac99e95ac6e3f838638.jpg,https://xqimg.imedao.com/18ca5acc27c7c5833fe2c5c8.jpg,https://xqimg.imedao.com/18ca5aceef35ac713fd67e85.jpg,https://xqimg.imedao.com/18ca5ad3af25302e3fefc3fa.jpg,https://xqimg.imedao.com/18ca5ad4b9e7c5923feee79d.jpg,https://xqimg.imedao.com/18ca5ad644f5ac7a3fef0c37.jpg",
+      "title": "第五话 试吃了十多种辣条之后，00后美女投资人发现了关键！辣条配方里，最重要的竟是它...",
+      "target": "/1676206424/233494501",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 233494501,
+      "mark": 5,
+      "view_count": 1290252
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2022-10-19 10:19",
+      "created_at": 1666145986000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a> <br/>在试吃了所有嘉心源产品后，甄真发现，嘉心源似乎“出了问题”。深思熟虑后，陈丙伸最终决定“入局”，协助甄真，开启嘉心源的调研之旅！<br/>未完待续……<br/>10月25日起，每周二更新1话。<br/>下周二上午10点，欢迎来@进阶吧投资者 追更！",
+      "pic_sizes": [
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/183edf3c1001b8823fe15cac.jpg,https://xqimg.imedao.com/183eb5ff9a31aca73fda5d75.jpg,https://xqimg.imedao.com/183eb6008681acea3fdf457e.jpg,https://xqimg.imedao.com/183eb60173e1af7f3fa4ec9c.jpg,https://xqimg.imedao.com/183eb6025bb1af533fda9550.jpg,https://xqimg.imedao.com/183eb60359c1afb83fe28780.jpg,https://xqimg.imedao.com/183eb60459c1af813fddd658.jpg,https://xqimg.imedao.com/183eb60532b1af823feca949.jpg,https://xqimg.imedao.com/183eb6062e81acec3fe83735.jpg,https://xqimg.imedao.com/183eb6072581aced3fe61485.jpg,https://xqimg.imedao.com/183eb6080fb1acee3fea580d.jpg,https://xqimg.imedao.com/183eb6090801af1a3fdfd09c.jpg,https://xqimg.imedao.com/183eb609e9a1b1843fcc8601.jpg,https://xqimg.imedao.com/183eb60c2c31acb93fd0bb03.jpg,https://xqimg.imedao.com/183eb60d16e1af1e3fe0760c.jpg,https://xqimg.imedao.com/183eb60e3111acae3fedfca0.jpg,https://xqimg.imedao.com/183eb60f3d51af873fd2b7bb.jpg,https://xqimg.imedao.com/183eb61092d1afba3fbbdadf.jpg,https://xqimg.imedao.com/183eb61189d1af5a3feee00a.jpg,https://xqimg.imedao.com/183eb612df71ae2f3fe5c0b2.jpg,https://xqimg.imedao.com/183eb6231a41acc63fd82d9d.jpg,https://xqimg.imedao.com/183eb6243611ac953fe17fa7.jpg,https://xqimg.imedao.com/183eb627e431ac983fed8662.jpg",
+      "title": "第四话 走，去辣条的发源地！",
+      "target": "/1676206424/233026463",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 233026463,
+      "mark": 5,
+      "view_count": 347641
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2022-10-19 10:19",
+      "created_at": 1666145946000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a> <br/>甄真终于在夜大课堂找到了“昔日明星基金经理”陈丙伸，却遭其“灵魂质问”。面对如此“难搞”的陈丙伸，甄真的下一步会如何做呢？",
+      "pic_sizes": [
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/183ededb38e1b5523fef8f17.jpg,https://xqimg.imedao.com/183eb5b5fb11ac673fe15e54.jpg,https://xqimg.imedao.com/183eb5b73ef1af2e3fdb9ed2.jpg,https://xqimg.imedao.com/183eb5b84861b1643fe1d40f.jpg,https://xqimg.imedao.com/183eb5b9bd91af2f3fe99d1a.jpg,https://xqimg.imedao.com/183eb5ba89b1af303fec710c.jpg,https://xqimg.imedao.com/183eb5d69e51acd73fee6b2e.jpg,https://xqimg.imedao.com/183eb5bbe3b1af313fc586fe.jpg,https://xqimg.imedao.com/183eb5bce441acc63fe46977.jpg,https://xqimg.imedao.com/183eb5bdeb11b1663fe8d05f.jpg,https://xqimg.imedao.com/183eb5bed5d1ae0c3fe3da59.jpg,https://xqimg.imedao.com/183eb5bfa9e1acc93fc782ee.jpg,https://xqimg.imedao.com/183eb5c0eff1ac8d3fca5b9e.jpg,https://xqimg.imedao.com/183eb5c20f31af5d3fea2c71.jpg,https://xqimg.imedao.com/183eb5c2fe11accd3fe61f7a.jpg,https://xqimg.imedao.com/183eb5c403e1acce3fe9d2e5.jpg,https://xqimg.imedao.com/183eb5c4f341af363fecd183.jpg,https://xqimg.imedao.com/183eb5c5e9e1ac903fe43edf.jpg,https://xqimg.imedao.com/183eb5c6ec21ac6c3fdc9fd7.jpg,https://xqimg.imedao.com/183eb5ee10e1ace23fe3e229.jpg,https://xqimg.imedao.com/183eb5ef57c1afae3fd9b2ee.jpg,https://xqimg.imedao.com/183eb5f055f1ace33f9007b6.jpg",
+      "title": "第三话 如果你真想了解一家公司，最好把他放进嘴里好好咀嚼！",
+      "target": "/1676206424/233026346",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 233026346,
+      "mark": 5,
+      "view_count": 347195
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2022-10-18 10:25",
+      "created_at": 1666059943000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a> <br/>甄真在毕业典礼上目睹父亲意外身亡，父亲生前管理的基金也面对市场质疑和投资者大量赎回。在父亲挚友李轶君的建议下，甄真决定入职父亲的基金公司，探寻投资真相。然而，她接到的第一个任务竟然是...<br/>《进阶吧！投资者》是雪球出品的首部投资剧...",
+      "pic_sizes": [
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/183ee0d0f641b6843fe96fa7.jpg,https://xqimg.imedao.com/183ee0d4a7a1b69a3fe9584a.jpg,https://xqimg.imedao.com/183ee0d65ba1b69b3fe32117.jpg,https://xqimg.imedao.com/183ee101eb41b9643fe69411.jpg,https://xqimg.imedao.com/183ee0da1e91b95c3fb5cfff.jpg,https://xqimg.imedao.com/183ee0db5a01b8863fc1d647.jpg,https://xqimg.imedao.com/183ee10663e1b6bb3fcff248.jpg,https://xqimg.imedao.com/183ee0dda6e1b6913fea3248.jpg,https://xqimg.imedao.com/183ee0df0631b6923fe464b7.jpg,https://xqimg.imedao.com/183ee109f351b9693fd37aa0.jpg,https://xqimg.imedao.com/183ee0e22651b6cb3fd678ab.jpg,https://xqimg.imedao.com/183ee0e3f001b88c3fcf9547.jpg,https://xqimg.imedao.com/183ee10d9401b9323fe6dfff.jpg,https://xqimg.imedao.com/183ee0e6c1c1b6cd3fc16536.jpg,https://xqimg.imedao.com/183ee0e87ed1b6a73fc6e916.jpg,https://xqimg.imedao.com/183ee113d411b96f3fe54999.jpg,https://xqimg.imedao.com/183ee0ed0d01b6923fe46851.jpg,https://xqimg.imedao.com/183ee0ee3b41b6d43fe2b1e1.jpg,https://xqimg.imedao.com/183ee1180a71b8b33fe08d0c.jpg,https://xqimg.imedao.com/183ee0f03921b6d53fec2ec1.jpg,https://xqimg.imedao.com/183ee0f13fc1b6963fe7948b.jpg,https://xqimg.imedao.com/183ee11baf81b6af3fa8f0f8.jpg,https://xqimg.imedao.com/183ee0f3a541bb1f3fe0b9e6.jpeg,https://xqimg.imedao.com/183ee0f86ea1b8983fcba91e.jpeg",
+      "title": "第二话 找到那个神秘的男人",
+      "target": "/1676206424/232936720",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 232936720,
+      "mark": 5,
+      "view_count": 598048
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2022-10-18 10:00",
+      "created_at": 1666058436000,
+      "description": "",
+      "pic_sizes": [
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2247
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/183e8d1287419a6e3fe21eb9.jpg,https://xqimg.imedao.com/18ca0095a617854c3fbd2e8c.jpg,https://xqimg.imedao.com/18ca00973ea785513fe26b5a.jpg,https://xqimg.imedao.com/18ca007fcaf540143fee7616.jpg,https://xqimg.imedao.com/18ca00841314eb103fef67e8.jpg,https://xqimg.imedao.com/18ca009ba255f97f3fdf2289.jpg,https://xqimg.imedao.com/18ca00a5271586ec3fe97da5.jpg,https://xqimg.imedao.com/18ca00ab5d5785a63feb41ad.jpg,https://xqimg.imedao.com/18ca00ade40785b23fe12c11.jpg,https://xqimg.imedao.com/18ca00b0697785bd3fd20688.jpg,https://xqimg.imedao.com/18ca00b2192785c53fb2d9be.jpg,https://xqimg.imedao.com/18ca00b2d6b5f9943fb57ada.jpg,https://xqimg.imedao.com/18ca00b460f785cf3fedfba5.jpg,https://xqimg.imedao.com/18ca00b6133785d93feb50cb.jpg,https://xqimg.imedao.com/18ca00b79325f99e3fe05a79.jpg,https://xqimg.imedao.com/18ca00b949e4eb2a3fe474c9.jpg,https://xqimg.imedao.com/18ca00be5ee785f23fdafe03.jpg,https://xqimg.imedao.com/18ca00bf69e786043fe7c7ee.jpg,https://xqimg.imedao.com/18ca00c0a945f9b43f929de7.jpg,https://xqimg.imedao.com/18ca00c2335786253feae2c6.jpg,https://xqimg.imedao.com/18ca00c34487862a3fe39fa2.jpg,https://xqimg.imedao.com/18ca00c489f5f9b73fe40cf7.jpg,https://xqimg.imedao.com/18ca00c75a25870e3fd548f6.jpg,https://xqimg.imedao.com/18ca00ca39f50ea73fce4fe2.jpg",
+      "title": "第一话 父亲突然离世！刚毕业的她，要如何面对...",
+      "target": "/1676206424/232932573",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 232932573,
+      "mark": 5,
+      "view_count": 632250
+    }
+  ],
+  "maxPage": 4
+}

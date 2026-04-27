@@ -1,0 +1,2188 @@
+{
+  "count": 20,
+  "total": 79,
+  "page": 1,
+  "list": [
+    {
+      "is_private": false,
+      "timeBefore": "2023-09-05 10:15",
+      "created_at": 1693880133000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a><br/>《进阶吧！投资者》第四十七话中，乌勒台村获得了普耀和央企的资助焕发新生，央国企超越资本规则自身的意义，是国家发展的压舱石。经历过多次行业调研，从食品、猪周期、芯片到光伏、储能和央国企，甄真了解了一家公司的本质和责任，已经逐渐成长为...",
+      "pic_sizes": [
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/18a6314f5794897f3fe52d71.jpg,https://xqimg.imedao.com/18a6314f4724897e3fec5991.jpg,https://xqimg.imedao.com/18a6314f40e50f983fd27bbe.jpg,https://xqimg.imedao.com/18a6314f65350f993feb5ddb.jpg,https://xqimg.imedao.com/18a6314fb6950f9a3f706f64.jpg,https://xqimg.imedao.com/18a6314fb34489803fabda74.jpg,https://xqimg.imedao.com/18a6314f3e84897d3fa0af89.jpg,https://xqimg.imedao.com/18a631713e6297563fe47675.jpg,https://xqimg.imedao.com/18a6317403a2658a3fef01ee.jpg,https://xqimg.imedao.com/18a63177e9d6c403fda5e09f.jpg,https://xqimg.imedao.com/18a6315ae3e4898f3fd6a347.jpg,https://xqimg.imedao.com/18a6317d84d727f3fbda4aa9.jpg,https://xqimg.imedao.com/18a6317daa7297613fef627e.jpg,https://xqimg.imedao.com/18a6317da22297603fe7534b.jpg,https://xqimg.imedao.com/18a6315bdaf50fab3fdcaf85.jpg,https://xqimg.imedao.com/18a6318f6c2728b3fe0fb438.jpg,https://xqimg.imedao.com/18a6315bd74489903fdd5ef1.jpg,https://xqimg.imedao.com/18a6319d9df23e703fe79760.jpg,https://xqimg.imedao.com/18a6319da2a265a93fb32278.jpg,https://xqimg.imedao.com/18a6315824b50faa3fb2ae44.jpg,https://xqimg.imedao.com/18a6336337333b7c3fc39204.jpg,https://xqimg.imedao.com/18a6336d04a33b883feaa1c2.jpg,https://xqimg.imedao.com/18a63363247240393fd5a245.jpg,https://xqimg.imedao.com/18a63362d9b299363fdb2cec.jpg,https://xqimg.imedao.com/18a63371ffe6e2f3fee2dd8e.jpg,https://xqimg.imedao.com/18a633632516e1f3fd96cd70.jpg,https://xqimg.imedao.com/18a633634976e203fe9b0992.jpg,https://xqimg.imedao.com/18a6336333e267713fa949e9.jpg",
+      "title": "第四十八话 下课终章！投资进阶之旅",
+      "target": "/1676206424/260295376",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 260295376,
+      "mark": 5,
+      "view_count": 356919
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2023-08-29 10:02",
+      "created_at": 1693274525000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a><br/>《进阶吧！投资者》第四十六话中，普耀集团的钒液流电池技术得到了突破，乌勒台村搭上当地政府对液流电池储能相关的新政策的顺风车， 以及新的合作伙伴加入，原先被中止的项目就被盘活。新的液流电池储能调峰示范站设计规模100兆瓦，招募了不少本地...",
+      "pic_sizes": [
+        {
+          "width": 853,
+          "height": 1280
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/18a3f061bb23ebeb3fe9eb83.png,https://xqimg.imedao.com/18a3f0657933ebf33feb2725.jpg,https://xqimg.imedao.com/18a3f063dce475643fd5c3fc.jpg,https://xqimg.imedao.com/18a3f0654bb3ebef3fe68680.jpg,https://xqimg.imedao.com/18a3f0641bc475653fe52bfa.jpg,https://xqimg.imedao.com/18d345513a28a443f981f50f.jpg,https://xqimg.imedao.com/18d34555fd08ccc3fd091541.jpg,https://xqimg.imedao.com/18d34557955cc8e3fd70036d.jpg,https://xqimg.imedao.com/18d34559c5da3fe3fdf0a119.jpg,https://xqimg.imedao.com/18d3455c67392823fe6b10f2.jpg,https://xqimg.imedao.com/18d345620bd982d3fce98620.jpg,https://xqimg.imedao.com/18d345650ba8a4e3fb0d4e85.jpg,https://xqimg.imedao.com/18d34569728cc9c3fe6f1353.jpg,https://xqimg.imedao.com/18d3456c2a2928d3fefd95ac.jpg,https://xqimg.imedao.com/18d3456e6b7a40f3fe0a315f.jpg,https://xqimg.imedao.com/18d3456fe828cd53fe3d922c.jpg,https://xqimg.imedao.com/18d34572d7092903fe70a23c.jpg,https://xqimg.imedao.com/18d34574e5ccca53fc8d1469.jpg,https://xqimg.imedao.com/18d3457778192933fe24f66d.jpg,https://xqimg.imedao.com/18d3463414a583db3fe21177.jpg,https://xqimg.imedao.com/18d346336b4583da3fe48048.jpg,https://xqimg.imedao.com/18d34634864583dc3fced9b6.png",
+      "title": "第四十七话 压舱石！央国企不可替代的作用",
+      "target": "/1676206424/259643634",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 259643634,
+      "mark": 5,
+      "view_count": 553441
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2023-08-22 09:53",
+      "created_at": 1692669182000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a><br/>《进阶吧！投资者》第四十五话中，大语言模型的涌现能力就是当一个系统复杂到一定程度，可能会发生超越系统元素的自组织见象，“当语言模型的参数超过1000亿以后，它会忽然获得一些之前没有的能力”，AI技术的长足进步引发了投资狂潮，然而，每个普...",
+      "pic_sizes": [
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/18a1af0be8f3d9243fe472d4.jpg,https://xqimg.imedao.com/18a1af0d8593d92e3fb8390a.jpg,https://xqimg.imedao.com/18a1af0b9fc3d9233fc8a623.jpg,https://xqimg.imedao.com/18a1af0cbba3d9283fc85052.jpg,https://xqimg.imedao.com/18a1af0b53b34d593fe8683c.jpg,https://xqimg.imedao.com/18a1af0a0df3d9223fe9c147.jpg,https://xqimg.imedao.com/18a1af0cbb034d5e3fe9e8de.jpg,https://xqimg.imedao.com/18a1af0d9d934d653fef424c.jpg,https://xqimg.imedao.com/18a1af0cadb3d9273fe849cb.jpg,https://xqimg.imedao.com/18a1af0d4fa34d623fef1b79.jpg,https://xqimg.imedao.com/18a1af0ddf53d9303fe9aa8a.jpg,https://xqimg.imedao.com/18a1af0c7c03d9253fef4260.jpg,https://xqimg.imedao.com/18a1af0ca5534d5d3fdfea8b.jpg,https://xqimg.imedao.com/18a1af0d80834d633feaef3d.jpg,https://xqimg.imedao.com/18a1af0d8fe34d643fd894c1.jpg,https://xqimg.imedao.com/18a1af0c54334d5b3fe55062.jpg,https://xqimg.imedao.com/18a1af0cc463d9293fe82dae.jpg,https://xqimg.imedao.com/18a1af0d3de3d92b3fd0386b.jpg,https://xqimg.imedao.com/18a1af0cbba34d5f3fc21cb0.jpg,https://xqimg.imedao.com/18a1af0dc113d92f3fded773.jpg,https://xqimg.imedao.com/18a1af0dd1934d663fa5a61c.jpg,https://xqimg.imedao.com/18a1af0d84f3d92d3fe9a4bc.jpg",
+      "title": "第四十六话 新生——乌勒台村的机遇",
+      "target": "/1676206424/258910686",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 258910686,
+      "mark": 5,
+      "view_count": 204881
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2023-08-15 10:06",
+      "created_at": 1692065188000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a><br/>《进阶吧！投资者》第四十四话中，李耀一向甄真介绍了传统化学电池的缺点和各种储能技术路径。其中，“钒电池有三条至关重要的特性：安全性高、一致性好，还有寿命长”，然而，“钒电池的初期建设费用很高，成本至少是锂电池的三四倍”。同时，AI技...",
+      "pic_sizes": [
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/189f6f135553454d3feaceec.jpg,https://xqimg.imedao.com/189f6f13a382b7c13fc9bebc.jpg,https://xqimg.imedao.com/189f6f12cfd2b7bc3fe1b3cf.jpg,https://xqimg.imedao.com/189f6f11a90345493fe53088.jpg,https://xqimg.imedao.com/189f6f13a533454f3fc7a3aa.jpg,https://xqimg.imedao.com/189f6f135be2b7bf3fb569aa.jpg,https://xqimg.imedao.com/189f6f126d83454a3fde2171.jpg,https://xqimg.imedao.com/189f6f131ba2b7bd3fe4d5d6.jpg,https://xqimg.imedao.com/189f6f13b5f345503fedcedc.jpg,https://xqimg.imedao.com/189f6f131cb3454c3fe26e76.jpg,https://xqimg.imedao.com/189f6f145ed345523fc2a932.jpg,https://xqimg.imedao.com/189f6f131733454b3fdbb317.jpg,https://xqimg.imedao.com/189f6f1362a2b7c03fed71cc.jpg,https://xqimg.imedao.com/189f6f131cf2b7be3fa3b820.jpg,https://xqimg.imedao.com/189f6f147742b7c53fd2f8c6.jpg,https://xqimg.imedao.com/189f6f140922b7c33febe788.jpg,https://xqimg.imedao.com/189f6f139f33454e3fe8d9a5.jpg,https://xqimg.imedao.com/189f6f146b8345533febaa54.jpg,https://xqimg.imedao.com/189f6f126ba2b7bb3fee18e9.jpg,https://xqimg.imedao.com/189f6f13b982b7c23fed403a.jpg,https://xqimg.imedao.com/189f6f143cf345513fe1dc0a.jpg,https://xqimg.imedao.com/189f6f1460e2b7c43fde9eea.jpg",
+      "title": "第四十五话 AI——通往人类新纪元",
+      "target": "/1676206424/258288746",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 258288746,
+      "mark": 5,
+      "view_count": 864293
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2023-08-08 09:53",
+      "created_at": 1691459624000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a><br/>《进阶吧！投资者》第四十三话中，甄真参加了多次光伏行业会议，“光伏行业每个环节都有这么多细分领域，每个领域都有一整套专业知识和供应链”。随着风电和光伏的快速发展，“与之配套的储能方案在全世界的一级市场都成了投资热点”。电池储能的技...",
+      "pic_sizes": [
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/189d2d7fafd2ae9f3fde57eb.jpg,https://xqimg.imedao.com/189d2d7fa1221d783fcd917c.jpg,https://xqimg.imedao.com/189d2d7f9de21d773fbfd44d.jpg,https://xqimg.imedao.com/189d2d80a1621d833fddda94.jpg,https://xqimg.imedao.com/189d2d7f7f421d763feb5dee.jpg,https://xqimg.imedao.com/189d2d80bf92aea93fc0dd1b.jpg,https://xqimg.imedao.com/189d2d7fea521d7c3fed6321.jpg,https://xqimg.imedao.com/189d2d819812aeac3f96b292.jpg,https://xqimg.imedao.com/189d2d80ef72aeab3fe5b721.jpg,https://xqimg.imedao.com/189d2d803fb2aea43fca36e1.jpg,https://xqimg.imedao.com/189d2d8588321d8f3fb46bbb.jpg,https://xqimg.imedao.com/189d2d8676521d933fea1efe.jpg,https://xqimg.imedao.com/189d2d8727421d973fd2204f.jpg,https://xqimg.imedao.com/189d2d851892aeb43fb133ad.jpg,https://xqimg.imedao.com/189d2d869d421d943fc70a91.jpg,https://xqimg.imedao.com/189d2d8434c2aeb13feb3cec.jpg,https://xqimg.imedao.com/189d2d8382b2aead3fe42839.jpg,https://xqimg.imedao.com/189d2d83f8a21d893fe06f63.jpg,https://xqimg.imedao.com/189d2d86daf21d963fc6b64f.jpg,https://xqimg.imedao.com/189d2d858ae2aeb53fde4fe6.jpg,https://xqimg.imedao.com/189d2d806fc21d803fe87d11.jpg,https://xqimg.imedao.com/189d2d832c621d873fe03ae3.jpg",
+      "title": "第四十四话 储能技术之争；谁会是下一个主流？",
+      "target": "/1676206424/257689454",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 257689454,
+      "mark": 5,
+      "view_count": 682499
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2023-08-01 09:42",
+      "created_at": 1690854152000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a><br/>《进阶吧！投资者》第四十二话中，隐星参与普耀定向增发，为普耀注入宝贵的流动资金。普耀集团接受了陈丙伸的方案，并按隐星要求升级了自家电池片产线，提前锁定了未来18个月的硅料供货，资本市场给予了积极的反馈。但永兴村光伏示范站项目无辜被迫...",
+      "pic_sizes": [
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/189aec13ddf184793fe3f181.jpg,https://xqimg.imedao.com/189aec17712219643fdb8cbf.jpg,https://xqimg.imedao.com/189aec166f9219613fd1fca5.jpg,https://xqimg.imedao.com/189aec167d3219623fc318c9.jpg,https://xqimg.imedao.com/189aec160112195f3fda463a.jpg,https://xqimg.imedao.com/189aec1799f219673fe7f1e1.jpg,https://xqimg.imedao.com/189aec1776c219653fc44c85.jpg,https://xqimg.imedao.com/189aec169921847f3fd50d97.jpg,https://xqimg.imedao.com/189aec1781f184833fb2e419.jpg,https://xqimg.imedao.com/189aec16bd5184813fecc633.jpg,https://xqimg.imedao.com/189aec17aa6219683fe36ec6.jpg,https://xqimg.imedao.com/189aec16b12219633fd544b3.jpg,https://xqimg.imedao.com/189aec16fe3184823fc8efc7.jpg,https://xqimg.imedao.com/189aec15eb91847b3fd1fc95.jpg,https://xqimg.imedao.com/189aec1596e2195e3fb8f914.jpg,https://xqimg.imedao.com/189aec178b4219663fecd3e8.jpg,https://xqimg.imedao.com/189aec166b0219603fd58233.jpg,https://xqimg.imedao.com/189aec154d52195d3feba503.jpg,https://xqimg.imedao.com/189aec141542195a3fe36780.jpg,https://xqimg.imedao.com/189aec17d0c184863fe361c0.jpg,https://xqimg.imedao.com/189aec179b5184853feb283d.jpg,https://xqimg.imedao.com/189aec178d9184843fe69384.jpg",
+      "title": "第四十三话 初识储能：光伏不可或缺的配套产业",
+      "target": "/1676206424/257095262",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 257095262,
+      "mark": 5,
+      "view_count": 270827
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2023-07-25 09:44",
+      "created_at": 1690249469000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a><br/>《进阶吧！投资者》第四十一话中，陈丙伸预测今年“多重因素并发，继而引发全国性的电力紧缺”，“这种时候，硅料就进入了有价无货的情形。价格可能会在短期内突破到出乎所有人预料的高位。所以对普耀而言，当务之急是要尽快锁定未来12到18个月的硅...",
+      "pic_sizes": [
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/1898ab5b023183403fdddd8d.jpg,https://xqimg.imedao.com/1898ab5b777183443fe75b0f.jpg,https://xqimg.imedao.com/1898ab59f91eaa93fe8934ec.jpg,https://xqimg.imedao.com/1898ab5a7bbeaac3fe0aba30.jpg,https://xqimg.imedao.com/1898ab59110183383fd9ccd5.jpg,https://xqimg.imedao.com/1898ab5b69beab33fce40274.jpg,https://xqimg.imedao.com/18d345dc10f8d0d3fe5642c0.jpg,https://xqimg.imedao.com/18d345e12c092d13fe75afbc.jpg,https://xqimg.imedao.com/18d345e394998833fcd40129.jpg,https://xqimg.imedao.com/18d345e7b568a863fe0cb424.jpg,https://xqimg.imedao.com/18d345fbc5959d143fdbaf51.jpg,https://xqimg.imedao.com/18d345fdc59583c63fe9899f.jpg,https://xqimg.imedao.com/18d345fcb7d59d153fbc4645.jpg,https://xqimg.imedao.com/18d34604cb159d183fd46b3e.jpg,https://xqimg.imedao.com/18d34604af8583c83fdfea56.jpg,https://xqimg.imedao.com/18d34603a7d583c73febe6f1.jpg,https://xqimg.imedao.com/18d345fbc00583c53fc5dd12.jpg,https://xqimg.imedao.com/18d345fb5c0583c43fd0a717.jpg,https://xqimg.imedao.com/18d3460868359d1c3febd867.jpg,https://xqimg.imedao.com/18d3460834359d1b3fda68e1.jpg,https://xqimg.imedao.com/18d3460614559d1a3fea783f.jpg,https://xqimg.imedao.com/18d34603fcb59d173fedcdbb.jpg,https://xqimg.imedao.com/18d346082bf583ca3fe73da5.jpg,https://xqimg.imedao.com/18d34600a4e59d163fdc54aa.jpg",
+      "title": "第四十二话 抉择！资本市场的残酷真相",
+      "target": "/1676206424/256499580",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 256499580,
+      "mark": 5,
+      "view_count": 601879
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2023-07-18 10:00",
+      "created_at": 1689645652000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a><br/>《进阶吧！投资者》第四十话中，普耀集团深陷原材料价格上涨带来的困局，而陈丙伸发现了破局的关键——煤炭。普耀的电池板上的EVA与POE胶膜就是由煤制烯烃工艺制成。煤炭价格将如何影响普耀集团？普耀集团还存在其他什么问题？普耀集团的发展之路会...",
+      "pic_sizes": [
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/18966ad16a854d93fe4dada3.png,https://xqimg.imedao.com/18966ad17e8f0e93fec1d981.jpg,https://xqimg.imedao.com/18966ad175654da3fd155c35.jpg,https://xqimg.imedao.com/18966ad066df0e13fe775119.jpg,https://xqimg.imedao.com/18966ad0f6f54d63fc30cd05.jpg,https://xqimg.imedao.com/18966ad142354d73fdc80214.jpg,https://xqimg.imedao.com/18966ad090254d13fc1de394.jpg,https://xqimg.imedao.com/18966ad1472f0e73feeb5292.jpg,https://xqimg.imedao.com/18966ad0ead54d43fedfe4d4.jpg,https://xqimg.imedao.com/18966ad135df0e63fdc05eb4.jpg,https://xqimg.imedao.com/18966ad0f1354d53fedbf6db.jpg,https://xqimg.imedao.com/18966ad14e654d83fb2c8ad8.jpg,https://xqimg.imedao.com/18966ad0a1df0e33fa87d1eb.jpg,https://xqimg.imedao.com/18966ad1571f0e83fce3e95b.jpg,https://xqimg.imedao.com/18966ad09a654d23fb8d5ded.jpg,https://xqimg.imedao.com/18966ad0d7354d33fdac1cba.jpg,https://xqimg.imedao.com/18966ad07a6f0e23fd4ee1c3.jpg,https://xqimg.imedao.com/18966ad1111f0e53faa54075.jpg,https://xqimg.imedao.com/18966ad084c54d03fe960d2f.jpg,https://xqimg.imedao.com/18966ad0f93f0e43fd48ad12.jpg,https://xqimg.imedao.com/18966acdfee54ce3fe385eeb.jpg,https://xqimg.imedao.com/18966ace13854cf3fd9028a5.jpg,https://xqimg.imedao.com/18966cadd045fb843fedd2a7.jpg",
+      "title": "第四十一话 煤炭价格如何影响光伏产业？",
+      "target": "/1676206424/255911902",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 255911902,
+      "mark": 5,
+      "view_count": 431420
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2023-07-11 09:50",
+      "created_at": 1689040232000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a><br/>《进阶吧！投资者》第三十九话中，李轶君向甄真介绍了光伏行业周期，“在整个光伏产业中，最上游的硅料是周期性体现最充分的环节，在一个周期中能有好几倍的价格波动”。陈丙伸一行人开始了对普耀集团的调研，陈丙伸能否发现普耀集团破局的关键呢？<...",
+      "pic_sizes": [
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        },
+        {
+          "width": 853,
+          "height": 1280
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/189429eb00c59843fe8a0612.jpg,https://xqimg.imedao.com/189429eb5f159883fe082039.jpg,https://xqimg.imedao.com/189429eace859833fd6ecf7c.jpg,https://xqimg.imedao.com/189429ea7835a233feeaca61.jpg,https://xqimg.imedao.com/189429eb14f59863fbbec7a4.jpg,https://xqimg.imedao.com/189429eab5659823fc99f00b.jpg,https://xqimg.imedao.com/189429ea67f5a213fc3950d9.jpg,https://xqimg.imedao.com/189429ea7da5a243fd148edd.jpg,https://xqimg.imedao.com/189429ea9b159813fe39b779.jpg,https://xqimg.imedao.com/189429e9682597f3f96abefd.jpg,https://xqimg.imedao.com/189429ea1355a203fcc893ea.jpg,https://xqimg.imedao.com/189429ea72d5a223fe7597df.jpg,https://xqimg.imedao.com/189429eb3f25a283fd87aebe.jpg,https://xqimg.imedao.com/189429e90395a1f3fe996cce.jpg,https://xqimg.imedao.com/189429eb0575a273fdecc0db.jpg,https://xqimg.imedao.com/189429eb0ff59853fbbda371.jpg,https://xqimg.imedao.com/189429eb1a559873fe739daa.jpg,https://xqimg.imedao.com/18d34675f0198f13fd4842d4.jpg,https://xqimg.imedao.com/18d3467949dcd583fe4ad4f4.jpg,https://xqimg.imedao.com/189429e9a3859803fe916e26.jpg,https://xqimg.imedao.com/189429e7bea597d3fe0a0e14.jpg,https://xqimg.imedao.com/189429e7b0b5a1e3fdd8c2e8.jpg,https://xqimg.imedao.com/18942a417c257fb83fed49fc.png",
+      "title": "第四十话 破局！普耀集团的突破口",
+      "target": "/1676206424/255303051",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 255303051,
+      "mark": 5,
+      "view_count": 549427
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2023-07-04 10:02",
+      "created_at": 1688436154000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a><br/>《进阶吧！投资者》第三十八话中，甄墨言发现了李晓的真实邀约对象是陈丙伸，同时，陈丙伸一行人参观了普耀科研大楼，雷正起向他们介绍了普耀资助的液流电池离子膜项目，“中国的光伏与电化学产业已经逐渐进入了一个无人区”。李晓究竟有什么目的？...",
+      "pic_sizes": [
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        },
+        {
+          "width": 853,
+          "height": 1280
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/1891ea1b74c21ed43fde90c8.jpg,https://xqimg.imedao.com/1891ea1baa121ed53fec3b51.jpg,https://xqimg.imedao.com/1891ea19040215a73fe90b6c.jpg,https://xqimg.imedao.com/1891ea1b0f8215ad3fed6f15.jpg,https://xqimg.imedao.com/1891ea1857221eca3fee81c3.jpg,https://xqimg.imedao.com/1891ea18b2c21ecb3f84e736.jpg,https://xqimg.imedao.com/1891ea19e3a21ecc3febc776.jpg,https://xqimg.imedao.com/1891ea1a155215a93fe735f5.jpg,https://xqimg.imedao.com/1891ea197bd215a83fbe67c4.jpg,https://xqimg.imedao.com/1891ea1a1aa21ece3febe084.jpg,https://xqimg.imedao.com/1891ea1a0ef21ecd3fe74b41.jpg,https://xqimg.imedao.com/1891ea1a3bf215aa3f9d4e88.jpg,https://xqimg.imedao.com/1891ea1aad421ed03fee7fa5.jpg,https://xqimg.imedao.com/1891ea1aade215ac3fbb116a.jpg,https://xqimg.imedao.com/1891ea1aa7e215ab3fe2c861.jpg,https://xqimg.imedao.com/1891ea1a42f21ecf3fa962aa.jpg,https://xqimg.imedao.com/1891ea1b2e921ed33fe4d177.jpg,https://xqimg.imedao.com/1891ea1b1dd215af3fcd5512.jpg,https://xqimg.imedao.com/1891ea1b8c4215b03fe4d751.jpg,https://xqimg.imedao.com/1891ea1b134215ae3fcd4dd0.jpg,https://xqimg.imedao.com/1891ea1b11d21ed23fcce963.jpg,https://xqimg.imedao.com/1891ea2b617217113fed2e2e.png",
+      "title": "第三十九话 光伏也有周期？",
+      "target": "/1676206424/254729778",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 254729778,
+      "mark": 5,
+      "view_count": 542878
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2023-06-27 09:56",
+      "created_at": 1687831004000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a><br/>《进阶吧！投资者》第三十七话中，在老白的科普下，陈丙伸一行人了解了光伏电池片的生产工艺。光伏电池片技术迭代非常快：在2017年，第一代BSF技术在还有超过80%的国内市场占有率，到2021年国内90%以上电池片已经变成第二代PERC技术。普耀的电池技术...",
+      "pic_sizes": [
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1080,
+          "height": 1620
+        },
+        {
+          "width": 1080,
+          "height": 1620
+        },
+        {
+          "width": 1080,
+          "height": 1620
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/188fa8a141d177e43fd35e1c.png,https://xqimg.imedao.com/188fa8a0e96177df3feee094.jpg,https://xqimg.imedao.com/188fa8a138517dd13fa8e37c.jpg,https://xqimg.imedao.com/188fa8a14e117dd43fb45924.jpg,https://xqimg.imedao.com/18d346bde51a50f3fe2be46d.jpg,https://xqimg.imedao.com/18d346c5bcdcd903fed4cba6.jpg,https://xqimg.imedao.com/18d346c75c7a5163fe4f7e03.jpg,https://xqimg.imedao.com/188fa8a0ccd177dd3fd2f99d.jpg,https://xqimg.imedao.com/188fa8a0f4f17dd03fe64fb4.jpg,https://xqimg.imedao.com/18d346af3df8ae63fe69128e.jpg,https://xqimg.imedao.com/188fa8a121d177e23feab8a3.jpg,https://xqimg.imedao.com/188fa8a168017dd53fcf66ba.jpg,https://xqimg.imedao.com/188fa8a0f1517dcf3fe4c060.jpg,https://xqimg.imedao.com/188fa8a1254177e33fccb5ae.jpg,https://xqimg.imedao.com/188fa8a1185177e13fef1a5b.jpg,https://xqimg.imedao.com/188fa8a139917dd23febcf7f.jpg,https://xqimg.imedao.com/188fa8a13b517dd33fea7179.jpg,https://xqimg.imedao.com/188fa8a0e5117dcd3fe10b28.jpg,https://xqimg.imedao.com/188fa8a030417dc63fd157a6.jpg,https://xqimg.imedao.com/188fa8a14f2177e53fed0156.jpg,https://xqimg.imedao.com/188fa943d497ce23fe9ddb47.jpg,https://xqimg.imedao.com/188fa89d50e177ca3fcb375d.jpg,https://xqimg.imedao.com/188fa89d3cf17db63fd71f81.jpg,https://xqimg.imedao.com/188fa8fb029178873fee82e5.jpg",
+      "title": "第三十八话 走进普耀科研大楼 深入了解光伏电池技术",
+      "target": "/1676206424/254110220",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 254110220,
+      "mark": 5,
+      "view_count": 276896
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2023-06-20 09:48",
+      "created_at": 1687225732000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a><br/>《进阶吧！投资者》第三十六话中，陈丙伸一行人来到了库布奇沙漠，见到了普耀集团的八百亩光伏示范站。光伏电站的电池板“就像防护林一样，能降低风速，减少水分蒸发”，定期用水清洗光伏面板又可以同时灌溉土地，重塑了沙漠的生态环境。光伏电站和...",
+      "pic_sizes": [
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/188f734279e4eef3fea635e6.jpg,https://xqimg.imedao.com/188f73499fc49913fd7e9942.jpg,https://xqimg.imedao.com/188f734beaa46693fc7d7c3e.jpg,https://xqimg.imedao.com/18d346f9d298dba3fd3ab4d0.jpg,https://xqimg.imedao.com/188f734e6ec4ef83fd714c92.jpg,https://xqimg.imedao.com/188f734fbac61393feaa493f.jpg,https://xqimg.imedao.com/188f73534984eff3fe2a6f58.jpg,https://xqimg.imedao.com/188f7354956466f3fe7c7705.jpg,https://xqimg.imedao.com/188f735914a61433fe8bf74d.jpg,https://xqimg.imedao.com/188f735aae546723fe16c093.jpg,https://xqimg.imedao.com/188f735c9b061463fe2f00e0.jpg,https://xqimg.imedao.com/188f73604c44f0b3fe7d9f46.jpg,https://xqimg.imedao.com/188f73652a349b03fd353ce1.jpg,https://xqimg.imedao.com/188f736a26349b73fe5989cf.jpg,https://xqimg.imedao.com/188f736c10a46833fcb927d4.jpg,https://xqimg.imedao.com/188f736dda849c03fe29f729.jpg,https://xqimg.imedao.com/188f7371bce49c43fd0eb68a.jpg,https://xqimg.imedao.com/188f7373cbd4f283fe6728c0.jpg,https://xqimg.imedao.com/188f73763c0468f3fd8bf6c7.jpg,https://xqimg.imedao.com/188f7377f414f303fd7966c5.jpg,https://xqimg.imedao.com/18d34a3b722a6af3fdbe2da5.jpg,https://xqimg.imedao.com/18d34a3d449a6b03fe2fd94a.jpg,https://xqimg.imedao.com/18d34a4814dcf2b3fe896759.jpg",
+      "title": "第三十七话 深入光伏，意外结识天才少女",
+      "target": "/1676206424/253633268",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 253633268,
+      "mark": 5,
+      "view_count": 239938
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2023-06-13 09:41",
+      "created_at": 1686620480000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a><br/>《进阶吧！投资者》第三十五话中，李晓和李轶君分别介绍了光伏的前世今生。光伏产业“就像在狂风巨浪的大海中，追寻着诱人的宝藏”。陈丙伸一行人在总工程师老白的接待下，正式开始对普耀的调查，他们能否发现普耀集团的独特之处？<br/>PS：点击 htt...",
+      "pic_sizes": [
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/188b263d0b76e503fe2e3e74.jpg,https://xqimg.imedao.com/188b38ac44d3ad4e3fe522fc.jpg,https://xqimg.imedao.com/188b38adca13a3f13fe851f0.jpg,https://xqimg.imedao.com/188b38ae5513a3283fed0e83.jpg,https://xqimg.imedao.com/188b38afef83a38d3fd611b7.jpg,https://xqimg.imedao.com/188b38b07823a5973fc97728.jpg,https://xqimg.imedao.com/188b38b1f613a32d3fde82f9.jpg,https://xqimg.imedao.com/188b38b2d473a5fb3f9cebae.jpg,https://xqimg.imedao.com/188b38b38c33a59f3fcc5b63.jpg,https://xqimg.imedao.com/188b38b71e53a5ff3fec341e.jpg,https://xqimg.imedao.com/188b38b766b3ad543fe60c47.jpg,https://xqimg.imedao.com/188b38b88d43a3973fe2aeb7.jpg,https://xqimg.imedao.com/188b38b95ef3a3993fd1ba95.jpg,https://xqimg.imedao.com/188b38baeb339f323fda272d.jpg,https://xqimg.imedao.com/188b38bb3d93a6053f9c0630.jpg,https://xqimg.imedao.com/188b38bc04a3a6073fe3a775.jpg,https://xqimg.imedao.com/188b38bce7f3acff3fbb5611.jpg,https://xqimg.imedao.com/188b38bee9d3ad023fdab4cb.jpg,https://xqimg.imedao.com/188b38c0cea3a6083f6a6153.jpg,https://xqimg.imedao.com/188b38c19f639b533fc451d4.jpg,https://xqimg.imedao.com/188b263d9f36fdd3fe9a3765.jpg,https://xqimg.imedao.com/188b26890fa3a5b83fe814a3.png,https://xqimg.imedao.com/188b267c3fb6e8d3fea830f4.png,https://xqimg.imedao.com/188b269b72839c593feeaf04.png",
+      "title": "第三十六话 了不起！沙漠变成绿色海洋",
+      "target": "/1676206424/253001758",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 253001758,
+      "mark": 5,
+      "view_count": 101668
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2023-06-06 09:26",
+      "created_at": 1686014806000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a><br/>《进阶吧！投资者》第三十四话中，一年前，陈丙伸接受周氏集团的委托，周老爷子在生命的最后阶段都不愿意出手业绩不及预期的普耀集团。普耀集团究竟是一个什么样的企业呢？陈丙伸、周鼎先、李晓三人开启了调研普耀集团之旅。甄真也在李轶君的带领下...",
+      "pic_sizes": [
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/1888e4cb5ca2f2633fcbee60.jpg,https://xqimg.imedao.com/1888e4cd2432f1cc3fea30ad.jpg,https://xqimg.imedao.com/1888e4cfc462ef673fc24399.jpg,https://xqimg.imedao.com/1888e4d0f102f8d13fea5b73.jpg,https://xqimg.imedao.com/1888e4d2c452ef693fc27cbc.jpg,https://xqimg.imedao.com/1888e4d354a2f4463feec990.jpg,https://xqimg.imedao.com/1888e4d4d742f4473f995508.jpg,https://xqimg.imedao.com/1888e4d6e382f26d3fdc173c.jpg,https://xqimg.imedao.com/1888e4d88112f1da3fe30ef7.jpg,https://xqimg.imedao.com/1888e4d9f022eca83fe28c6c.jpg,https://xqimg.imedao.com/1888e4db5c32fa1f3fe54164.jpg,https://xqimg.imedao.com/1888e4dcee02ef6c3fe8cbd8.jpg,https://xqimg.imedao.com/1888e4de6b52f8da3fdfea9b.jpg,https://xqimg.imedao.com/1888e4e05122f22b3fe41341.jpg,https://xqimg.imedao.com/1888e4e1e5f2f22c3fef006c.jpg,https://xqimg.imedao.com/1888e4e391a2f4533fe5fd8c.jpg,https://xqimg.imedao.com/1888e4e5cc82fa2c3fb2c68f.jpg,https://xqimg.imedao.com/1888e4e7e3c2f5353fc91f69.jpg,https://xqimg.imedao.com/1888e4e956d2f8ed3fe497b2.jpg,https://xqimg.imedao.com/1888e4eae712f1ea3fd06bb9.jpg,https://xqimg.imedao.com/1888e4ec3ab2f5373f9865fa.jpg,https://xqimg.imedao.com/1888e4eff332ecba3fdda00b.jpg,https://xqimg.imedao.com/1888e4f06c42f8f03fd2a762.jpg,https://xqimg.imedao.com/1888e4f64692f8f13fdfd881.jpg",
+      "title": "第三十五话 生死轮回！光伏产业逆袭",
+      "target": "/1676206424/252368083",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 252368083,
+      "mark": 5,
+      "view_count": 167972
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2023-05-30 10:00",
+      "created_at": 1685412018000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a><br/>《进阶吧！投资者》第三十三话中，陈丙伸得了重感冒，甄真代收了娜布其给陈丙伸的明信片。原来，娜布其是陈丙伸最后一次受委托调研中认识的学生，甄真也得知了陈丙伸在该案后离开了隐星。回到一年前，意气风发的陈丙伸接受了周氏集团的二公子周鼎先...",
+      "pic_sizes": [
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 853,
+          "height": 1280
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/1886a555e491b27f3feea541.jpg,https://xqimg.imedao.com/1886a5559221acb03fb91b41.jpg,https://xqimg.imedao.com/18d348cbae594823fe3932e7.jpg,https://xqimg.imedao.com/18d348c9de58bfc3fcd0cef4.jpg,https://xqimg.imedao.com/18d348cab0594813fe5797eb.jpg,https://xqimg.imedao.com/1886a5552fa1acaf3fee68ff.jpg,https://xqimg.imedao.com/1886a5c6d48202413fc01088.png,https://xqimg.imedao.com/1886a5560071acb53fdbad4f.jpg,https://xqimg.imedao.com/1886a555e9b1b2803fe0d9f4.jpg,https://xqimg.imedao.com/1886a555ae01b27c3fa0c295.jpg,https://xqimg.imedao.com/1886a556ec91b2843fe81356.jpg,https://xqimg.imedao.com/1886a555e741acb43fe74c25.jpg,https://xqimg.imedao.com/1886a556b491acb93fbdcf30.jpg,https://xqimg.imedao.com/1886a5560b81acb63fe2fd87.jpg,https://xqimg.imedao.com/1886a555e5d1acb33fda433a.jpg,https://xqimg.imedao.com/1886a555e441b27e3fe365f3.jpg,https://xqimg.imedao.com/1886a556b5f1b2833fb82114.jpg,https://xqimg.imedao.com/1886a555dad1b27d3fc80599.jpg,https://xqimg.imedao.com/1886a55642d1acb73fc784aa.jpg,https://xqimg.imedao.com/1886a5563f31b2823fedc9a4.jpg,https://xqimg.imedao.com/1886a5566c11acb83fd2b3ff.jpg,https://xqimg.imedao.com/1886a622a10203743f45d544.jpg",
+      "title": "第三十四话 初识光伏产业，陈丙伸离开前的最后一案！",
+      "target": "/1676206424/251724962",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 251724962,
+      "mark": 5,
+      "view_count": 179716
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2023-05-23 10:00",
+      "created_at": 1684807206000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a><br/>《进阶吧！投资者》第三十二话中，在郑伯的带领下，甄真将继续熟悉纺织行业的生存法则，明白了人的体力、时间、健康也是天然垄断的资源，了解了公司的“盈利评分=客户需要程度×公司护城河宽度”。甄真成功交上100万的投资答卷，通过了陈丙伸的考核...",
+      "pic_sizes": [
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/1884651784f108ac3fc7587e.png,https://xqimg.imedao.com/188465176ca108ab3fe73c6d.jpg,https://xqimg.imedao.com/18846516e9a10bfb3fedc400.jpg,https://xqimg.imedao.com/18846516c3e10bf83fefcf38.jpg,https://xqimg.imedao.com/188465173e510bfe3fcdffca.jpg,https://xqimg.imedao.com/1884651672d108a43fea6dc5.jpg,https://xqimg.imedao.com/1884651700f108a93fe73bd4.jpg,https://xqimg.imedao.com/18846516ccf10bf93feae772.jpg,https://xqimg.imedao.com/18846516fd9108a83fd35b50.jpg,https://xqimg.imedao.com/1884651759410bff3fa10e98.jpg,https://xqimg.imedao.com/18846516d2f10bfa3fc1a206.jpg,https://xqimg.imedao.com/18846516ae4108a53fdfac20.jpg,https://xqimg.imedao.com/18846516b3b108a63fba3b09.jpg,https://xqimg.imedao.com/1884651675c10bf73fe4058f.jpg,https://xqimg.imedao.com/18846517187108aa3fd7fd4b.jpg,https://xqimg.imedao.com/18846516fee10bfd3fd62b71.jpg,https://xqimg.imedao.com/18d348f92108c0f3fb52e0b1.jpg,https://xqimg.imedao.com/18846516f7710bfc3fecb2ad.jpg,https://xqimg.imedao.com/18846516bbf108a73fe774fa.jpg,https://xqimg.imedao.com/1884652829d15a3a3fe019ca.jpg,https://xqimg.imedao.com/18846529dee1597a3feb6c72.jpg,https://xqimg.imedao.com/1884659d92415aa13faaad33.jpg",
+      "title": "第三十三话 一张明信片揭开明星私募经理离职隐情",
+      "target": "/1676206424/251086407",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 251086407,
+      "mark": 5,
+      "view_count": 259529
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2023-05-16 09:38",
+      "created_at": 1684201105000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a><br/>《进阶吧！投资者》第三十一话中，甄真终于见到了老季介绍的纺织业大佬郑伯，了解了纺织业对国家发展的重要性，“纺织业的需求投入少，而且能充分体现廉价劳动力资源的优势，快速赚到第一桶金”“很多国家的工业化，都是从纺织业做起来的”。甄真初...",
+      "pic_sizes": [
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/188222f1f3a3673fe9002db4.jpg,https://xqimg.imedao.com/188222f45303353fd86d9377.jpg,https://xqimg.imedao.com/188222f5be13363fb5dfd1fc.jpg,https://xqimg.imedao.com/188222f7d313373fdc63d0e7.jpg,https://xqimg.imedao.com/188222f92103383fe937d3ff.jpg,https://xqimg.imedao.com/188222fa3bd3393feddbd168.jpg,https://xqimg.imedao.com/188222fb9ee3683fa169897e.jpg,https://xqimg.imedao.com/188222fd05b3693fe5f33303.jpg,https://xqimg.imedao.com/188222fe63633a3fc943a4ba.jpg,https://xqimg.imedao.com/188222ffa4d36a3fd5980a52.jpg,https://xqimg.imedao.com/1882230138433b3fcc4794e3.jpg,https://xqimg.imedao.com/18822302c0933c3fd70f0075.jpg,https://xqimg.imedao.com/1882230511e36b3fdbf8a419.jpg,https://xqimg.imedao.com/18822306b1236c3fb53b471c.jpg,https://xqimg.imedao.com/1882230834033d3fea57ad8d.jpg,https://xqimg.imedao.com/18822309abf36d3fea275fb5.jpg,https://xqimg.imedao.com/1882230bab133e3fa6e3a106.jpg,https://xqimg.imedao.com/1882230d1d133f3fe7b6f8e2.jpg,https://xqimg.imedao.com/1882230eb1236e3fe7392d08.jpg,https://xqimg.imedao.com/18822310a943403feda4b7d8.jpg,https://xqimg.imedao.com/1882231289d3413fc8e88a40.jpg,https://xqimg.imedao.com/188240df3084373fe296ebd9.jpg,https://xqimg.imedao.com/1882234aa133473fe22cdc4a.jpg,https://xqimg.imedao.com/1882234c3ca3483fd1b6f9b2.jpg,https://xqimg.imedao.com/1882410d0ec41b3fe13ef33a.jpg",
+      "title": "第三十二话 交卷！甄真是否通过100万元投资考核？",
+      "target": "/1676206424/250457033",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 250457033,
+      "mark": 5,
+      "view_count": 233179
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2023-05-09 09:38",
+      "created_at": 1683596329000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a><br/>《进阶吧！投资者》第三十话中，老季分享了其便利店的最终秘笈：“除了垄断性的地段，还要有垄断性的商品”。凭借强大的供应商议价能力和商品的差异化定位，老季决定了自身便利店的独家优势。为了进一步拓展研究课题，老季还为甄真推荐了另外一位纺...",
+      "pic_sizes": [
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/187fe25386714ebd3fb2e94f.jpg,https://xqimg.imedao.com/187fe22a8cb14d103fe97661.jpg,https://xqimg.imedao.com/187fe22c5f214c3b3fc5e31d.jpg,https://xqimg.imedao.com/187fe22e67a14d323fc4835b.jpg,https://xqimg.imedao.com/187fe231cd814eb13fcdd935.jpg,https://xqimg.imedao.com/187fe23463a14d183fac74ad.jpg,https://xqimg.imedao.com/187fe2362ba14d603fe9644a.jpg,https://xqimg.imedao.com/187fe2397fd14d633fd14915.jpg,https://xqimg.imedao.com/187fe23cbcf14c463fe4703d.jpg,https://xqimg.imedao.com/187fe2404d014eb43fe85abf.jpg,https://xqimg.imedao.com/187fe242d4d14d3e3fda5da8.jpg,https://xqimg.imedao.com/187fe246a3714ebe3fd1e5b6.jpg,https://xqimg.imedao.com/187fe2486b414d253fc412e0.jpg,https://xqimg.imedao.com/187fe24b43914ec13fe5999e.jpg,https://xqimg.imedao.com/187fe24e82214cbd3fde2814.jpg,https://xqimg.imedao.com/187fe25e5e514b1b3fb37912.jpg,https://xqimg.imedao.com/187fe267ee114f9b3fe4c7f8.jpg,https://xqimg.imedao.com/187fe269f6914c573fd50803.jpg,https://xqimg.imedao.com/187fe26bb0014cc93fe7a7e4.jpg,https://xqimg.imedao.com/187fe2814fb14fac3fe82865.jpg,https://xqimg.imedao.com/187fe284b7b14d833fec05c9.jpg,https://xqimg.imedao.com/1899054ed118e7363fdacb3c.jpg",
+      "title": "第三十一话 听知情人士谈纺织行业如何投！",
+      "target": "/1676206424/249807503",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 249807503,
+      "mark": 5,
+      "view_count": 250080
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2023-04-25 09:41",
+      "created_at": 1682386868000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a><br/>《进阶吧！投资者》第二十九话中，铺面位置、品牌形象以及管理制度是老季经营的优势，除此之外便利店还有什么其他的独到之处？为了供应更加美味的烤肠，老季又使出了怎样的独家秘笈？甄真的成长又是否能够得到陈丙伸的认可？<br/>PS：点击 <a href=\"https://xueqiu.com/1676206424/column\" title=\"https://xueqiu.com/1676206424/column\" target=\"_blank\">⌈正片集锦⌋</a>",
+      "pic_sizes": [
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        },
+        {
+          "width": 3072,
+          "height": 4608
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/187b60ebe7c1afb93fe0de5f.jpg,https://xqimg.imedao.com/187b60eedda1b0883fc1db60.jpg,https://xqimg.imedao.com/187b60efaaa1a9f33fecd531.jpg,https://xqimg.imedao.com/187b60f02911b1f33fd491f5.jpg,https://xqimg.imedao.com/187b60f0ebd1b2cf3fd2cc3b.jpg,https://xqimg.imedao.com/187b60f16111b19b3fe0e150.jpg,https://xqimg.imedao.com/187b60f1c9f1b4b03fec5dfa.jpg,https://xqimg.imedao.com/187b60f32991b2a53fc7b100.jpg,https://xqimg.imedao.com/187b60f41b21b08b3fc84bf6.jpg,https://xqimg.imedao.com/187b60f52961b1f43fb34e52.jpg,https://xqimg.imedao.com/187b60fe4807bf3fe4c63479.jpg,https://xqimg.imedao.com/187b60fdc467bc3fe531e037.jpg,https://xqimg.imedao.com/187b60fe0db7be3fef242b11.jpg,https://xqimg.imedao.com/187b60fde4b6bf43fbd3c6d6.jpg,https://xqimg.imedao.com/187b60fe0057bd3fefcfdcb8.jpg,https://xqimg.imedao.com/187b60fe08d6bf53fc8d244b.jpg,https://xqimg.imedao.com/187b60fe57c6bf83fd483ade.jpg,https://xqimg.imedao.com/187b60fe5656bf73fefad09b.jpg,https://xqimg.imedao.com/187b60fe4026bf63fdbd6012.jpg,https://xqimg.imedao.com/187b610e0011a9fc3fd72e7b.jpg,https://xqimg.imedao.com/187b61102e81b1ab3fe55f12.jpg,https://xqimg.imedao.com/187b61115c41b2003fedce16.jpg",
+      "title": "第三十话 方法论！首谈如何认知一家公司最基本的要素",
+      "target": "/1676206424/248508035",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 248508035,
+      "mark": 5,
+      "view_count": 290264
+    },
+    {
+      "is_private": false,
+      "timeBefore": "2023-04-18 09:58",
+      "created_at": 1681783136000,
+      "description": "【前情提要】<a href=\"https://xueqiu.com/k?q=%23%E9%9B%AA%E7%90%83%E6%8E%A8%E5%87%BA%E9%A6%96%E9%83%A8%E6%8A%95%E8%B5%84%E5%89%A7%E6%83%85%E7%B1%BB%E6%BC%AB%E7%94%BB%23\" target=\"_blank\">#雪球推出首部投资剧情类漫画#</a><br/>《进阶吧！投资者》第二十八话中，老季向甄真描述了自营和加盟便利店的不同，随着话题的逐渐深入，老季的身份也逐渐浮现。什么才是便利店利润的核心？其背后的商业逻辑又是如何运作的......甄真是否能找到正确的答案？<br/>PS：点击 <a href=\"https://xueqiu.com/1676206424/column\" title=\"https://xueqiu.com/1676206424/column\" target=\"_blank\">⌈正片集锦⌋</a>",
+      "pic_sizes": [
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 853,
+          "height": 1280
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 1500,
+          "height": 2250
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        },
+        {
+          "width": 2731,
+          "height": 4096
+        }
+      ],
+      "pic": "https://xqimg.imedao.com/187920edd84298333fc99bf1.jpg,https://xqimg.imedao.com/187920ecbbe98863fe733f94.jpg,https://xqimg.imedao.com/187920edeb2298343fc54969.jpg,https://xqimg.imedao.com/187920ed7e0988a3fedb4975.jpg,https://xqimg.imedao.com/187920ed771298313fcbc1c8.jpg,https://xqimg.imedao.com/187920ed76c98893feb531e9.jpg,https://xqimg.imedao.com/187921597bb101dd3fc0e516.png,https://xqimg.imedao.com/187920ed6eb298303fb26de1.jpg,https://xqimg.imedao.com/187920edb4b988d3fe200aa2.png,https://xqimg.imedao.com/187920ed0142982d3fe8a196.jpg,https://xqimg.imedao.com/187920ece242982c3fe171d4.jpg,https://xqimg.imedao.com/187920ed45998883fe8f1665.jpg,https://xqimg.imedao.com/187920ed0f12982e3fe9b57e.jpg,https://xqimg.imedao.com/187920edab0988b3fc89cd67.jpg,https://xqimg.imedao.com/187920ed3e298873fe9e7379.jpg,https://xqimg.imedao.com/187920edb0f988c3fc13b425.jpg,https://xqimg.imedao.com/187920ed849298323feae1f1.jpg,https://xqimg.imedao.com/187920ecd4b2982b3fe418f2.jpg,https://xqimg.imedao.com/187920ed2522982f3fe0bc6e.jpg,https://xqimg.imedao.com/187920f924c106163fea4526.png,https://xqimg.imedao.com/187920fd0ab105483fe554c3.png,https://xqimg.imedao.com/187921bfb7d105623fefc899.png",
+      "title": "第二十九话 老季大佬身份浮现！便利店利润核心大揭秘",
+      "target": "/1676206424/247741962",
+      "legal_user_visible": false,
+      "user_id": 1676206424,
+      "controversial": false,
+      "id": 247741962,
+      "mark": 5,
+      "view_count": 600889
+    }
+  ],
+  "maxPage": 4
+}

@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投资漫画 - 章节链接导航</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #1a1e2d;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background-color: #121623;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #3498db;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            color: #2ecc71;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #2c3e50;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            color: #3498db;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #95a5a6;
+            font-size: 1.1rem;
+        }
+
+        .content-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            background-color: #1e2337;
+        }
+
+        .content-table thead {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .content-table th,
+        .content-table td {
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid #2c3e50;
+        }
+
+        .content-table tbody tr {
+            transition: background-color 0.3s ease;
+        }
+
+        .content-table tbody tr:hover {
+            background-color: #252c42;
+            transform: scale(1.005);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .content-table tbody tr:last-of-type {
+            border-bottom: 2px solid #3498db;
+        }
+
+        .serial-number {
+            color: #2ecc71;
+            font-weight: 600;
+            text-align: center;
+            width: 80px;
+        }
+
+        .chapter-title {
+            color: #e0e0e0;
+            font-size: 1rem;
+        }
+
+        .chapter-link {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .chapter-link:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        .chapter-link i {
+            margin-right: 5px;
+        }
+
+        .stats-card {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-item {
+            flex: 1;
+            min-width: 200px;
+            background-color: #1e2337;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #95a5a6;
+            font-size: 1rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            padding-left: 45px;
+            border-radius: 30px;
+            border: none;
+            background-color: #1e2337;
+            color: #e0e0e0;
+            font-size: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #3498db, 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #95a5a6;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container > div {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .stats-card { animation-delay: 0.1s; }
+        .search-container { animation-delay: 0.2s; }
+        .content-table { animation-delay: 0.3s; }
+
+        .footer {
+            background-color: #121623;
+            padding: 2rem;
+            margin-top: 3rem;
+            text-align: center;
+            border-top: 1px solid #2c3e50;
+        }
+
+        .footer p {
+            color: #95a5a6;
+            font-size: 0.9rem;
+        }
+
+        .footer-links {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            color: #3498db;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .content-table {
+                font-size: 0.9rem;
+            }
+
+            .content-table th,
+            .content-table td {
+                padding: 0.8rem 1rem;
+            }
+
+            .chapter-link {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.85rem;
+            }
+
+            .serial-number {
+                width: 60px;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .navbar-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .stats-card {
+                flex-direction: column;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .search-input {
+                padding: 0.8rem 1rem;
+                padding-left: 40px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <span>投资漫画导航系统</span>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="chapter-link" style="background-color: #2ecc71;">
+                    <i class="fas fa-home"></i>首页
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>投资漫画章节链接导航</h1>
+            <p>一站式获取所有章节内容，点击链接即可直达阅读页面</p>
+        </div>
+
+        <div class="stats-card">
+            <div class="stat-item">
+                <div class="stat-number>49</div>
+                <div class="stat-label">总章节数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">1</div>
+                <div class="stat-label">漫画系列</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">链接有效性</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">实时</div>
+                <div class="stat-label">更新状态</div>
+            </div>
+        </div>
+
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="搜索章节标题...">
+            </div>
+        </div>
+
+        <table class="content-table" id="chaptersTable">
+            <thead>
+                <tr>
+                    <th class="serial-number">序号</th>
+                    <th>章节标题</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="serial-number">1</td>
+                    <td class="chapter-title">第一话 父亲突然离世！刚毕业的她，要如何面对...</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/232932573" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">2</td>
+                    <td class="chapter-title">第二话 找到那个神秘的男人</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/232936720" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">3</td>
+                    <td class="chapter-title">第三话 如果你真想了解一家公司，最好把他放进嘴里好好咀嚼！</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/233026346" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">4</td>
+                    <td class="chapter-title">第四话 走，去辣条的发源地！</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/233026463" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">5</td>
+                    <td class="chapter-title">第五话 试吃了十多种辣条之后，00 后美女投资人发现了关键！辣条配方里，最重要的竟是它...</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/233494501" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">6</td>
+                    <td class="chapter-title">第六话 解开嘉心源 “变味儿” 的秘密，甄真实地调研嘉心源工厂</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/234183951" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">7</td>
+                    <td class="chapter-title">第七话 激烈交锋，这场会议成了公司战略转折点！</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/234786091" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">8</td>
+                    <td class="chapter-title">第八话 改变公司战略后 嘉心源产品还能找到 “小时候的味道” 吗？</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/235393850" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">9</td>
+                    <td class="chapter-title">第九话 陈丙伸夜大课堂后 神秘美女投资人初现身</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/235988878" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">10</td>
+                    <td class="chapter-title">第十话 神秘美女投资人挖角陈丙伸 隐星基金一持仓股遇危机股价腰斩</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/236532689" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">11</td>
+                    <td class="chapter-title">第十一话 陈丙伸勇闯天景总部，神秘胸卡暗藏玄机</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/237120576" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">12</td>
+                    <td class="chapter-title">第十二话 天景科技秘密暴露 甄真 “靠美色” 嘉年华求助</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/237703555" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">13</td>
+                    <td class="chapter-title">第十三话 昔日好友重聚首 天景问题显新转机</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/238220818" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">14</td>
+                    <td class="chapter-title">第十四话 陈丙伸大胆拆车 天景真相浮出水面</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/238642020" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">15</td>
+                    <td class="chapter-title">第十五话 神秘美女竟为设局 隐星基金成最后赢家</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/239074519" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">16</td>
+                    <td class="chapter-title">第十六话 甄真变身猪饲养员 陈丙伸详解美林时钟</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/239654064" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">17</td>
+                    <td class="chapter-title">第十七话 投资不是赌博！但人类从不吸取教训！</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/240173275" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">18</td>
+                    <td class="chapter-title">第十八话 小小色弱眼镜竟成破局利器！</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/240885083" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">19</td>
+                    <td class="chapter-title">第十九话 甄真前往稚歌养殖场一线！</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/241438080" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">20</td>
+                    <td class="chapter-title">第二十话 好羞耻！居然喊这种口号！受不了了，有员工直接 “提桶跑路”</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/242009385" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">21</td>
+                    <td class="chapter-title">第二十一话 一次看懂猪周期！</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/242574604" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">22</td>
+                    <td class="chapter-title">第二十二话 别人有的技术，咱们也得有！</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/243122198" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">23</td>
+                    <td class="chapter-title">第二十三话 种源 “卡脖子”？可能就在这次破局！</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/243689698" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">24</td>
+                    <td class="chapter-title">第二十四话 找到撬动巨石的支点，走艰难但正确的道路！</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/244372273" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">25</td>
+                    <td class="chapter-title">第二十五话 想跑赢指数？未来应该这样操作！</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/245011098" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">26</td>
+                    <td class="chapter-title">第二十六话 成长股还是价值股？原来不是选择题！</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/245659565" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">27</td>
+                    <td class="chapter-title">第二十七话 3 天 100 万！甄真接受陈丙伸超难作业</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/246435491" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">28</td>
+                    <td class="chapter-title">第二十八话 从身边的生意开始研究！小超市老板竟是隐藏大佬</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/247031508" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">29</td>
+                    <td class="chapter-title">第二十九话 老季大佬身份浮现！便利店利润核心大揭秘</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/247741962" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">30</td>
+                    <td class="chapter-title">第三十话 方法论！首谈如何认知一家公司最基本的要素</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/248508035" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">31</td>
+                    <td class="chapter-title">第三十一话 听知情人士谈纺织行业如何投！</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/249807503" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">32</td>
+                    <td class="chapter-title">第三十二话 交卷！甄真是否通过 100 万元投资考核？</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/250457033" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">33</td>
+                    <td class="chapter-title">第三十三话 一张明信片揭开明星私募经理离职隐情</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/251086407" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">34</td>
+                    <td class="chapter-title">第三十四话 初识光伏产业，陈丙伸离开前的最后一案！</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/251724962" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">35</td>
+                    <td class="chapter-title">第三十五话 生死轮回！光伏产业逆袭</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/252368083" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">36</td>
+                    <td class="chapter-title">第三十六话 了不起！沙漠变成绿色海洋</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/253001758" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">37</td>
+                    <td class="chapter-title">第三十七话 深入光伏，意外结识天才少女</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/253633268" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">38</td>
+                    <td class="chapter-title">第三十八话 走进普耀科研大楼 深入了解光伏电池技术</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/254110220" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">39</td>
+                    <td class="chapter-title">第三十九话 光伏也有周期？</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/254729778" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">40</td>
+                    <td class="chapter-title">第四十话 破局！普耀集团的突破口</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/255303051" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">41</td>
+                    <td class="chapter-title">第四十一话 煤炭价格如何影响光伏产业？</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/255911902" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">42</td>
+                    <td class="chapter-title">第四十二话 抉择！资本市场的残酷真相</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/256499580" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">43</td>
+                    <td class="chapter-title">第四十三话 初识储能：光伏不可或缺的配套产业</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/257095262" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">44</td>
+                    <td class="chapter-title">第四十四话 储能技术之争；谁会是下一个主流？</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/257689454" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">45</td>
+                    <td class="chapter-title">第四十五话 AI—— 通往人类新纪元</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/258288746" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">46</td>
+                    <td class="chapter-title">第四十六话 新生 —— 乌勒台村的机遇</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/258910686" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">47</td>
+                    <td class="chapter-title">第四十七话 压舱石！央国企不可替代的作用</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/259643634" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">48</td>
+                    <td class="chapter-title">第四十八话 下课终章！投资进阶之旅</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/260295376" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="serial-number">49</td>
+                    <td class="chapter-title">三年之期已到，全员回归！易方达联合雪球出品漫画《进阶吧！投资者》番外篇来了！</td>
+                    <td>
+                        <a href="https://xueqiu.com/1676206424/355989458" target="_blank" class="chapter-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看章节
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <footer class="footer">
+        <p>2025 投资漫画导航系统 | 商务科技版</p>
+        <div class="footer-links">
+            <a href="#"><i class="fas fa-question-circle"></i> 使用帮助</a>
+            <a href="#"><i class="fas fa-envelope"></i> 联系我们</a>
+            <a href="#"><i class="fas fa-shield-alt"></i> 隐私政策</a>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const tableRows = document.querySelectorAll('#chaptersTable tbody tr');
+            
+            tableRows.forEach(row => {
+                const title = row.querySelector('.chapter-title').textContent.toLowerCase();
+                if (title.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        window.addEventListener('load', function() {
+            document.body.classList.add('loaded');
+        });
+
+        document.querySelectorAll('.chapter-link').forEach(link => {
+            link.addEventListener('click', function() {
+                const chapterNum = this.closest('tr').querySelector('.serial-number').textContent;
+                console.log('用户点击了章节 ' + chapterNum + ' 的链接: ' + this.href);
+            });
+        });
+    </script>
+</body>
+</html>

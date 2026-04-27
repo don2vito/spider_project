@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBNData 免费报告中心</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- 背景装饰 -->
+    <div class="bg-decoration">
+        <div class="bg-glow bg-glow-1"></div>
+        <div class="bg-glow bg-glow-2"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- 头部 -->
+        <header class="header">
+            <div class="header-inner">
+                <div class="brand">
+                    <div class="logo-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <rect width="32" height="32" rx="8" fill="url(#logoGrad)"/>
+                            <path d="M8 10h16v2H8zM8 15h12v2H8zM8 20h14v2H8z" fill="white" opacity="0.9"/>
+                            <defs>
+                                <linearGradient id="logoGrad" x1="0" y1="0" x2="32" y2="32">
+                                    <stop stop-color="#e8853d"/>
+                                    <stop offset="1" stop-color="#d4622b"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="brand-text">
+                        <h1 class="logo-title">CBNData <span class="logo-accent">报告中心</span></h1>
+                        <p class="logo-subtitle" id="yearLabel">第一财经商业数据中心 · 免费报告</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-refresh" onclick="fetchReports(true)" title="刷新数据">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M13.65 2.35A7.96 7.96 0 008 0C3.58 0 0 3.58 0 8s3.58 8 8 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 018 14 6 6 0 112 8a6 6 0 016-6v3l4-4-4-4v3z" fill="currentColor"/>
+                        </svg>
+                        <span>刷新</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="main">
+            <!-- 统计栏 -->
+            <div class="stats-bar" id="statsBar" style="display:none">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <rect x="2" y="2" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M6 7h8M6 10h5M6 13h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="totalCount">0</span>
+                        <span class="stat-label">报告总数</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <rect x="3" y="1" width="14" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M7 5h6M7 8h6M7 11h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="totalPages">0</span>
+                        <span class="stat-label">总页数</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M10 6v4l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="dateRange">-</span>
+                        <span class="stat-label">时间范围</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 加载状态 -->
+            <div class="loading" id="loading">
+                <div class="loading-animation">
+                    <div class="pulse-ring"></div>
+                    <div class="pulse-ring delay-1"></div>
+                    <div class="pulse-ring delay-2"></div>
+                    <div class="pulse-dot"></div>
+                </div>
+                <p class="loading-text">正在获取报告数据</p>
+                <p class="loading-subtext" id="loadingSubtext">连接 CBNData 数据源...</p>
+            </div>
+
+            <!-- 错误提示 -->
+            <div class="error-panel" id="errorPanel" style="display:none">
+                <div class="error-icon">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                        <circle cx="24" cy="24" r="22" stroke="#f87171" stroke-width="2"/>
+                        <path d="M16 16l16 16M32 16l-16 16" stroke="#f87171" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h3 class="error-title">数据加载失败</h3>
+                <p class="error-message" id="errorMessage"></p>
+                <button class="btn-retry" onclick="fetchReports()">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M13.65 2.35A7.96 7.96 0 008 0C3.58 0 0 3.58 0 8s3.58 8 8 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 018 14 6 6 0 112 8a6 6 0 016-6v3l4-4-4-4v3z" fill="currentColor"/>
+                    </svg>
+                    重新加载
+                </button>
+            </div>
+
+            <!-- 报告表格 -->
+            <div class="table-wrapper" id="tableWrapper" style="display:none">
+                <table class="report-table">
+                    <colgroup>
+                        <col class="col-cover">
+                        <col class="col-title">
+                        <col class="col-date">
+                        <col class="col-pages">
+                        <col class="col-tags">
+                        <col class="col-action">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th class="col-cover">封面</th>
+                            <th class="col-title">报告名称</th>
+                            <th class="col-date">发布日期</th>
+                            <th class="col-pages">页数</th>
+                            <th class="col-tags">标签</th>
+                            <th class="col-action">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <!-- 下载进度模态框 -->
+        <div class="modal-overlay" id="downloadModal" style="display:none">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="modalTitle">正在生成 PDF</h3>
+                    <button class="modal-close" onclick="hideDownloadModal()" style="display:none" id="modalCloseBtn">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                            <div class="progress-shimmer"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span class="progress-text" id="progressText">准备中...</span>
+                            <span class="progress-percent" id="progressPercent">0%</span>
+                        </div>
+                    </div>
+                    <div class="modal-detail" id="modalDetail"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部 -->
+        <footer class="footer">
+            <p>数据来源：第一财经商业数据中心 (CBNData) · 仅供个人学习使用</p>
+        </footer>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

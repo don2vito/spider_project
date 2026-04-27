@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>快乐购 TV5 节目表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+  :root {
+    --bg-deep: #0c0a09;
+    --bg-card: #1c1917;
+    --bg-card-hover: #292524;
+    --bg-stripe: rgba(255,255,255,0.02);
+    --accent-gold: #f59e0b;
+    --accent-orange: #f97316;
+    --accent-red: #ef4444;
+    --accent-green: #22c55e;
+    --accent-blue: #3b82f6;
+    --accent-purple: #a855f7;
+    --text-primary: #fafaf9;
+    --text-secondary: #a8a29e;
+    --text-muted: #78716c;
+    --border-subtle: rgba(255,255,255,0.06);
+    --border-accent: rgba(245,158,11,0.3);
+    --glow-gold: rgba(245,158,11,0.15);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --radius-xs: 6px;
+    --shadow-card: 0 4px 24px rgba(0,0,0,0.4);
+    --shadow-glow: 0 0 40px rgba(245,158,11,0.08);
+    --font-display: 'Playfair Display', serif;
+    --font-body: 'Noto Sans SC', system-ui, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* === Background atmosphere === */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -30%; left: -10%;
+    width: 60%; height: 60%;
+    background: radial-gradient(ellipse, rgba(245,158,11,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -20%; right: -10%;
+    width: 50%; height: 50%;
+    background: radial-gradient(ellipse, rgba(249,115,22,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* === Header === */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(12,10,9,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 0 32px;
+  }
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+  }
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .brand-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--bg-deep);
+    font-family: var(--font-display);
+    box-shadow: 0 2px 12px rgba(245,158,11,0.3);
+  }
+  .brand h1 {
+    font-family: var(--font-body);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--text-primary), var(--accent-gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .brand-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 400;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange));
+    color: var(--bg-deep);
+    box-shadow: 0 2px 12px rgba(245,158,11,0.25);
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(245,158,11,0.35);
+  }
+  .btn-secondary {
+    background: rgba(255,255,255,0.06);
+    color: var(--text-primary);
+    border: 1px solid var(--border-subtle);
+  }
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: var(--border-accent);
+  }
+  .btn svg { width: 16px; height: 16px; }
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  /* === Main Container === */
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* === Loading === */
+  .loading-overlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    gap: 24px;
+  }
+  .spinner {
+    width: 48px; height: 48px;
+    border: 3px solid var(--border-subtle);
+    border-top-color: var(--accent-gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text {
+    color: var(--text-secondary);
+    font-size: 15px;
+  }
+  .loading-progress {
+    color: var(--accent-gold);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  /* === Summary Bar === */
+  .summary-bar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 16px 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius);
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+  .summary-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .summary-label {
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+  .summary-value {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .summary-value.highlight {
+    color: var(--accent-gold);
+  }
+  .summary-divider {
+    width: 1px;
+    height: 20px;
+    background: var(--border-subtle);
+  }
+
+  /* === Date Section === */
+  .date-section {
+    margin-bottom: 40px;
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .date-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .date-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(249,115,22,0.08));
+    border: 1px solid var(--border-accent);
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent-gold);
+  }
+  .date-badge .weekday {
+    font-weight: 400;
+    color: var(--text-secondary);
+    font-size: 12px;
+    margin-left: 4px;
+  }
+  .date-count {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .date-today {
+    padding: 2px 8px;
+    background: var(--accent-green);
+    color: var(--bg-deep);
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  /* === Table === */
+  .table-wrapper {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+  .table-scroll {
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  thead th {
+    padding: 14px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border-subtle);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background 0.15s ease;
+  }
+  tbody tr:nth-child(even) {
+    background: var(--bg-stripe);
+  }
+  tbody tr:hover {
+    background: var(--bg-card-hover);
+  }
+  tbody tr:last-child {
+    border-bottom: none;
+  }
+  tbody td {
+    padding: 12px 16px;
+    vertical-align: middle;
+  }
+  .col-idx {
+    width: 50px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .col-img {
+    width: 72px;
+    padding: 8px !important;
+  }
+  .product-img {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: var(--radius-xs);
+    border: 1px solid var(--border-subtle);
+    background: rgba(255,255,255,0.03);
+    transition: transform 0.2s ease;
+  }
+  .product-img:hover {
+    transform: scale(1.8);
+    z-index: 10;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    border-radius: var(--radius-sm);
+  }
+  .col-time {
+    width: 110px;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-secondary);
+    font-size: 13px;
+  }
+  .col-name {
+    min-width: 200px;
+    max-width: 320px;
+  }
+  .product-name {
+    font-weight: 500;
+    color: var(--text-primary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+  }
+  .product-name a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .product-name a:hover {
+    color: var(--accent-gold);
+  }
+  .col-desc {
+    max-width: 180px;
+    color: var(--text-muted);
+    font-size: 12px;
+  }
+  .product-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .col-price {
+    white-space: nowrap;
+  }
+  .price-sale {
+    font-weight: 700;
+    color: var(--accent-orange);
+    font-size: 15px;
+  }
+  .price-market {
+    color: var(--text-muted);
+    font-size: 12px;
+    text-decoration: line-through;
+    margin-left: 6px;
+  }
+  .col-category {
+    width: 140px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .cat-main {
+    color: var(--text-secondary);
+  }
+  .cat-sub {
+    color: var(--text-muted);
+    font-size: 11px;
+  }
+  .col-status {
+    width: 90px;
+  }
+  .status-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .status-tag::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .status-live {
+    background: rgba(34,197,94,0.12);
+    color: var(--accent-green);
+    border: 1px solid rgba(34,197,94,0.2);
+  }
+  .status-live::before {
+    background: var(--accent-green);
+    box-shadow: 0 0 6px var(--accent-green);
+    animation: pulse-dot 1.5s ease infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .status-upcoming {
+    background: rgba(59,130,246,0.12);
+    color: var(--accent-blue);
+    border: 1px solid rgba(59,130,246,0.2);
+  }
+  .status-upcoming::before { background: var(--accent-blue); }
+  .status-ended {
+    background: rgba(255,255,255,0.04);
+    color: var(--text-muted);
+    border: 1px solid var(--border-subtle);
+  }
+  .status-ended::before { background: var(--text-muted); }
+
+  /* === Error State === */
+  .error-state {
+    text-align: center;
+    padding: 60px 20px;
+  }
+  .error-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+  .error-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .error-msg {
+    color: var(--text-muted);
+    font-size: 14px;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  /* === Footer === */
+  .footer {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    font-size: 12px;
+    border-top: 1px solid var(--border-subtle);
+    margin-top: 40px;
+  }
+  .footer a {
+    color: var(--accent-gold);
+    text-decoration: none;
+  }
+
+  /* === Responsive === */
+  @media (max-width: 768px) {
+    .header { padding: 0 16px; }
+    .header-inner { height: 60px; }
+    .brand h1 { font-size: 17px; }
+    .brand-sub { display: none; }
+    .container { padding: 16px; }
+    .btn span.btn-label { display: none; }
+    .btn { padding: 10px 14px; }
+    .summary-bar { padding: 12px 16px; gap: 12px; }
+    .col-desc, .col-category { display: none; }
+    thead th:nth-child(6),
+    thead th:nth-child(7) { display: none; }
+    tbody td:nth-child(6),
+    tbody td:nth-child(7) { display: none; }
+  }
+
+  /* === Scrollbar === */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-icon">H</div>
+      <div>
+        <h1>快乐购 TV5 节目表</h1>
+      </div>
+      <span class="brand-sub">Happigo Schedule</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" id="btnRefresh" onclick="loadData()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6M3 12a9 9 0 0115.36-6.36L21 8M3 22v-6h6M21 12a9 9 0 01-15.36 6.36L3 16"/></svg>
+        <span class="btn-label">刷新</span>
+      </button>
+      <button class="btn btn-primary" id="btnExport" onclick="exportExcel()" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        <span class="btn-label">下载 Excel</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Main -->
+<div class="container" id="mainContainer">
+  <!-- Loading -->
+  <div class="loading-overlay" id="loadingState">
+    <div class="spinner"></div>
+    <div class="loading-text">正在获取节目数据...</div>
+    <div class="loading-progress" id="loadingProgress"></div>
+  </div>
+
+  <!-- Content (hidden initially) -->
+  <div id="contentArea" style="display:none;">
+    <div class="summary-bar" id="summaryBar"></div>
+    <div id="scheduleContent"></div>
+  </div>
+
+  <!-- Error -->
+  <div class="error-state" id="errorState" style="display:none;">
+    <div class="error-icon">⚠️</div>
+    <div class="error-title">数据加载失败</div>
+    <div class="error-msg" id="errorMsg">无法连接到数据源，请检查网络后刷新重试。</div>
+    <button class="btn btn-secondary" style="margin-top:20px;" onclick="loadData()">重新加载</button>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  数据来源：<a href="https://www.happigo.com/tv5/" target="_blank">happigo.com/tv5</a> &nbsp;|&nbsp;
+  自动抓取最近 7 天节目表 &nbsp;|&nbsp;
+  仅供个人参考
+</footer>
+
+<script>
+// ==================== Configuration ====================
+
+const API_PROXY = '/api/proxy'; // Local proxy endpoint (requires server.py)
+const LIVE_STATE_MAP = { 0: '即将播出', 1: '正在直播', 2: '已结束' };
+const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六'];
+
+let allData = []; // global store for Excel export
+
+// ==================== Utility ====================
+
+function formatDateDisplay(ymd) {
+  const y = ymd.substring(0, 4);
+  const m = parseInt(ymd.substring(4, 6));
+  const d = parseInt(ymd.substring(6, 8));
+  return `${y}年${m}月${d}日`;
+}
+
+function getWeekday(ymd) {
+  const date = new Date(parseInt(ymd.substring(0,4)), parseInt(ymd.substring(4,6))-1, parseInt(ymd.substring(6,8)));
+  return '星期' + WEEKDAYS[date.getDay()];
+}
+
+function isToday(ymd) {
+  const now = new Date();
+  const today = now.getFullYear().toString() +
+    String(now.getMonth()+1).padStart(2,'0') +
+    String(now.getDate()).padStart(2,'0');
+  return ymd === today;
+}
+
+function sleep(ms) {
+  return new Promise(r => setTimeout(r, ms));
+}
+
+// ==================== Data Fetching ====================
+
+async function fetchSchedule(dateStr) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  try {
+    const resp = await fetch(`${API_PROXY}?ymd=${dateStr}`, { signal: controller.signal });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    if (data.state !== 1) {
+      throw new Error(data.msg || 'API error');
+    }
+    const goods = data.tvliveGoods || [];
+    return parseItems(goods, dateStr);
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function filterByDate(items, dateStr) {
+  return items.filter(item => {
+    const ts = item.tvStartTime;
+    if (!ts) return false;
+    // Convert timestamp to Beijing time (UTC+8)
+    const d = new Date(parseInt(ts) * 1000 + 8 * 3600 * 1000);
+    const ymd = d.getUTCFullYear().toString() +
+      String(d.getUTCMonth()+1).padStart(2,'0') +
+      String(d.getUTCDate()).padStart(2,'0');
+    return ymd === dateStr;
+  });
+}
+
+function parseItems(rawItems, dateStr) {
+  const filtered = filterByDate(rawItems, dateStr);
+  return filtered.map((item, idx) => ({
+    date: dateStr,
+    index: idx + 1,
+    timeRange: item.bochushijian || '',
+    startTime: item.tvStartTime1 || '',
+    endTime: item.tvEndTime1 || '',
+    name: item.goodsName || item.tvName || '',
+    goodsId: item.goodsCommonid || '',
+    salePrice: item.salePrice || 0,
+    marketPrice: item.marketPrice || 0,
+    desc: item.goodsShortDesc2 || '',
+    cat1: item.gcName1 || '',
+    cat2: item.gcName2 || '',
+    sales: item.saleCounDisplay || 0,
+    stock: item.goodStorage || 0,
+    liveState: item.liveState ?? -1,
+    liveStateText: LIVE_STATE_MAP[item.liveState] || '未知',
+    url: item.url || '',
+    pic: item.pic || '',
+    progName: item.progName || '',
+  }));
+}
+
+// ==================== Rendering ====================
+
+function showState(stateId) {
+  document.getElementById('loadingState').style.display = stateId === 'loading' ? 'flex' : 'none';
+  document.getElementById('contentArea').style.display = stateId === 'content' ? 'block' : 'none';
+  document.getElementById('errorState').style.display = stateId === 'error' ? 'block' : 'none';
+}
+
+function renderSummary(data) {
+  const dates = [...new Set(data.map(d => d.date))].sort();
+  const total = data.length;
+  const liveCount = data.filter(d => d.liveState === 1).length;
+  const todayStr = dates.find(d => isToday(d));
+
+  let html = `
+    <div class="summary-item">
+      <span class="summary-label">日期范围</span>
+      <span class="summary-value">${formatDateDisplay(dates[0])} — ${formatDateDisplay(dates[dates.length-1])}</span>
+    </div>
+    <div class="summary-divider"></div>
+    <div class="summary-item">
+      <span class="summary-label">总节目数</span>
+      <span class="summary-value highlight">${total}</span>
+    </div>
+    <div class="summary-divider"></div>
+    <div class="summary-item">
+      <span class="summary-label">天数</span>
+      <span class="summary-value">${dates.length} 天</span>
+    </div>
+  `;
+  if (liveCount > 0) {
+    html += `
+      <div class="summary-divider"></div>
+      <div class="summary-item">
+        <span class="summary-label">正在直播</span>
+        <span class="summary-value" style="color:var(--accent-green)">${liveCount} 个</span>
+      </div>
+    `;
+  }
+  document.getElementById('summaryBar').innerHTML = html;
+}
+
+function renderSchedule(data) {
+  // Group by date
+  const grouped = {};
+  data.forEach(item => {
+    if (!grouped[item.date]) grouped[item.date] = [];
+    grouped[item.date].push(item);
+  });
+  const dates = Object.keys(grouped).sort();
+
+  let html = '';
+  dates.forEach((dateStr, di) => {
+    const items = grouped[dateStr];
+    const todayTag = isToday(dateStr) ? '<span class="date-today">TODAY</span>' : '';
+    const weekday = getWeekday(dateStr);
+
+    html += `
+      <div class="date-section" style="animation-delay:${di * 0.08}s">
+        <div class="date-header">
+          <span class="date-badge">
+            📺 ${formatDateDisplay(dateStr)}
+            <span class="weekday">${weekday}</span>
+          </span>
+          ${todayTag}
+          <span class="date-count">${items.length} 个节目</span>
+        </div>
+        <div class="table-wrapper">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th class="col-idx">#</th>
+                  <th class="col-img">图片</th>
+                  <th class="col-time">播出时间</th>
+                  <th class="col-name">商品名称</th>
+                  <th class="col-desc">描述</th>
+                  <th class="col-price">价格</th>
+                  <th class="col-category">分类</th>
+                  <th class="col-status">状态</th>
+                </tr>
+              </thead>
+              <tbody>
+    `;
+
+    items.forEach(item => {
+      const statusClass = item.liveState === 1 ? 'status-live' :
+                          item.liveState === 0 ? 'status-upcoming' : 'status-ended';
+      const nameHtml = item.url
+        ? `<a href="${item.url}" target="_blank" title="${item.name}">${item.name}</a>`
+        : `<span title="${item.name}">${item.name}</span>`;
+      const imgHtml = item.pic
+        ? `<img class="product-img" src="${item.pic}" alt="${item.name}" loading="lazy" onerror="this.style.display='none'">`
+        : '';
+      const discount = (item.marketPrice > 0 && item.salePrice < item.marketPrice)
+        ? `<span class="price-market">¥${item.marketPrice}</span>` : '';
+
+      html += `
+        <tr>
+          <td class="col-idx">${item.index}</td>
+          <td class="col-img">${imgHtml}</td>
+          <td class="col-time">${item.timeRange}</td>
+          <td class="col-name"><div class="product-name">${nameHtml}</div></td>
+          <td class="col-desc"><div class="product-desc">${item.desc}</div></td>
+          <td class="col-price">
+            <span class="price-sale">¥${item.salePrice}</span>${discount}
+          </td>
+          <td class="col-category">
+            <div class="cat-main">${item.cat1}</div>
+            <div class="cat-sub">${item.cat2}</div>
+          </td>
+          <td class="col-status">
+            <span class="status-tag ${statusClass}">${item.liveStateText}</span>
+          </td>
+        </tr>
+      `;
+    });
+
+    html += `
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  document.getElementById('scheduleContent').innerHTML = html;
+}
+
+// ==================== Excel Export ====================
+
+function exportExcel() {
+  if (!allData.length) return;
+
+  const dates = [...new Set(allData.map(d => d.date))].sort();
+  const rows = allData.map(item => ({
+    '日期': item.date,
+    '序号': item.index,
+    '播出时间': item.timeRange,
+    '商品名称': item.name,
+    '商品ID': item.goodsId,
+    '销售价': item.salePrice,
+    '市场价': item.marketPrice,
+    '商品描述': item.desc,
+    '一级分类': item.cat1,
+    '二级分类': item.cat2,
+    '累计销量': item.sales,
+    '库存': item.stock,
+    '直播状态': item.liveStateText,
+    '商品链接': item.url,
+    '商品图片': item.pic,
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(rows);
+  ws['!cols'] = [
+    { wch: 12 }, { wch: 6 }, { wch: 14 }, { wch: 40 }, { wch: 10 },
+    { wch: 8 }, { wch: 8 }, { wch: 24 }, { wch: 10 }, { wch: 10 },
+    { wch: 10 }, { wch: 6 }, { wch: 8 }, { wch: 40 }, { wch: 50 },
+  ];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '节目表');
+  XLSX.writeFile(wb, `happigo_schedule_${dates[0]}_${dates[dates.length-1]}.xlsx`);
+}
+
+// ==================== Main ====================
+
+async function loadData() {
+  showState('loading');
+  document.getElementById('btnExport').disabled = true;
+  document.getElementById('btnRefresh').disabled = true;
+
+  // Calculate date range: today - 6 days ~ today
+  const now = new Date();
+  const dates = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    dates.push(
+      d.getFullYear().toString() +
+      String(d.getMonth()+1).padStart(2,'0') +
+      String(d.getDate()).padStart(2,'0')
+    );
+  }
+
+  const progressEl = document.getElementById('loadingProgress');
+  allData = [];
+  let failedDates = [];
+
+  for (let i = 0; i < dates.length; i++) {
+    const dateStr = dates[i];
+    progressEl.textContent = `正在获取 ${dateStr} 的数据... (${i+1}/${dates.length})`;
+    try {
+      const items = await fetchSchedule(dateStr);
+      allData.push(...items);
+    } catch (e) {
+      console.error(`Failed to fetch ${dateStr}:`, e);
+      failedDates.push(dateStr);
+    }
+    if (i < dates.length - 1) await sleep(500);
+  }
+
+  if (allData.length === 0) {
+    showState('error');
+    document.getElementById('errorMsg').textContent =
+      failedDates.length > 0
+        ? `以下日期获取失败：${failedDates.join(', ')}。请检查网络后重试。`
+        : '未获取到任何节目数据，请检查网络后重试。';
+    document.getElementById('btnRefresh').disabled = false;
+    return;
+  }
+
+  // Sort by date ascending
+  allData.sort((a, b) => a.date.localeCompare(b.date) || a.index - b.index);
+
+  renderSummary(allData);
+  renderSchedule(allData);
+  showState('content');
+  document.getElementById('btnExport').disabled = false;
+  document.getElementById('btnRefresh').disabled = false;
+}
+
+// Auto-load on page open
+document.addEventListener('DOMContentLoaded', loadData);
+</script>
+</body>
+</html>

@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>好享购节目表 - 实时数据看板</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+    <style>
+        /* ==================== CSS Variables ==================== */
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-card-hover: #1a1a28;
+            --bg-input: #0e0e16;
+            --brand: #ff6b35;
+            --brand-glow: rgba(255, 107, 53, 0.25);
+            --brand-dim: #cc5529;
+            --live: #00d4aa;
+            --live-glow: rgba(0, 212, 170, 0.3);
+            --upcoming: #fbbf24;
+            --ended: #6b7280;
+            --other: #9ca3af;
+            --text-primary: #e8e8ed;
+            --text-secondary: #8888a0;
+            --text-muted: #55556a;
+            --border: #1e1e2e;
+            --border-light: #2a2a3e;
+            --radius: 10px;
+            --radius-sm: 6px;
+            --radius-lg: 16px;
+            --shadow: 0 4px 24px rgba(0,0,0,0.4);
+            --shadow-brand: 0 4px 20px var(--brand-glow);
+            --font: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* ==================== Reset & Base ==================== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ==================== Background Atmosphere ==================== */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 20% 20%, rgba(255,107,53,0.04) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 80%, rgba(0,212,170,0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .app-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 20px 60px;
+        }
+
+        /* ==================== Header ==================== */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--brand) 0%, #ff9a6c 50%, var(--live) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+        }
+
+        .header .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 300;
+            letter-spacing: 4px;
+        }
+
+        /* ==================== Control Panel ==================== */
+        .control-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.6s ease-out 0.1s both;
+        }
+
+        .control-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .control-row:last-child { margin-bottom: 0; }
+
+        .control-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            min-width: 60px;
+            flex-shrink: 0;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 18px;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            font-family: var(--font);
+            font-size: 0.82rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .btn:hover {
+            border-color: var(--brand);
+            color: var(--text-primary);
+            background: rgba(255,107,53,0.08);
+        }
+
+        .btn.active {
+            background: var(--brand);
+            border-color: var(--brand);
+            color: #fff;
+            box-shadow: var(--shadow-brand);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--brand), var(--brand-dim));
+            border-color: var(--brand);
+            color: #fff;
+            font-weight: 700;
+            padding: 10px 32px;
+            font-size: 0.9rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-brand);
+            transition: all 0.25s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 28px var(--brand-glow);
+        }
+
+        .btn-primary:active { transform: translateY(0); }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-export {
+            background: transparent;
+            border: 1px solid var(--live);
+            color: var(--live);
+            font-weight: 500;
+        }
+
+        .btn-export:hover {
+            background: rgba(0,212,170,0.1);
+            box-shadow: 0 4px 16px var(--live-glow);
+        }
+
+        .btn-export:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* ==================== Stats Cards ==================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            transition: border-color 0.3s ease;
+        }
+
+        .stat-card:hover { border-color: var(--border-light); }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 900;
+            font-variant-numeric: tabular-nums;
+            line-height: 1.2;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        .stat-card:nth-child(1) .stat-value { color: var(--brand); }
+        .stat-card:nth-child(2) .stat-value { color: var(--text-primary); }
+        .stat-card:nth-child(3) .stat-value { color: var(--live); }
+
+        /* ==================== Progress Bar ==================== */
+        .progress-container {
+            display: none;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .progress-container.visible { display: block; }
+
+        .progress-text {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--brand), var(--live));
+            border-radius: 2px;
+            transition: width 0.4s ease;
+            width: 0%;
+        }
+
+        /* ==================== Data Table ==================== */
+        .table-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out 0.3s both;
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .table-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+        .table-scroll::-webkit-scrollbar-track { background: var(--bg-primary); }
+        .table-scroll::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        thead { position: sticky; top: 0; z-index: 10; }
+
+        thead th {
+            background: #16161f;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 14px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s ease;
+            animation: fadeInUp 0.4s ease-out both;
+        }
+
+        tbody tr:hover { background: var(--bg-card-hover); }
+
+        tbody td {
+            padding: 12px;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        /* Date column */
+        .date-cell {
+            font-weight: 700;
+            color: var(--brand);
+            font-size: 0.82rem;
+            padding-left: 16px !important;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        .date-cell .date-weekday {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-top: 2px;
+        }
+
+        /* 日期分组：同日期首行加顶部分隔线 */
+        tbody tr[data-date-first] td:first-child {
+            border-top: 2px solid var(--brand);
+        }
+
+        /* Status badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.live {
+            background: rgba(0,212,170,0.12);
+            color: var(--live);
+            border: 1px solid rgba(0,212,170,0.3);
+        }
+
+        .status-badge.live::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--live);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .status-badge.upcoming {
+            background: rgba(251,191,36,0.1);
+            color: var(--upcoming);
+            border: 1px solid rgba(251,191,36,0.25);
+        }
+
+        .status-badge.ended {
+            background: rgba(107,114,128,0.1);
+            color: var(--ended);
+            border: 1px solid rgba(107,114,128,0.2);
+        }
+
+        .status-badge.other {
+            background: rgba(156,163,175,0.08);
+            color: var(--other);
+            border: 1px solid rgba(156,163,175,0.15);
+        }
+
+        /* Product image */
+        .product-img {
+            width: 56px;
+            height: 56px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--border);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            cursor: pointer;
+            background: var(--bg-input);
+        }
+
+        .product-img:hover {
+            transform: scale(2.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            z-index: 100;
+            position: relative;
+            border-radius: 10px;
+        }
+
+        .product-img-placeholder {
+            width: 56px;
+            height: 56px;
+            border-radius: 8px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        /* Price */
+        .price-sale {
+            font-weight: 700;
+            color: var(--brand);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .price-market {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-decoration: line-through;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .pay-tips {
+            font-size: 0.72rem;
+            color: var(--upcoming);
+            background: rgba(251,191,36,0.08);
+            padding: 2px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        /* ==================== Mobile Cards ==================== */
+        .mobile-cards { display: none; }
+
+        .date-group-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--brand);
+            padding: 16px 16px 8px;
+            position: sticky;
+            top: 0;
+            background: var(--bg-card);
+            z-index: 5;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .mobile-card {
+            display: flex;
+            gap: 12px;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s ease;
+            animation: fadeInUp 0.4s ease-out both;
+        }
+
+        .mobile-card:hover { background: var(--bg-card-hover); }
+
+        .mobile-card .card-img {
+            width: 72px;
+            height: 72px;
+            border-radius: 10px;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 1px solid var(--border);
+            background: var(--bg-input);
+        }
+
+        .mobile-card .card-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .mobile-card .card-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .mobile-card .card-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .mobile-card .card-time {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .mobile-card .card-price {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--brand);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* ==================== Empty State ==================== */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.4;
+        }
+
+        .empty-state .empty-text {
+            font-size: 0.9rem;
+        }
+
+        /* ==================== Loading Overlay ==================== */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10,10,15,0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading-overlay.visible {
+            display: flex;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--brand);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .loading-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* ==================== Toast ==================== */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 0.82rem;
+            font-weight: 500;
+            animation: slideInRight 0.3s ease-out;
+            box-shadow: var(--shadow);
+            max-width: 360px;
+        }
+
+        .toast.success {
+            background: rgba(0,212,170,0.15);
+            border: 1px solid rgba(0,212,170,0.3);
+            color: var(--live);
+        }
+
+        .toast.error {
+            background: rgba(239,68,68,0.15);
+            border: 1px solid rgba(239,68,68,0.3);
+            color: #ef4444;
+        }
+
+        .toast.info {
+            background: rgba(255,107,53,0.12);
+            border: 1px solid rgba(255,107,53,0.3);
+            color: var(--brand);
+        }
+
+        /* ==================== Footer ==================== */
+        .footer {
+            text-align: center;
+            padding: 32px 0 0;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            letter-spacing: 1px;
+        }
+
+        /* ==================== Animations ==================== */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.4); }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-input) 25%, var(--border) 50%, var(--bg-input) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+            border-radius: 4px;
+        }
+
+        /* ==================== Responsive ==================== */
+        @media (max-width: 768px) {
+            .app-container { padding: 16px 12px 40px; }
+
+            .header h1 { font-size: 1.5rem; }
+
+            .control-panel { padding: 16px; }
+
+            .control-row { gap: 10px; }
+
+            .control-label { min-width: auto; width: 100%; margin-bottom: -4px; }
+
+            .btn { padding: 7px 14px; font-size: 0.78rem; }
+
+            .btn-primary { padding: 10px 24px; width: 100%; }
+
+            .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+            .stat-card { padding: 14px 10px; }
+            .stat-card .stat-value { font-size: 1.5rem; }
+
+            .table-scroll { display: none; }
+            .mobile-cards { display: block; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- Header -->
+    <header class="header">
+        <h1>好享购节目表</h1>
+        <p class="subtitle">HAPPIGO LIVE SCHEDULE</p>
+    </header>
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+        <div class="control-row">
+            <span class="control-label">区域</span>
+            <div class="btn-group" id="areaGroup">
+                <button class="btn active" data-area="02">省内（江苏）</button>
+                <button class="btn" data-area="03">省外</button>
+            </div>
+        </div>
+        <div class="control-row">
+            <span class="control-label">天数</span>
+            <div class="btn-group" id="daysGroup">
+                <button class="btn" data-days="3">3天</button>
+                <button class="btn active" data-days="7">7天</button>
+                <button class="btn" data-days="14">14天</button>
+                <button class="btn" data-days="30">30天</button>
+            </div>
+        </div>
+        <div class="control-row" style="justify-content: space-between;">
+            <button class="btn-primary" id="fetchBtn">
+                <span id="fetchBtnText">开始抓取</span>
+            </button>
+            <button class="btn btn-export" id="exportBtn" disabled>
+                📥 下载 Excel
+            </button>
+        </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-container" id="progressContainer">
+        <div class="progress-text" id="progressText">正在抓取...</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid" id="statsGrid">
+        <div class="stat-card">
+            <div class="stat-value" id="statDays">-</div>
+            <div class="stat-label">抓取天数</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="statTotal">-</div>
+            <div class="stat-label">节目总数</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="statLive">-</div>
+            <div class="stat-label">正在直播</div>
+        </div>
+    </div>
+
+    <!-- Table (Desktop) -->
+    <div class="table-wrapper" id="tableWrapper">
+        <div class="table-scroll" id="tableScroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>日期</th>
+                        <th>时间</th>
+                        <th>状态</th>
+                        <th>商品图片</th>
+                        <th>商品名称</th>
+                        <th>销售价</th>
+                        <th>市场价</th>
+                        <th>优惠</th>
+                        <th>已售</th>
+                        <th>编号</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr>
+                        <td colspan="10">
+                            <div class="empty-state">
+                                <div class="empty-icon">📺</div>
+                                <div class="empty-text">点击「开始抓取」获取节目数据</div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- Mobile Cards -->
+        <div class="mobile-cards" id="mobileCards">
+            <div class="empty-state">
+                <div class="empty-icon">📺</div>
+                <div class="empty-text">点击「开始抓取」获取节目数据</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        HAPPIGO PROGRAM SCHEDULE &nbsp;·&nbsp; 数据来源 hao24.com
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">正在连接...</div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+/* ==================== Module A: Config & Constants ==================== */
+const CONFIG = {
+    API_URL: 'https://m.hao24.com/live/list.do',
+    /* 优先使用本地代理（通过 server.py 启动），备选 CORS 代理 */
+    PROXY_LIST: [
+        '/api/proxy',
+        'https://corsproxy.io/?url=',
+        'https://proxy.killcors.com/?url=',
+        'https://api.cors.lol/?url='
+    ],
+    DEFAULT_DAYS: 7,
+    MAX_RETRIES: 3,
+    RETRY_DELAY: 1500,
+    REQUEST_INTERVAL: 400,
+    TIMEOUT: 15000,
+};
+
+const STATUS_MAP = {
+    '0': { text: '正在直播', cls: 'live' },
+    '1': { text: '即将开播', cls: 'upcoming' },
+    '2': { text: '已结束', cls: 'ended' },
+    '-1': { text: '其他', cls: 'other' },
+    '-2': { text: '已结束', cls: 'ended' },
+};
+
+const WEEKDAYS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+
+let allPrograms = [];
+let currentArea = '02';
+let currentDays = 7;
+let isFetching = false;
+
+/* ==================== Module B: Proxy Fetch ==================== */
+async function fetchWithProxy(url, options) {
+    for (const proxy of CONFIG.PROXY_LIST) {
+        try {
+            let fetchUrl, fetchOptions;
+
+            if (proxy === '/api/proxy') {
+                /* 本地代理：直接把目标 URL 和 body 传给代理服务器 */
+                fetchUrl = '/api/proxy';
+                fetchOptions = {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        targetUrl: url,
+                        method: options.method || 'POST',
+                        body: options.body,
+                    }),
+                };
+            } else {
+                /* CORS 代理 */
+                fetchUrl = proxy + encodeURIComponent(url);
+                fetchOptions = { ...options };
+            }
+
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), CONFIG.TIMEOUT);
+
+            const response = await fetch(fetchUrl, {
+                ...fetchOptions,
+                signal: controller.signal,
+            });
+            clearTimeout(timeoutId);
+
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response;
+        } catch (e) {
+            console.warn(`Proxy ${proxy} failed:`, e.message);
+            continue;
+        }
+    }
+    throw new Error('所有代理均不可用，请确保已启动 server.py 或检查网络');
+}
+
+/* ==================== Module C: API Data Fetch ==================== */
+async function fetchProgramList(dateStr, areaCd) {
+    const payload = { date: dateStr, areaCd: areaCd };
+
+    for (let attempt = 1; attempt <= CONFIG.MAX_RETRIES; attempt++) {
+        try {
+            const response = await fetchWithProxy(CONFIG.API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await response.json();
+            if (!data.state) throw new Error('API 返回 state=false');
+            return data;
+        } catch (e) {
+            if (attempt < CONFIG.MAX_RETRIES) {
+                await sleep(CONFIG.RETRY_DELAY);
+            } else {
+                throw e;
+            }
+        }
+    }
+}
+
+async function fetchAllPrograms(dateList, areaCd, onProgress) {
+    const results = [];
+    let successCount = 0;
+
+    for (let i = 0; i < dateList.length; i++) {
+        const dateStr = dateList[i];
+        if (onProgress) onProgress(i + 1, dateList.length, dateStr);
+
+        try {
+            const data = await fetchProgramList(dateStr, areaCd);
+            const programs = parsePrograms(data, dateStr);
+            results.push(...programs);
+            successCount++;
+        } catch (e) {
+            console.error(`Failed to fetch ${dateStr}:`, e);
+        }
+
+        if (i < dateList.length - 1) {
+            await sleep(CONFIG.REQUEST_INTERVAL);
+        }
+    }
+
+    return { programs: results, successCount, total: dateList.length };
+}
+
+/* ==================== Module D: Data Parse ==================== */
+function parsePrograms(data, dateStr) {
+    const programs = [];
+    const livelist = data.livelist || [];
+
+    for (const item of livelist) {
+        const goods = item.liveGoods || {};
+        const priceRaw = goods.salePrc || 0;
+        let price = 0;
+        try { price = parseFloat(priceRaw); } catch (e) { price = 0; }
+
+        const statusKey = String(goods.status ?? '-1');
+        const statusInfo = STATUS_MAP[statusKey] || { text: '未知', cls: 'other' };
+
+        programs.push({
+            date: dateStr,
+            time: goods.beTime || '未知',
+            name: goods.goodsNm || '未知商品',
+            sn: goods.goodsSn || '',
+            price: price,
+            priceFormatted: price > 0 ? `¥${price.toFixed(2)}` : '价格待定',
+            marketPrice: goods.marketPrc || '',
+            payTips: goods.payTips || '',
+            saleQty: goods.saleQty || '',
+            status: statusKey,
+            statusText: statusInfo.text,
+            statusCls: statusInfo.cls,
+            imageUrl: goods.imgUrl || '',
+        });
+    }
+
+    return programs;
+}
+
+/* ==================== Module E: UI Rendering ==================== */
+function formatDateDisplay(dateStr) {
+    const d = new Date(dateStr.substring(0, 4), parseInt(dateStr.substring(4, 6)) - 1, parseInt(dateStr.substring(6, 8)));
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const weekday = WEEKDAYS[d.getDay()];
+    return { display: `${month}-${day}`, weekday };
+}
+
+function renderTable(programs) {
+    const tableBody = document.getElementById('tableBody');
+    const mobileCards = document.getElementById('mobileCards');
+
+    if (!programs.length) {
+        tableBody.innerHTML = `<tr><td colspan="10"><div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">暂无节目数据</div></div></td></tr>`;
+        mobileCards.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">暂无节目数据</div></div>`;
+        return;
+    }
+
+    // Desktop table — 每行都显示日期，不合并单元格
+    let html = '';
+    let prevDate = '';
+
+    for (let i = 0; i < programs.length; i++) {
+        const p = programs[i];
+        const delay = Math.min(i * 30, 800);
+        const isFirstOfDate = p.date !== prevDate;
+        prevDate = p.date;
+
+        const dateInfo = formatDateDisplay(p.date);
+        const imgHtml = p.imageUrl
+            ? `<img class="product-img" src="${p.imageUrl}" alt="${p.name}" loading="lazy" onerror="this.outerHTML='<div class=\\'product-img-placeholder\\'>📦</div>'">`
+            : `<div class="product-img-placeholder">📦</div>`;
+        const tipsHtml = p.payTips ? `<span class="pay-tips">${p.payTips}</span>` : '<span style="color:var(--text-muted)">—</span>';
+
+        const dateDisplay = isFirstOfDate
+            ? `${dateInfo.display}<span class="date-weekday">${dateInfo.weekday}</span>`
+            : `${dateInfo.display}<span class="date-weekday">${dateInfo.weekday}</span>`;
+
+        html += `<tr style="animation-delay:${delay}ms"${isFirstOfDate ? ' data-date-first' : ''}>
+            <td class="date-cell" data-date="${p.date}">
+                ${dateDisplay}
+            </td>
+            <td>${p.time}</td>
+            <td><span class="status-badge ${p.statusCls}">${p.statusText}</span></td>
+            <td>${imgHtml}</td>
+            <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;" title="${p.name}">${p.name}</td>
+            <td class="price-sale">${p.priceFormatted}</td>
+            <td class="price-market">${p.marketPrice ? '¥' + p.marketPrice : '—'}</td>
+            <td>${tipsHtml}</td>
+            <td style="font-variant-numeric:tabular-nums">${p.saleQty || '—'}</td>
+            <td style="color:var(--text-muted)">${p.sn || '—'}</td>
+        </tr>`;
+    }
+
+    tableBody.innerHTML = html;
+
+    // Mobile cards
+    let mobileHtml = '';
+    let mobileDate = '';
+    let rowIndex = 0;
+    for (const p of programs) {
+        const delay = Math.min(rowIndex * 20, 600);
+        if (p.date !== mobileDate) {
+            mobileDate = p.date;
+            const dateInfo = formatDateDisplay(p.date);
+            mobileHtml += `<div class="date-group-title">${dateInfo.display} ${dateInfo.weekday}</div>`;
+        }
+        const imgSrc = p.imageUrl || '';
+        mobileHtml += `
+        <div class="mobile-card" style="animation-delay:${delay}ms">
+            ${imgSrc ? `<img class="card-img" src="${imgSrc}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'">` : ''}
+            <div class="card-info">
+                <div class="card-name" title="${p.name}">${p.name}</div>
+                <div class="card-meta">
+                    <span class="card-time">${p.time}</span>
+                    <span class="status-badge ${p.statusCls}" style="font-size:0.65rem;padding:2px 6px;">${p.statusText}</span>
+                    <span class="card-price">${p.priceFormatted}</span>
+                </div>
+            </div>
+        </div>`;
+        rowIndex++;
+    }
+    mobileCards.innerHTML = mobileHtml;
+}
+
+function updateStats(programs) {
+    const dates = [...new Set(programs.map(p => p.date))];
+    const liveCount = programs.filter(p => p.status === '0').length;
+
+    document.getElementById('statDays').textContent = dates.length;
+    document.getElementById('statTotal').textContent = programs.length;
+    document.getElementById('statLive').textContent = liveCount;
+}
+
+function showProgress(visible, current, total, dateStr) {
+    const container = document.getElementById('progressContainer');
+    const text = document.getElementById('progressText');
+    const fill = document.getElementById('progressFill');
+
+    if (!visible) {
+        container.classList.remove('visible');
+        return;
+    }
+
+    container.classList.add('visible');
+    const pct = total > 0 ? Math.round((current / total) * 100) : 0;
+    text.textContent = `正在抓取 ${dateStr}（${current}/${total}）`;
+    fill.style.width = pct + '%';
+}
+
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(40px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+/* ==================== Module F: Excel Export ==================== */
+function exportToExcel(programs) {
+    if (!programs.length) {
+        showToast('暂无数据可导出', 'error');
+        return;
+    }
+
+    if (typeof XLSX === 'undefined') {
+        showToast('Excel 导出库加载失败，请刷新页面重试', 'error');
+        return;
+    }
+
+    const wsData = [
+        ['日期', '时间段', '商品名称', '商品编号', '销售价格', '市场价', '支付优惠', '已售数量', '直播状态', '商品图片URL']
+    ];
+
+    programs.forEach(p => {
+        wsData.push([
+            p.date,
+            p.time,
+            p.name,
+            p.sn,
+            p.priceFormatted,
+            p.marketPrice ? '¥' + p.marketPrice : '',
+            p.payTips,
+            p.saleQty,
+            p.statusText,
+            p.imageUrl,
+        ]);
+    });
+
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+    ws['!cols'] = [
+        { wch: 12 }, { wch: 12 }, { wch: 32 }, { wch: 12 },
+        { wch: 10 }, { wch: 10 }, { wch: 18 }, { wch: 8 },
+        { wch: 10 }, { wch: 50 }
+    ];
+
+    XLSX.utils.book_append_sheet(wb, ws, '节目表');
+
+    const todayStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    XLSX.writeFile(wb, `快乐购节目表_${todayStr}.xlsx`);
+
+    showToast(`已导出 ${programs.length} 条记录`, 'success');
+}
+
+/* ==================== Module G: Init & Events ==================== */
+function generateDateList(days) {
+    const dates = [];
+    const today = new Date();
+    for (let i = days - 1; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        dates.push(`${y}${m}${dd}`);
+    }
+    return dates;
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function startFetch() {
+    if (isFetching) return;
+    isFetching = true;
+
+    const fetchBtn = document.getElementById('fetchBtn');
+    const fetchBtnText = document.getElementById('fetchBtnText');
+    const exportBtn = document.getElementById('exportBtn');
+
+    fetchBtn.disabled = true;
+    fetchBtnText.textContent = '抓取中...';
+    exportBtn.disabled = true;
+    allPrograms = [];
+
+    const dateList = generateDateList(currentDays);
+
+    try {
+        const result = await fetchAllPrograms(dateList, currentArea, (current, total, dateStr) => {
+            showProgress(true, current, total, dateStr);
+        });
+
+        allPrograms = result.programs;
+
+        showProgress(false);
+
+        if (allPrograms.length > 0) {
+            renderTable(allPrograms);
+            updateStats(allPrograms);
+            exportBtn.disabled = false;
+            showToast(`抓取完成：${result.successCount}/${result.total} 天，共 ${allPrograms.length} 条节目`, 'success');
+        } else {
+            renderTable([]);
+            updateStats([]);
+            showToast('未获取到任何数据，请检查网络或稍后重试', 'error');
+        }
+    } catch (e) {
+        showProgress(false);
+        showToast(`抓取失败：${e.message}`, 'error');
+        console.error('Fetch error:', e);
+    } finally {
+        isFetching = false;
+        fetchBtn.disabled = false;
+        fetchBtnText.textContent = '重新抓取';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Area buttons
+    document.getElementById('areaGroup').addEventListener('click', (e) => {
+        const btn = e.target.closest('.btn');
+        if (!btn || isFetching) return;
+        document.querySelectorAll('#areaGroup .btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentArea = btn.dataset.area;
+    });
+
+    // Days buttons
+    document.getElementById('daysGroup').addEventListener('click', (e) => {
+        const btn = e.target.closest('.btn');
+        if (!btn || isFetching) return;
+        document.querySelectorAll('#daysGroup .btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentDays = parseInt(btn.dataset.days);
+    });
+
+    // Fetch button
+    document.getElementById('fetchBtn').addEventListener('click', startFetch);
+
+    // Export button
+    document.getElementById('exportBtn').addEventListener('click', () => {
+        exportToExcel(allPrograms);
+    });
+
+    // Auto fetch on load
+    startFetch();
+});
+</script>
+
+</body>
+</html>

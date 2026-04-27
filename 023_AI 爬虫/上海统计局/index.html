@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>上海市统计局 · 月度数据获取工具</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@600;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bg: '#0c0e14',
+                        surface: '#141722',
+                        card: '#1a1e2e',
+                        border: '#2a2f42',
+                        gold: '#c9a96e',
+                        'gold-light': '#e0c992',
+                        'gold-dark': '#a08040',
+                        accent: '#3b82f6',
+                        muted: '#6b7280',
+                        fg: '#e5e7eb',
+                        'fg-dim': '#9ca3af',
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif SC"', 'serif'],
+                        sans: ['"Noto Sans SC"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: #0c0e14;
+            color: #e5e7eb;
+            min-height: 100vh;
+        }
+        /* 背景纹理 */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(201,169,110,0.08), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(59,130,246,0.05), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+        main { position: relative; z-index: 1; }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #141722; }
+        ::-webkit-scrollbar-thumb { background: #2a2f42; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3a3f52; }
+
+        /* 矩阵表格 */
+        .matrix-table { border-collapse: separate; border-spacing: 0; width: 100%; }
+        .matrix-table th, .matrix-table td {
+            border: 1px solid #2a2f42;
+            padding: 6px 8px;
+            text-align: center;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        .matrix-table th {
+            background: #1a1e2e;
+            color: #c9a96e;
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+        .matrix-table td:first-child {
+            text-align: left;
+            position: sticky;
+            left: 0;
+            z-index: 1;
+            background: #141722;
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .matrix-table th:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 3;
+        }
+        .matrix-table tr:hover td { background: rgba(201,169,110,0.04); }
+
+        /* 数据单元格 */
+        .cell-data {
+            color: #3b82f6;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            border-radius: 4px;
+            display: inline-block;
+            padding: 2px 8px;
+        }
+        .cell-data:hover {
+            color: #60a5fa;
+            background: rgba(59,130,246,0.1);
+            transform: translateY(-1px);
+        }
+        .cell-empty { color: #374151; }
+        .cell-placeholder { color: #4b5563; font-style: italic; }
+
+        /* 类别行 */
+        .category-row td {
+            background: rgba(201,169,110,0.06) !important;
+            color: #c9a96e;
+            font-weight: 600;
+            font-size: 13px;
+            text-align: left !important;
+            padding: 8px 12px !important;
+        }
+
+        /* 详情面板动画 */
+        .detail-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+            opacity: 0;
+        }
+        .detail-panel.open {
+            max-height: 800px;
+            opacity: 1;
+        }
+
+        /* 加载动画 */
+        .spinner {
+            width: 32px; height: 32px;
+            border: 3px solid #2a2f42;
+            border-top-color: #c9a96e;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* 脉冲点 */
+        .pulse-dot {
+            width: 8px; height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+        }
+
+        /* 列表项动画 */
+        .list-item {
+            animation: fadeSlideIn 0.3s ease-out forwards;
+            opacity: 0;
+        }
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Toast 通知 */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            animation: toastIn 0.3s ease-out;
+            max-width: 360px;
+        }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* 复选框自定义 */
+        .custom-checkbox {
+            appearance: none;
+            width: 16px; height: 16px;
+            border: 2px solid #2a2f42;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .custom-checkbox:checked {
+            background: #c9a96e;
+            border-color: #c9a96e;
+        }
+        .custom-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            top: -2px; left: 1px;
+            font-size: 12px;
+            color: #0c0e14;
+            font-weight: bold;
+        }
+
+        /* 按钮样式 */
+        .btn-gold {
+            background: linear-gradient(135deg, #c9a96e, #a08040);
+            color: #0c0e14;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(201,169,110,0.3); }
+        .btn-gold:active { transform: translateY(0); }
+        .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .btn-outline {
+            background: transparent;
+            color: #c9a96e;
+            border: 1px solid #c9a96e;
+            padding: 6px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+        .btn-outline:hover { background: rgba(201,169,110,0.1); }
+
+        /* 选择器样式 */
+        select, .select-styled {
+            background: #1a1e2e;
+            color: #e5e7eb;
+            border: 1px solid #2a2f42;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        select:hover, select:focus { border-color: #c9a96e; outline: none; }
+        select option { background: #1a1e2e; color: #e5e7eb; }
+
+        /* 图片预览 */
+        .img-preview {
+            max-width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 1px solid #2a2f42;
+        }
+
+        /* 进度条 */
+        .progress-bar {
+            height: 3px;
+            background: #2a2f42;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #c9a96e, #e0c992);
+            transition: width 0.3s;
+            border-radius: 2px;
+        }
+
+        /* 标签页 */
+        .tab-btn {
+            padding: 8px 16px;
+            border-bottom: 2px solid transparent;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        .tab-btn:hover { color: #e5e7eb; }
+        .tab-btn.active { color: #c9a96e; border-bottom-color: #c9a96e; }
+    </style>
+</head>
+<body>
+<main class="max-w-7xl mx-auto px-4 py-6">
+    <!-- 头部 -->
+    <header class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="font-serif text-2xl font-bold text-gold tracking-wide">上海市统计局</h1>
+            <p class="text-fg-dim text-sm mt-1">月度统计数据获取工具</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="pulse-dot"></div>
+            <span class="text-xs text-fg-dim" id="serverStatus">检测中...</span>
+        </div>
+    </header>
+
+    <!-- 筛选区域 -->
+    <section class="bg-surface border border-border rounded-xl p-5 mb-6">
+        <div class="flex flex-wrap items-end gap-4">
+            <div class="flex-1 min-w-[140px]">
+                <label class="block text-xs text-fg-dim mb-1.5">年份</label>
+                <select id="yearSelect" class="w-full">
+                    <option value="">加载中...</option>
+                </select>
+            </div>
+            <div class="flex-1 min-w-[160px]">
+                <label class="block text-xs text-fg-dim mb-1.5">指标分类</label>
+                <select id="categorySelect" class="w-full">
+                    <option value="">全部分类</option>
+                </select>
+            </div>
+            <div class="flex-1 min-w-[200px]">
+                <label class="block text-xs text-fg-dim mb-1.5">具体指标</label>
+                <select id="indicatorSelect" class="w-full">
+                    <option value="">全部指标</option>
+                </select>
+            </div>
+            <div>
+                <button id="queryBtn" class="btn-gold flex items-center gap-2" onclick="queryData()">
+                    <i class="fas fa-search text-sm"></i>
+                    <span>查询数据</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 标签页切换 -->
+    <div class="flex border-b border-border mb-4">
+        <button class="tab-btn active" data-tab="matrix" onclick="switchTab('matrix')">
+            <i class="fas fa-table-cells mr-1.5"></i>数据矩阵
+        </button>
+        <button class="tab-btn" data-tab="list" onclick="switchTab('list')">
+            <i class="fas fa-list mr-1.5"></i>数据列表
+        </button>
+    </div>
+
+    <!-- 数据矩阵视图 -->
+    <section id="matrixView" class="bg-surface border border-border rounded-xl overflow-hidden mb-6">
+        <div class="overflow-auto max-h-[500px]" id="matrixContainer">
+            <div id="matrixEmpty" class="flex flex-col items-center justify-center py-20 text-fg-dim">
+                <i class="fas fa-database text-4xl mb-3 text-border"></i>
+                <p>请选择年份和指标后点击"查询数据"</p>
+            </div>
+            <div id="matrixLoading" class="hidden flex flex-col items-center justify-center py-20">
+                <div class="spinner mb-3"></div>
+                <p class="text-fg-dim text-sm">正在获取数据矩阵...</p>
+            </div>
+            <div id="matrixContent" class="hidden"></div>
+        </div>
+    </section>
+
+    <!-- 数据列表视图 -->
+    <section id="listView" class="bg-surface border border-border rounded-xl overflow-hidden mb-6 hidden">
+        <div id="listEmpty" class="flex flex-col items-center justify-center py-20 text-fg-dim">
+            <i class="fas fa-list text-4xl mb-3 text-border"></i>
+            <p>请选择具体指标后查询数据列表</p>
+        </div>
+        <div id="listLoading" class="hidden flex flex-col items-center justify-center py-20">
+            <div class="spinner mb-3"></div>
+            <p class="text-fg-dim text-sm" id="listLoadingText">正在获取数据列表...</p>
+            <div class="progress-bar w-48 mt-3">
+                <div class="progress-bar-fill" id="listProgress" style="width: 0%"></div>
+            </div>
+        </div>
+        <div id="listContent" class="hidden"></div>
+    </section>
+
+    <!-- 详情面板 -->
+    <section class="detail-panel" id="detailPanel">
+        <div class="bg-card border border-border rounded-xl p-5 mb-6">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <h3 class="font-serif text-lg font-bold text-gold" id="detailTitle"></h3>
+                    <p class="text-fg-dim text-sm mt-1" id="detailDate"></p>
+                </div>
+                <button class="text-fg-dim hover:text-fg transition-colors" onclick="closeDetail()">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+            <div id="detailImage" class="mb-4 text-center"></div>
+            <div class="flex flex-wrap gap-3">
+                <button id="detailDownloadBtn" class="btn-gold flex items-center gap-2" onclick="downloadDetailXlsx()">
+                    <i class="fas fa-file-excel"></i>
+                    <span>下载 Excel</span>
+                </button>
+                <a id="detailSourceLink" href="#" target="_blank" class="btn-outline flex items-center gap-2 no-underline">
+                    <i class="fas fa-external-link-alt"></i>
+                    <span>打开原始页面</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 批量操作栏 -->
+    <section id="batchBar" class="bg-card border border-border rounded-xl p-4 mb-6 hidden">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+            <div class="flex items-center gap-3">
+                <input type="checkbox" class="custom-checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()">
+                <span class="text-sm text-fg-dim">
+                    已选择 <span class="text-gold font-bold" id="selectedCount">0</span> 项数据
+                </span>
+            </div>
+            <div class="flex gap-3">
+                <button class="btn-outline flex items-center gap-2" onclick="batchDownload()" id="batchDownloadBtn">
+                    <i class="fas fa-download"></i>
+                    <span>批量下载 Excel</span>
+                </button>
+                <button class="btn-outline flex items-center gap-2" onclick="exportSummary()">
+                    <i class="fas fa-file-export"></i>
+                    <span>导出汇总表</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 底部信息 -->
+    <footer class="text-center text-xs text-muted py-4">
+        <p>数据来源：上海市统计局 · 国家统计局上海调查总队 (tjj.sh.gov.cn)</p>
+        <p class="mt-1">本工具仅供学习研究使用，请遵守相关网站的使用条款</p>
+    </footer>
+</main>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// 状态管理
+// ══════════════════════════════════════════════════════════════
+const API_BASE = window.location.origin;
+const state = {
+    years: [],
+    yearUrlMap: {},
+    currentYear: null,
+    matrixData: null,
+    indicatorList: [],
+    selectedItems: new Set(),
+    currentDetail: null,
+    activeTab: 'matrix',
+    categories: []
+};
+
+// ══════════════════════════════════════════════════════════════
+// API 调用层
+// ══════════════════════════════════════════════════════════════
+async function apiGet(path) {
+    const resp = await fetch(`${API_BASE}${path}`);
+    if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ error: '请求失败' }));
+        throw new Error(err.error || `HTTP ${resp.status}`);
+    }
+    return resp.json();
+}
+
+// ══════════════════════════════════════════════════════════════
+// 初始化
+// ══════════════════════════════════════════════════════════════
+async function init() {
+    // 检查服务器状态
+    try {
+        await apiGet('/api/health');
+        document.getElementById('serverStatus').textContent = '服务已连接';
+    } catch {
+        document.getElementById('serverStatus').textContent = '服务未连接';
+        showToast('无法连接到后端服务，请确保 server.py 已启动', 'error');
+        return;
+    }
+
+    // 加载年份列表
+    try {
+        const data = await apiGet('/api/years');
+        state.years = data.years;
+        state.yearUrlMap = {};
+        const sel = document.getElementById('yearSelect');
+        sel.innerHTML = '';
+        data.years.forEach(y => {
+            state.yearUrlMap[y.year] = y.url;
+            const opt = document.createElement('option');
+            opt.value = y.year;
+            opt.textContent = y.label || `${y.year}年`;
+            sel.appendChild(opt);
+        });
+        if (data.years.length > 0) {
+            sel.value = data.years[0].year;
+            // 自动加载默认年份的矩阵数据以填充分类和指标下拉框
+            const defaultYear = data.years[0].year;
+            try {
+                const matrixData = await apiGet(`/api/matrix?year=${defaultYear}`);
+                state.matrixData = matrixData;
+                state.categories = matrixData.categories || [];
+                updateCategorySelectors(matrixData.categories);
+            } catch (e) {
+                console.warn('自动加载矩阵数据失败:', e);
+            }
+        }
+    } catch (e) {
+        showToast('加载年份列表失败: ' + e.message, 'error');
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
+// 标签页切换
+// ══════════════════════════════════════════════════════════════
+function switchTab(tab) {
+    state.activeTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+    });
+    document.getElementById('matrixView').classList.toggle('hidden', tab !== 'matrix');
+    document.getElementById('listView').classList.toggle('hidden', tab !== 'list');
+}
+
+// ══════════════════════════════════════════════════════════════
+// 查询数据
+// ══════════════════════════════════════════════════════════════
+async function queryData() {
+    const year = parseInt(document.getElementById('yearSelect').value);
+    if (!year) { showToast('请选择年份', 'warn'); return; }
+
+    state.currentYear = year;
+    state.selectedItems.clear();
+    updateBatchBar();
+
+    const btn = document.getElementById('queryBtn');
+    btn.disabled = true;
+
+    const indicatorId = document.getElementById('indicatorSelect').value;
+
+    if (indicatorId) {
+        // 选择了具体指标 → 自动切换到列表视图，加载全量数据
+        switchTab('list');
+        await loadIndicatorList(indicatorId, year);
+    } else {
+        // 未选择具体指标 → 加载矩阵视图
+        if (state.activeTab !== 'matrix') {
+            switchTab('matrix');
+        }
+        await loadMatrix(year);
+    }
+
+    btn.disabled = false;
+}
+
+// ══════════════════════════════════════════════════════════════
+// 加载数据矩阵
+// ══════════════════════════════════════════════════════════════
+async function loadMatrix(year) {
+    showMatrixLoading(true);
+
+    try {
+        const data = await apiGet(`/api/matrix?year=${year}`);
+        state.matrixData = data;
+        state.categories = data.categories || [];
+
+        // 更新分类和指标选择器
+        updateCategorySelectors(data.categories);
+
+        // 先结束加载状态，再渲染内容
+        showMatrixLoading(false);
+        renderMatrix(data);
+    } catch (e) {
+        showMatrixLoading(false);
+        showToast('加载矩阵失败: ' + e.message, 'error');
+    }
+}
+
+function showMatrixLoading(show) {
+    document.getElementById('matrixEmpty').classList.toggle('hidden', show);
+    document.getElementById('matrixLoading').classList.toggle('hidden', !show);
+    // 注意：matrixContent 由 renderMatrix 自行控制显隐，这里不操作
+}
+
+function renderMatrix(data) {
+    const container = document.getElementById('matrixContent');
+    const categories = data.categories || [];
+    const periodLabels = data.period_labels || [];
+
+    if (categories.length === 0) {
+        container.innerHTML = '<div class="text-center py-10 text-fg-dim">该年份暂无数据</div>';
+        container.classList.remove('hidden');
+        return;
+    }
+
+    let html = '<table class="matrix-table"><thead><tr>';
+    html += '<th class="min-w-[200px]">指标名称</th>';
+    periodLabels.forEach(label => {
+        html += `<th class="min-w-[60px]">${label}</th>`;
+    });
+    html += '</tr></thead><tbody>';
+
+    let currentCat = '';
+    categories.forEach(ind => {
+        // 类别标题行
+        if (ind.category && ind.category !== currentCat) {
+            currentCat = ind.category;
+            const catDisplay = currentCat.replace(/^[一二三四五六七八九十]+、/, '');
+            html += `<tr class="category-row"><td colspan="${periodLabels.length + 1}">${catDisplay}</td></tr>`;
+        }
+
+        html += '<tr>';
+        const displayName = ind.name.replace(/^[一二三四五六七八九十\d]+[、.]\s*/, '');
+        html += `<td title="${displayName}">${displayName}</td>`;
+
+        periodLabels.forEach(label => {
+            const period = ind.periods ? ind.periods[label] : null;
+            if (period && period.has_data && period.url) {
+                html += `<td><span class="cell-data" onclick="showDetail('${encodeURIComponent(period.url)}')" title="${period.label}">${period.label}</span></td>`;
+            } else if (period && !period.has_data && period.label) {
+                html += `<td><span class="cell-placeholder">${period.label}</span></td>`;
+            } else {
+                html += '<td><span class="cell-empty">-</span></td>';
+            }
+        });
+
+        html += '</tr>';
+    });
+
+    html += '</tbody></table>';
+    container.innerHTML = html;
+    container.classList.remove('hidden');
+}
+
+function updateCategorySelectors(categories) {
+    const catSel = document.getElementById('categorySelect');
+    const indSel = document.getElementById('indicatorSelect');
+
+    // 提取唯一分类，清理显示名称（去掉"一、"等序号前缀）
+    const catMap = new Map();
+    categories.forEach(c => {
+        if (c.category && !catMap.has(c.category)) {
+            const displayName = c.category.replace(/^[一二三四五六七八九十]+、/, '');
+            catMap.set(c.category, displayName);
+        }
+    });
+
+    const prevCat = catSel.value;
+    const prevInd = indSel.value;
+
+    catSel.innerHTML = '<option value="">全部分类</option>';
+    // 按分类原始文本排序（保持中文数字顺序）
+    [...catMap.entries()].sort((a, b) => a[0].localeCompare(b[0], 'zh')).forEach(([catKey, catDisplay]) => {
+        const opt = document.createElement('option');
+        opt.value = catKey;
+        opt.textContent = catDisplay;
+        catSel.appendChild(opt);
+    });
+    catSel.value = prevCat;
+
+    updateIndicatorSelectors(categories);
+}
+
+function updateIndicatorSelectors(categories) {
+    const catVal = document.getElementById('categorySelect').value;
+    const indSel = document.getElementById('indicatorSelect');
+    const prevInd = indSel.value;
+
+    const filtered = catVal ? categories.filter(c => c.category === catVal) : categories;
+
+    indSel.innerHTML = '<option value="">全部指标</option>';
+    filtered.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        // 清理指标名称中的序号前缀（如"1、工业生产情况" → "工业生产情况"）
+        const cleanName = c.name.replace(/^[一二三四五六七八九十\d]+[、.]\s*/, '');
+        opt.textContent = cleanName;
+        indSel.appendChild(opt);
+    });
+    indSel.value = prevInd;
+}
+
+// 分类选择器变化时更新指标选择器
+document.getElementById('categorySelect').addEventListener('change', () => {
+    if (state.matrixData) {
+        updateIndicatorSelectors(state.matrixData.categories || []);
+    }
+    // 如果切换到列表视图且有选中指标，自动加载
+    if (state.activeTab === 'list') {
+        const indicatorId = document.getElementById('indicatorSelect').value;
+        const year = parseInt(document.getElementById('yearSelect').value);
+        if (indicatorId && year) {
+            loadIndicatorList(indicatorId, year);
+        }
+    }
+});
+
+// 年份切换时自动加载矩阵数据以填充分类和指标下拉框
+document.getElementById('yearSelect').addEventListener('change', async () => {
+    const year = parseInt(document.getElementById('yearSelect').value);
+    if (!year) return;
+
+    // 重置分类和指标选择器
+    document.getElementById('categorySelect').innerHTML = '<option value="">加载中...</option>';
+    document.getElementById('indicatorSelect').innerHTML = '<option value="">全部指标</option>';
+
+    try {
+        const data = await apiGet(`/api/matrix?year=${year}`);
+        state.matrixData = data;
+        state.categories = data.categories || [];
+        updateCategorySelectors(data.categories);
+    } catch (e) {
+        document.getElementById('categorySelect').innerHTML = '<option value="">全部分类</option>';
+        showToast('加载分类数据失败: ' + e.message, 'error');
+    }
+});
+
+// ══════════════════════════════════════════════════════════════
+// 加载指标列表
+// ══════════════════════════════════════════════════════════════
+async function loadIndicatorList(indicatorId, year) {
+    const listEmpty = document.getElementById('listEmpty');
+    const listLoading = document.getElementById('listLoading');
+    const listContent = document.getElementById('listContent');
+
+    listEmpty.classList.add('hidden');
+    listContent.classList.add('hidden');
+    listLoading.classList.remove('hidden');
+    document.getElementById('listProgress').style.width = '0%';
+    document.getElementById('listLoadingText').textContent = '正在获取数据列表...';
+
+    try {
+        const data = await apiGet(`/api/indicator-list?indicator_id=${indicatorId}&year=${year}`);
+        state.indicatorList = data.items || [];
+        state.selectedItems.clear();
+        updateBatchBar();
+
+        document.getElementById('listProgress').style.width = '100%';
+
+        // 如果还没有矩阵数据，后台静默加载以获取指标名称
+        if (!state.matrixData || state.matrixData.year !== year) {
+            apiGet(`/api/matrix?year=${year}`).then(matrixData => {
+                state.matrixData = matrixData;
+                state.categories = matrixData.categories || [];
+                // 更新列表头部的指标名称显示
+                const rawName = (matrixData.categories || []).find(c => c.id === indicatorId)?.name || '';
+                if (rawName) {
+                    const nameEl = document.querySelector('#listContent .text-gold.font-semibold');
+                    if (nameEl) {
+                        nameEl.textContent = rawName.replace(/^[一二三四五六七八九十\d]+[、.]\s*/, '');
+                    }
+                }
+            }).catch(() => {});
+        }
+
+        setTimeout(() => {
+            listLoading.classList.add('hidden');
+            renderIndicatorList(data.items || [], indicatorId);
+        }, 300);
+    } catch (e) {
+        listLoading.classList.add('hidden');
+        listEmpty.classList.remove('hidden');
+        showToast('加载列表失败: ' + e.message, 'error');
+    }
+}
+
+function renderIndicatorList(items, indicatorId) {
+    const container = document.getElementById('listContent');
+    const year = state.currentYear || '';
+
+    if (items.length === 0) {
+        container.innerHTML = '<div class="text-center py-10 text-fg-dim">该指标在所选年份暂无数据</div>';
+        container.classList.remove('hidden');
+        return;
+    }
+
+    // 找到指标名称
+    const rawName = (state.matrixData?.categories || []).find(c => c.id === indicatorId)?.name || '';
+    const indicatorName = rawName
+        ? rawName.replace(/^[一二三四五六七八九十\d]+[、.]\s*/, '')
+        : indicatorId;
+
+    let html = `
+        <div class="px-5 py-3 border-b border-border flex items-center justify-between">
+            <div>
+                <span class="text-gold font-semibold">${indicatorName}</span>
+                <span class="text-fg-dim text-sm ml-2">${year}年 · 共 ${items.length} 条数据</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="btn-outline text-xs flex items-center gap-1.5" onclick="exportAllData()">
+                    <i class="fas fa-file-excel"></i>
+                    <span>导出全部数据</span>
+                </button>
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" class="custom-checkbox" onchange="toggleSelectAllList(this.checked)">
+                    <span class="text-xs text-fg-dim">全选</span>
+                </div>
+            </div>
+        </div>
+        <div class="divide-y divide-border max-h-[500px] overflow-auto">
+    `;
+
+    items.forEach((item, idx) => {
+        const dateStr = item.publish_date || '未知日期';
+        html += `
+            <div class="list-item flex items-center gap-3 px-5 py-3 hover:bg-card/50 transition-colors" style="animation-delay: ${idx * 30}ms">
+                <input type="checkbox" class="custom-checkbox item-checkbox" data-url="${item.url}" data-title="${item.title}" data-date="${dateStr}" onchange="updateSelection()">
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm text-fg truncate">${item.title}</p>
+                    <p class="text-xs text-fg-dim mt-0.5">${dateStr}</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button class="text-accent hover:text-blue-400 text-sm transition-colors" onclick="showDetail('${encodeURIComponent(item.url)}')" title="查看详情">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="text-gold hover:text-gold-light text-sm transition-colors" onclick="quickDownload('${encodeURIComponent(item.url)}')" title="下载">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+
+    html += '</div>';
+    container.innerHTML = html;
+    container.classList.remove('hidden');
+}
+
+// ══════════════════════════════════════════════════════════════
+// 查看详情
+// ══════════════════════════════════════════════════════════════
+async function showDetail(encodedUrl) {
+    const url = decodeURIComponent(encodedUrl);
+    const panel = document.getElementById('detailPanel');
+
+    // 先展开面板并显示加载状态
+    panel.classList.add('open');
+    document.getElementById('detailTitle').textContent = '加载中...';
+    document.getElementById('detailDate').textContent = '';
+    document.getElementById('detailImage').innerHTML = '<div class="spinner mx-auto my-4"></div>';
+    document.getElementById('detailDownloadBtn').disabled = true;
+    document.getElementById('detailSourceLink').href = url;
+
+    try {
+        const data = await apiGet(`/api/detail?url=${encodeURIComponent(url)}`);
+        state.currentDetail = data;
+
+        document.getElementById('detailTitle').textContent = data.title || '未知标题';
+        document.getElementById('detailDate').textContent = data.publish_date ? `发布日期：${data.publish_date}` : '';
+        document.getElementById('detailSourceLink').href = url;
+
+        // 图片
+        const imgDiv = document.getElementById('detailImage');
+        if (data.image_url) {
+            const proxyUrl = `${API_BASE}/api/proxy-image?url=${encodeURIComponent(data.image_url)}`;
+            imgDiv.innerHTML = `<img src="${proxyUrl}" class="img-preview" alt="数据表格" onerror="this.parentElement.innerHTML='<p class=\\'text-fg-dim text-sm py-4\\'>图片加载失败</p>'">`;
+        } else {
+            imgDiv.innerHTML = '<p class="text-fg-dim text-sm py-4">暂无图片预览</p>';
+        }
+
+        // 下载按钮
+        const dlBtn = document.getElementById('detailDownloadBtn');
+        if (data.xlsx_url) {
+            dlBtn.disabled = false;
+            dlBtn.onclick = () => {
+                window.open(`${API_BASE}/api/download-xlsx?url=${encodeURIComponent(data.xlsx_url)}&filename=${encodeURIComponent(data.xlsx_name || 'data.xlsx')}`, '_blank');
+            };
+        } else {
+            dlBtn.disabled = true;
+            dlBtn.onclick = null;
+        }
+
+        // 滚动到详情面板
+        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    } catch (e) {
+        document.getElementById('detailTitle').textContent = '加载失败';
+        document.getElementById('detailImage').innerHTML = `<p class="text-red-400 text-sm py-4">${e.message}</p>`;
+    }
+}
+
+function closeDetail() {
+    document.getElementById('detailPanel').classList.remove('open');
+    state.currentDetail = null;
+}
+
+// ══════════════════════════════════════════════════════════════
+// 快速下载（从列表视图）
+// ══════════════════════════════════════════════════════════════
+async function quickDownload(encodedUrl) {
+    const url = decodeURIComponent(encodedUrl);
+    try {
+        showToast('正在获取下载链接...', 'info');
+        const data = await apiGet(`/api/detail?url=${encodeURIComponent(url)}`);
+        if (data.xlsx_url) {
+            window.open(`${API_BASE}/api/download-xlsx?url=${encodeURIComponent(data.xlsx_url)}&filename=${encodeURIComponent(data.xlsx_name || 'data.xlsx')}`, '_blank');
+        } else {
+            showToast('该数据暂无可下载的 Excel 文件', 'warn');
+        }
+    } catch (e) {
+        showToast('获取下载链接失败: ' + e.message, 'error');
+    }
+}
+
+function downloadDetailXlsx() {
+    if (state.currentDetail && state.currentDetail.xlsx_url) {
+        window.open(`${API_BASE}/api/download-xlsx?url=${encodeURIComponent(state.currentDetail.xlsx_url)}&filename=${encodeURIComponent(state.currentDetail.xlsx_name || 'data.xlsx')}`, '_blank');
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
+// 选择与批量操作
+// ══════════════════════════════════════════════════════════════
+function updateSelection() {
+    state.selectedItems.clear();
+    document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
+        state.selectedItems.add({
+            url: cb.dataset.url,
+            title: cb.dataset.title,
+            date: cb.dataset.date
+        });
+    });
+    updateBatchBar();
+}
+
+function toggleSelectAll() {
+    const checked = document.getElementById('selectAllCheckbox').checked;
+    document.querySelectorAll('.item-checkbox').forEach(cb => { cb.checked = checked; });
+    updateSelection();
+}
+
+function toggleSelectAllList(checked) {
+    document.querySelectorAll('.item-checkbox').forEach(cb => { cb.checked = checked; });
+    updateSelection();
+}
+
+function updateBatchBar() {
+    const bar = document.getElementById('batchBar');
+    const count = state.selectedItems.size;
+    document.getElementById('selectedCount').textContent = count;
+    bar.classList.toggle('hidden', count === 0);
+}
+
+async function batchDownload() {
+    const items = [...state.selectedItems];
+    if (items.length === 0) { showToast('请先选择数据项', 'warn'); return; }
+
+    showToast(`开始批量下载 ${items.length} 个文件...`, 'info');
+
+    for (let i = 0; i < items.length; i++) {
+        try {
+            const data = await apiGet(`/api/detail?url=${encodeURIComponent(items[i].url)}`);
+            if (data.xlsx_url) {
+                window.open(`${API_BASE}/api/download-xlsx?url=${encodeURIComponent(data.xlsx_url)}&filename=${encodeURIComponent(data.xlsx_name || `data_${i + 1}.xlsx`)}`, '_blank');
+                await new Promise(r => setTimeout(r, 800)); // 间隔避免浏览器拦截
+            }
+        } catch (e) {
+            console.warn(`下载第 ${i + 1} 项失败:`, e.message);
+        }
+    }
+
+    showToast(`批量下载完成，共处理 ${items.length} 项`, 'success');
+}
+
+function exportSummary() {
+    const items = [...state.selectedItems];
+    if (items.length === 0) { showToast('请先选择数据项', 'warn'); return; }
+    doExportExcel(items, '选中数据');
+}
+
+function exportAllData() {
+    const items = state.indicatorList;
+    if (items.length === 0) { showToast('暂无数据可导出', 'warn'); return; }
+
+    // 获取指标名称
+    const indicatorId = document.getElementById('indicatorSelect').value;
+    const rawName = (state.matrixData?.categories || []).find(c => c.id === indicatorId)?.name || '';
+    const indicatorName = rawName.replace(/^[一二三四五六七八九十\d]+[、.]\s*/, '') || '数据';
+
+    showToast(`正在获取 ${items.length} 个数据源的附件并合并，请稍候...`, 'info');
+
+    // 构建请求参数：所有详情页 URL
+    const params = new URLSearchParams();
+    items.forEach(item => {
+        params.append('urls', item.url);
+    });
+    params.append('indicator_name', indicatorName);
+
+    // 通过后端合并导出接口下载
+    const exportUrl = `${API_BASE}/api/export-merged?${params.toString()}`;
+
+    // 使用 fetch 下载，以便处理错误
+    fetch(exportUrl)
+        .then(resp => {
+            if (!resp.ok) {
+                return resp.json().then(err => {
+                    throw new Error(err.error || `HTTP ${resp.status}`);
+                });
+            }
+            return resp.blob();
+        })
+        .then(blob => {
+            const year = state.currentYear || 'all';
+            const filename = `${indicatorName}_${year}年_全量数据.xlsx`;
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast(`导出成功！共合并 ${items.length} 个数据源`, 'success');
+        })
+        .catch(e => {
+            showToast('导出失败: ' + e.message, 'error');
+        });
+}
+
+function doExportExcel(items, scope) {
+
+    try {
+        const wb = XLSX.utils.book_new();
+
+        // 汇总表
+        const summaryData = items.map((item, idx) => ({
+            '序号': idx + 1,
+            '指标名称': item.title,
+            '发布日期': item.date,
+            '数据来源链接': item.url
+        }));
+        const ws = XLSX.utils.json_to_sheet(summaryData);
+
+        // 设置列宽
+        ws['!cols'] = [
+            { wch: 6 },   // 序号
+            { wch: 40 },  // 指标名称
+            { wch: 14 },  // 发布日期
+            { wch: 60 },  // 链接
+        ];
+
+        XLSX.utils.book_append_sheet(wb, ws, '数据汇总');
+
+        // 生成文件名：包含指标名称、年份、范围
+        const year = state.currentYear || 'all';
+        const indicatorId = document.getElementById('indicatorSelect').value;
+        const rawName = (state.matrixData?.categories || []).find(c => c.id === indicatorId)?.name || '';
+        const cleanName = rawName.replace(/^[一二三四五六七八九十\d]+[、.]\s*/, '') || '数据';
+        XLSX.writeFile(wb, `上海市统计局_${cleanName}_${year}${scope === '全部数据' ? '_全量' : '_选中'}.xlsx`);
+        showToast(`${scope}导出成功，共 ${items.length} 条`, 'success');
+    } catch (e) {
+        showToast('导出失败: ' + e.message, 'error');
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
+// Toast 通知
+// ══════════════════════════════════════════════════════════════
+function showToast(message, type = 'info') {
+    const colors = {
+        info: 'bg-accent/20 text-blue-300 border border-accent/30',
+        success: 'bg-green-500/20 text-green-300 border border-green-500/30',
+        warn: 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30',
+        error: 'bg-red-500/20 text-red-300 border border-red-500/30',
+    };
+    const icons = {
+        info: 'fa-info-circle',
+        success: 'fa-check-circle',
+        warn: 'fa-exclamation-triangle',
+        error: 'fa-times-circle',
+    };
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${colors[type] || colors.info}`;
+    toast.innerHTML = `<i class="fas ${icons[type] || icons.info} mr-2"></i>${message}`;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(40px)';
+        toast.style.transition = 'all 0.3s';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// ══════════════════════════════════════════════════════════════
+// 启动
+// ══════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

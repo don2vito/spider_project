@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>国家统计局月度数据查看器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans SC', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --sidebar-width: 320px;
+            --header-height: 64px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #c1c7d0; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a0a7b4; }
+
+        /* 树节点样式 */
+        .tree-node {
+            user-select: none;
+        }
+        .tree-node .tree-children {
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .tree-node .tree-children.collapsed {
+            max-height: 0 !important;
+        }
+        .tree-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            color: #9ca3af;
+            font-size: 10px;
+            flex-shrink: 0;
+        }
+        .tree-toggle.expanded {
+            transform: rotate(90deg);
+        }
+        .tree-toggle.leaf {
+            visibility: hidden;
+        }
+
+        /* 自定义 checkbox */
+        .custom-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #d1d5db;
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+            transition: all 0.15s ease;
+        }
+        .custom-checkbox:checked {
+            background: #2563eb;
+            border-color: #2563eb;
+        }
+        .custom-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 1px;
+            width: 5px;
+            height: 9px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        .custom-checkbox:indeterminate {
+            background: #2563eb;
+            border-color: #2563eb;
+        }
+        .custom-checkbox:indeterminate::after {
+            content: '';
+            position: absolute;
+            left: 2px;
+            top: 5px;
+            width: 8px;
+            height: 2px;
+            background: white;
+        }
+
+        /* 数据表格 */
+        .data-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 13px;
+        }
+        .data-table thead th {
+            position: sticky;
+            top: 0;
+            background: #f8fafc;
+            z-index: 10;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 10px 12px;
+            text-align: right;
+            white-space: nowrap;
+            font-weight: 600;
+            color: #475569;
+            font-size: 12px;
+        }
+        .data-table thead th:first-child {
+            text-align: left;
+            position: sticky;
+            left: 0;
+            z-index: 11;
+            min-width: 160px;
+            background: #f8fafc;
+        }
+        .data-table thead th:nth-child(2) {
+            text-align: left;
+            position: sticky;
+            left: 160px;
+            z-index: 11;
+            min-width: 280px;
+            background: #f8fafc;
+        }
+        .data-table tbody td {
+            padding: 8px 12px;
+            text-align: right;
+            border-bottom: 1px solid #f1f5f9;
+            white-space: nowrap;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+        .data-table tbody td:first-child {
+            text-align: left;
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 5;
+            font-family: 'Noto Sans SC', sans-serif;
+            font-size: 13px;
+            max-width: 160px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #64748b;
+            font-weight: 500;
+        }
+        .data-table tbody td:nth-child(2) {
+            text-align: left;
+            position: sticky;
+            left: 160px;
+            background: white;
+            z-index: 5;
+            font-family: 'Noto Sans SC', sans-serif;
+            font-size: 13px;
+            max-width: 320px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .data-table tbody tr:hover td {
+            background: #eff6ff;
+        }
+        .data-table tbody tr:hover td:first-child,
+        .data-table tbody tr:hover td:nth-child(2) {
+            background: #eff6ff;
+        }
+
+        /* 进度条动画 */
+        @keyframes progress-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .progress-active {
+            animation: progress-pulse 1.5s ease-in-out infinite;
+        }
+
+        /* 加载骨架屏 */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        /* 移动端抽屉 */
+        .drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 40;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .drawer-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .drawer {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 85vw;
+            max-width: 360px;
+            background: white;
+            z-index: 50;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+        }
+        .drawer.active {
+            transform: translateX(0);
+        }
+
+        /* Toast 通知 */
+        .toast {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 100;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.success { background: #16a34a; }
+        .toast.error { background: #dc2626; }
+        .toast.info { background: #2563eb; }
+    </style>
+</head>
+<body>
+    <!-- Toast 容器 -->
+    <div id="toast" class="toast"></div>
+
+    <!-- 顶部导航栏 -->
+    <header class="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 flex items-center px-4 z-30 shadow-sm">
+        <!-- 移动端菜单按钮 -->
+        <button id="menu-btn" class="lg:hidden mr-3 p-2 rounded-lg hover:bg-gray-100 transition-colors" onclick="toggleDrawer()">
+            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+        </button>
+        <!-- Logo & 标题 -->
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-gradient-to-br from-brand-600 to-brand-800 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-base font-bold text-gray-800 leading-tight">国家统计局月度数据</h1>
+                <p class="text-xs text-gray-400 leading-tight">National Bureau of Statistics · Monthly Data</p>
+            </div>
+        </div>
+
+        <!-- 右侧操作区 -->
+        <div class="ml-auto flex items-center gap-3">
+            <div id="selection-badge" class="hidden items-center gap-1.5 px-3 py-1.5 bg-brand-50 text-brand-700 rounded-full text-sm font-medium">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>已选 <strong id="selected-count">0</strong> 项</span>
+            </div>
+            <button id="fetch-btn" onclick="fetchData()" disabled
+                class="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium hover:bg-brand-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all flex items-center gap-2 shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                获取数据
+            </button>
+            <button id="export-btn" onclick="exportToExcel()" disabled
+                class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all flex items-center gap-2 shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                导出 Excel
+            </button>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <div class="flex" style="margin-top: var(--header-height); height: calc(100vh - var(--header-height));">
+        <!-- 左侧指标树面板 (桌面端) -->
+        <aside id="sidebar" class="hidden lg:flex flex-col bg-white border-r border-gray-200 flex-shrink-0" style="width: var(--sidebar-width);">
+            <!-- 树操作栏 -->
+            <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+                <span class="text-sm font-semibold text-gray-600">指标分类</span>
+                <div class="flex gap-1">
+                    <button onclick="selectAll()" class="px-2 py-1 text-xs text-brand-600 hover:bg-brand-50 rounded transition-colors font-medium">全选</button>
+                    <button onclick="deselectAll()" class="px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 rounded transition-colors">清空</button>
+                </div>
+            </div>
+            <!-- 搜索框 -->
+            <div class="px-3 py-2 border-b border-gray-100">
+                <div class="relative">
+                    <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input id="tree-search" type="text" placeholder="搜索指标..." oninput="filterTree(this.value)"
+                        class="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-200 focus:border-brand-400 transition-all bg-gray-50">
+                </div>
+            </div>
+            <!-- 树容器 -->
+            <div id="tree-container" class="flex-1 overflow-y-auto p-2">
+                <div id="tree-loading" class="flex flex-col items-center justify-center h-full text-gray-400">
+                    <svg class="w-8 h-8 mb-2 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                    <span class="text-sm">正在加载指标树...</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 右侧数据区域 -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <!-- 数据工具栏 -->
+            <div class="px-4 py-2 bg-white border-b border-gray-100 flex items-center justify-between">
+                <div class="flex items-center gap-3 text-sm text-gray-500">
+                    <span id="data-info">请选择指标后点击"获取数据"</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="time-range" class="text-xs text-gray-400"></span>
+                </div>
+            </div>
+
+            <!-- 进度条 -->
+            <div id="progress-container" class="hidden px-4 py-3 bg-brand-50 border-b border-brand-100">
+                <div class="flex items-center justify-between mb-1.5">
+                    <span id="progress-text" class="text-sm text-brand-700 font-medium">正在获取数据...</span>
+                    <span id="progress-percent" class="text-sm text-brand-600 font-mono">0%</span>
+                </div>
+                <div class="w-full bg-brand-100 rounded-full h-2 overflow-hidden">
+                    <div id="progress-bar" class="bg-brand-600 h-2 rounded-full transition-all duration-300 progress-active" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- 数据表格容器 -->
+            <div id="table-container" class="flex-1 overflow-auto">
+                <!-- 空状态 -->
+                <div id="empty-state" class="flex flex-col items-center justify-center h-full text-gray-400">
+                    <svg class="w-20 h-20 mb-4 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <p class="text-base font-medium text-gray-400 mb-1">暂无数据</p>
+                    <p class="text-sm text-gray-300">在左侧选择指标，然后点击"获取数据"</p>
+                </div>
+                <!-- 表格将在此处动态生成 -->
+                <table id="data-table" class="data-table hidden w-full"></table>
+            </div>
+        </main>
+    </div>
+
+    <!-- 移动端抽屉 -->
+    <div id="drawer-overlay" class="drawer-overlay lg:hidden" onclick="toggleDrawer()"></div>
+    <div id="drawer" class="drawer lg:hidden">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gray-50">
+            <span class="font-semibold text-gray-700">指标分类</span>
+            <button onclick="toggleDrawer()" class="p-1 rounded hover:bg-gray-200 transition-colors">
+                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="px-3 py-2 border-b border-gray-100">
+            <div class="relative">
+                <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input id="drawer-tree-search" type="text" placeholder="搜索指标..." oninput="filterTree(this.value)"
+                    class="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-200 focus:border-brand-400 transition-all bg-gray-50">
+            </div>
+        </div>
+        <div class="flex gap-1 px-3 py-2 border-b border-gray-100">
+            <button onclick="selectAll()" class="px-2 py-1 text-xs text-brand-600 hover:bg-brand-50 rounded transition-colors font-medium">全选</button>
+            <button onclick="deselectAll()" class="px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 rounded transition-colors">清空</button>
+        </div>
+        <div id="drawer-tree-container" class="flex-1 overflow-y-auto p-2" style="height: calc(100vh - 180px);"></div>
+    </div>
+
+    <script>
+    // ==================== 配置 ====================
+    const API_BASE = 'http://localhost:5000';
+    const MONTHS = 36;
+
+    // ==================== 全局状态 ====================
+    let treeData = [];          // 完整指标树数据
+    let tableData = [];         // 当前表格数据（用于导出）
+    let allLeafNodes = [];      // 所有叶子节点引用
+
+    // ==================== 初始化 ====================
+    document.addEventListener('DOMContentLoaded', () => {
+        loadTree();
+    });
+
+    // ==================== 指标树加载 ====================
+    async function loadTree() {
+        try {
+            const resp = await fetch(`${API_BASE}/api/tree?code=1`);
+            const result = await resp.json();
+            if (!result.success) throw new Error(result.error);
+
+            treeData = result.data;
+            allLeafNodes = [];
+
+            // 渲染到桌面端和移动端
+            const sidebarContainer = document.getElementById('tree-container');
+            const drawerContainer = document.getElementById('drawer-tree-container');
+
+            sidebarContainer.innerHTML = '';
+            drawerContainer.innerHTML = '';
+
+            renderTree(treeData, sidebarContainer, 0);
+            renderTree(treeData, drawerContainer, 0);
+
+            updateSelectionCount();
+            showToast('指标树加载完成', 'success');
+        } catch (e) {
+            console.error('加载指标树失败:', e);
+            const containers = [document.getElementById('tree-container'), document.getElementById('drawer-tree-container')];
+            containers.forEach(c => {
+                c.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-red-400 p-4">
+                        <svg class="w-10 h-10 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                        <p class="text-sm font-medium">加载失败</p>
+                        <p class="text-xs mt-1 text-gray-400">${e.message}</p>
+                        <button onclick="loadTree()" class="mt-3 px-3 py-1.5 text-xs bg-brand-50 text-brand-600 rounded-lg hover:bg-brand-100 transition-colors">重试</button>
+                    </div>`;
+            });
+        }
+    }
+
+    // ==================== 树渲染 ====================
+    function renderTree(nodes, container, depth) {
+        nodes.forEach(node => {
+            const el = createTreeNode(node, depth);
+            container.appendChild(el);
+        });
+    }
+
+    function createTreeNode(node, depth) {
+        const div = document.createElement('div');
+        div.className = 'tree-node';
+        div.dataset.id = node.id;
+        div.dataset.name = node.name.toLowerCase();
+
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-1.5 py-1 px-1 rounded-md hover:bg-gray-50 transition-colors cursor-pointer group';
+        row.style.paddingLeft = `${depth * 16 + 4}px`;
+
+        // 展开/折叠箭头
+        const toggle = document.createElement('span');
+        toggle.className = 'tree-toggle' + (node.isLeaf ? ' leaf' : '');
+        toggle.innerHTML = '▶';
+        if (!node.isLeaf && node.children && node.children.length > 0) {
+            toggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleNode(toggle, node);
+            });
+        }
+
+        // Checkbox
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'custom-checkbox';
+        checkbox.dataset.id = node.id;
+        checkbox.dataset.isLeaf = node.isLeaf;
+        checkbox.dataset.name = node.name;
+        checkbox.addEventListener('change', () => handleCheckChange(node, checkbox));
+        checkbox.addEventListener('click', (e) => e.stopPropagation());
+
+        if (node.isLeaf) {
+            allLeafNodes.push({ id: node.id, name: node.name, checkbox });
+        }
+
+        // 名称标签
+        const label = document.createElement('span');
+        label.className = 'text-sm text-gray-700 truncate flex-1';
+        label.textContent = node.name;
+        if (node.isLeaf) {
+            label.className = 'text-sm text-gray-600 truncate flex-1';
+        }
+
+        // 叶子节点标记
+        if (node.isLeaf) {
+            const badge = document.createElement('span');
+            badge.className = 'text-[10px] text-gray-300 group-hover:text-brand-400 transition-colors flex-shrink-0';
+            badge.textContent = '📊';
+            row.appendChild(toggle);
+            row.appendChild(checkbox);
+            row.appendChild(label);
+            row.appendChild(badge);
+        } else {
+            const count = document.createElement('span');
+            count.className = 'text-[10px] text-gray-300 group-hover:text-gray-500 transition-colors flex-shrink-0';
+            count.textContent = node.children ? node.children.length : '';
+            row.appendChild(toggle);
+            row.appendChild(checkbox);
+            row.appendChild(label);
+            row.appendChild(count);
+        }
+
+        // 点击行也能切换
+        row.addEventListener('click', () => {
+            checkbox.checked = !checkbox.checked;
+            handleCheckChange(node, checkbox);
+            if (!node.isLeaf && node.children && node.children.length > 0) {
+                toggleNode(toggle, node);
+            }
+        });
+
+        div.appendChild(row);
+
+        // 子节点容器
+        if (!node.isLeaf && node.children && node.children.length > 0) {
+            const childrenDiv = document.createElement('div');
+            childrenDiv.className = 'tree-children';
+            childrenDiv.style.maxHeight = 'none';
+            node.children.forEach(child => {
+                childrenDiv.appendChild(createTreeNode(child, depth + 1));
+            });
+            div.appendChild(childrenDiv);
+        }
+
+        return div;
+    }
+
+    function toggleNode(toggle, node) {
+        const childrenDiv = toggle.closest('.tree-node').querySelector(':scope > .tree-children');
+        if (!childrenDiv) return;
+
+        if (childrenDiv.classList.contains('collapsed')) {
+            childrenDiv.classList.remove('collapsed');
+            childrenDiv.style.maxHeight = childrenDiv.scrollHeight + 'px';
+            toggle.classList.add('expanded');
+            setTimeout(() => { childrenDiv.style.maxHeight = 'none'; }, 300);
+        } else {
+            childrenDiv.style.maxHeight = childrenDiv.scrollHeight + 'px';
+            requestAnimationFrame(() => {
+                childrenDiv.classList.add('collapsed');
+                toggle.classList.remove('expanded');
+            });
+        }
+    }
+
+    // ==================== 选中逻辑 ====================
+    function handleCheckChange(node, checkbox) {
+        // 向下传播
+        setChildrenState(node, checkbox.checked);
+        // 向上传播
+        updateParentState(checkbox);
+        updateSelectionCount();
+    }
+
+    function setChildrenState(node, checked) {
+        if (!node.children) return;
+        node.children.forEach(child => {
+            const cb = findCheckbox(child.id);
+            if (cb) {
+                cb.checked = checked;
+                cb.indeterminate = false;
+            }
+            setChildrenState(child, checked);
+        });
+    }
+
+    function updateParentState(checkbox) {
+        const parentDiv = checkbox.closest('.tree-children');
+        if (!parentDiv) return;
+        const parentRow = parentDiv.previousElementSibling;
+        if (!parentRow) return;
+        const parentCb = parentRow.querySelector('.custom-checkbox');
+        if (!parentCb) return;
+
+        const siblings = parentDiv.querySelectorAll(':scope > .tree-node > div:first-child .custom-checkbox');
+        let allChecked = true;
+        let someChecked = false;
+        siblings.forEach(cb => {
+            if (cb.checked) someChecked = true;
+            else allChecked = false;
+            if (cb.indeterminate) someChecked = true;
+        });
+
+        parentCb.checked = allChecked;
+        parentCb.indeterminate = !allChecked && someChecked;
+
+        // 递归向上
+        updateParentState(parentCb);
+    }
+
+    function findCheckbox(id) {
+        return document.querySelector(`.custom-checkbox[data-id="${id}"]`);
+    }
+
+    function selectAll() {
+        document.querySelectorAll('.custom-checkbox').forEach(cb => {
+            cb.checked = true;
+            cb.indeterminate = false;
+        });
+        updateSelectionCount();
+    }
+
+    function deselectAll() {
+        document.querySelectorAll('.custom-checkbox').forEach(cb => {
+            cb.checked = false;
+            cb.indeterminate = false;
+        });
+        updateSelectionCount();
+    }
+
+    function getSelectedLeafCids() {
+        const selected = [];
+        document.querySelectorAll('.custom-checkbox').forEach(cb => {
+            if (cb.checked && cb.dataset.isLeaf === 'true') {
+                selected.push({ id: cb.dataset.id, name: cb.dataset.name });
+            }
+        });
+        return selected;
+    }
+
+    function updateSelectionCount() {
+        const selected = getSelectedLeafCids();
+        const count = selected.length;
+        const badge = document.getElementById('selection-badge');
+        const countEl = document.getElementById('selected-count');
+        const fetchBtn = document.getElementById('fetch-btn');
+
+        countEl.textContent = count;
+        if (count > 0) {
+            badge.classList.remove('hidden');
+            badge.classList.add('flex');
+            fetchBtn.disabled = false;
+        } else {
+            badge.classList.add('hidden');
+            badge.classList.remove('flex');
+            fetchBtn.disabled = true;
+        }
+    }
+
+    // ==================== 搜索过滤 ====================
+    function filterTree(keyword) {
+        const kw = keyword.toLowerCase().trim();
+        const allNodes = document.querySelectorAll('.tree-node');
+
+        if (!kw) {
+            allNodes.forEach(n => n.style.display = '');
+            return;
+        }
+
+        allNodes.forEach(node => {
+            const name = node.dataset.name || '';
+            const hasMatch = name.includes(kw);
+            const childMatch = node.querySelector('.tree-node[data-name*="' + kw + '"]');
+
+            if (hasMatch || childMatch) {
+                node.style.display = '';
+                // 展开父级
+                if (childMatch) {
+                    const children = node.querySelector('.tree-children');
+                    if (children) {
+                        children.classList.remove('collapsed');
+                        const toggle = node.querySelector(':scope > div:first-child .tree-toggle');
+                        if (toggle) toggle.classList.add('expanded');
+                    }
+                }
+            } else {
+                node.style.display = 'none';
+            }
+        });
+    }
+
+    // ==================== 数据获取 ====================
+    async function fetchData() {
+        const selected = getSelectedLeafCids();
+        if (selected.length === 0) {
+            showToast('请至少选择一个指标', 'error');
+            return;
+        }
+
+        const cids = selected.map(s => s.id);
+        const fetchBtn = document.getElementById('fetch-btn');
+        const exportBtn = document.getElementById('export-btn');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const progressPercent = document.getElementById('progress-percent');
+        const dataInfo = document.getElementById('data-info');
+
+        fetchBtn.disabled = true;
+        exportBtn.disabled = true;
+        progressContainer.classList.remove('hidden');
+        progressBar.style.width = '0%';
+        progressText.textContent = `正在获取数据... (0/${cids.length})`;
+        progressPercent.textContent = '0%';
+        dataInfo.textContent = `正在获取 ${cids.length} 个指标集的数据...`;
+
+        // 显示时间范围
+        const now = new Date();
+        const startDate = new Date(now.getFullYear(), now.getMonth() - MONTHS + 1, 1);
+        const timeRange = document.getElementById('time-range');
+        timeRange.textContent = `${formatDate(startDate)} ~ ${formatDate(now)}（最近${MONTHS}个月）`;
+
+        try {
+            const resp = await fetch(`${API_BASE}/api/data`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cids, months: MONTHS })
+            });
+
+            const result = await resp.json();
+            if (!result.success) throw new Error(result.error || '请求失败');
+
+            // 逐步更新进度（模拟，因为后端是批量返回）
+            const dataItems = result.data;
+            const totalItems = dataItems.length;
+            let processedItems = 0;
+
+            for (let i = 0; i < totalItems; i++) {
+                processedItems = i + 1;
+                const pct = Math.round((processedItems / totalItems) * 100);
+                progressBar.style.width = pct + '%';
+                progressPercent.textContent = pct + '%';
+                progressText.textContent = `正在处理数据... (${processedItems}/${totalItems})`;
+                // 让 UI 有时间更新
+                await new Promise(r => setTimeout(r, 10));
+            }
+
+            renderTable(dataItems, selected);
+            const successCount = dataItems.filter(d => d.success).length;
+            dataInfo.textContent = `已加载 ${successCount}/${totalItems} 个指标集的数据`;
+
+            exportBtn.disabled = false;
+            showToast(`数据获取完成，共 ${successCount} 个指标集`, 'success');
+        } catch (e) {
+            console.error('获取数据失败:', e);
+            dataInfo.textContent = '获取数据失败: ' + e.message;
+            showToast('获取数据失败: ' + e.message, 'error');
+        } finally {
+            fetchBtn.disabled = false;
+            setTimeout(() => {
+                progressContainer.classList.add('hidden');
+            }, 1000);
+        }
+    }
+
+    // ==================== 表格渲染 ====================
+    function renderTable(dataItems, selectedLeafs) {
+        const table = document.getElementById('data-table');
+        const emptyState = document.getElementById('empty-state');
+
+        // 构建 cid -> 叶子节点名称（即三级分类名）映射
+        const cidNameMap = {};
+        if (selectedLeafs) {
+            selectedLeafs.forEach(s => { cidNameMap[s.id] = s.name; });
+        }
+
+        // 收集所有数据行
+        const allRows = [];
+        const timeSet = new Set();
+
+        dataItems.forEach(item => {
+            if (!item.success || !item.data) return;
+
+            // 获取该 cid 对应的三级分类名
+            const parentName = cidNameMap[item.cid] || '未知分类';
+
+            // 构建指标 ID -> 名称映射
+            const indicatorMap = {};
+            if (item.indicators) {
+                item.indicators.forEach(ind => {
+                    indicatorMap[ind._id] = ind.i_showname || ind._name || ind._id;
+                });
+            }
+
+            // 解析数据
+            if (Array.isArray(item.data)) {
+                item.data.forEach(datapoint => {
+                    const timeName = datapoint.name || datapoint.code || '';
+                    if (timeName) timeSet.add(timeName);
+
+                    if (datapoint.values && Array.isArray(datapoint.values)) {
+                        datapoint.values.forEach(val => {
+                            const indicatorName = val.i_showname || indicatorMap[val._id] || val._id || '未知指标';
+                            allRows.push({
+                                indicatorName: indicatorName,
+                                time: timeName,
+                                value: val.value !== null && val.value !== undefined ? val.value : '',
+                                unit: val.du_name || '',
+                                parentName: parentName
+                            });
+                        });
+                    }
+                });
+            }
+        });
+
+        if (allRows.length === 0) {
+            table.classList.add('hidden');
+            emptyState.classList.remove('hidden');
+            emptyState.innerHTML = `
+                <svg class="w-20 h-20 mb-4 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <p class="text-base font-medium text-gray-400 mb-1">无数据返回</p>
+                <p class="text-sm text-gray-300">所选指标在指定时间范围内可能没有数据</p>`;
+            return;
+        }
+
+        // 按"三级分类+指标名称"降序排列
+        allRows.sort((a, b) => {
+            const catCmp = b.parentName.localeCompare(a.parentName, 'zh-CN');
+            if (catCmp !== 0) return catCmp;
+            return b.indicatorName.localeCompare(a.indicatorName, 'zh-CN');
+        });
+
+        // 获取排序列表（时间列）— 按年月数值降序
+        const times = Array.from(timeSet).sort((a, b) => {
+            const ma = a.match(/(\d{4})年(\d{1,2})月/);
+            const mb = b.match(/(\d{4})年(\d{1,2})月/);
+            if (ma && mb) {
+                const va = parseInt(ma[1]) * 100 + parseInt(ma[2]);
+                const vb = parseInt(mb[1]) * 100 + parseInt(mb[2]);
+                return vb - va; // 降序：最新月份在前
+            }
+            return b.localeCompare(a, 'zh-CN');
+        });
+
+        // 构建表格
+        table.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+
+        // 表头
+        let thead = '<thead><tr><th>三级分类</th><th>指标名称</th>';
+        times.forEach(t => { thead += `<th>${t}</th>`; });
+        thead += '</tr></thead>';
+
+        // 表体 - 扁平行结构
+        let tbody = '<tbody>';
+        let prevParent = '';
+        let prevIndicator = '';
+
+        allRows.forEach(row => {
+            // 每个指标只出现一行（取第一条时间的数据行作为模板）
+            if (row.indicatorName !== prevIndicator) {
+                prevIndicator = row.indicatorName;
+                const displayName = row.indicatorName;
+                tbody += '<tr>';
+                // 三级分类（同分类下只显示一次，其余留空）
+                if (row.parentName !== prevParent) {
+                    prevParent = row.parentName;
+                    tbody += `<td>${escapeHtml(row.parentName)}</td>`;
+                } else {
+                    tbody += '<td></td>';
+                }
+                tbody += `<td>${escapeHtml(displayName)}</td>`;
+                // 各月数值
+                times.forEach(t => {
+                    const match = allRows.find(r => r.indicatorName === prevIndicator && r.time === t);
+                    tbody += `<td>${match && match.value !== '' ? match.value : '-'}</td>`;
+                });
+                tbody += '</tr>';
+            }
+        });
+        tbody += '</tbody>';
+
+        table.innerHTML = thead + tbody;
+        tableData = allRows; // 保存用于导出
+    }
+
+    // ==================== Excel 导出 ====================
+    function exportToExcel() {
+        if (!tableData || tableData.length === 0) {
+            showToast('没有可导出的数据', 'error');
+            return;
+        }
+
+        try {
+            const wb = XLSX.utils.book_new();
+
+            // 1. 按三级分类分组，收集所有时间和指标
+            const categoryMap = new Map(); // parentName -> [{ indicatorName, time, value, unit }]
+            const timeSet = new Set();
+            tableData.forEach(row => {
+                const cat = row.parentName || '未知分类';
+                if (!categoryMap.has(cat)) categoryMap.set(cat, []);
+                categoryMap.get(cat).push(row);
+                if (row.time) timeSet.add(row.time);
+            });
+
+            // 时间列按年月数值降序排列
+            const times = Array.from(timeSet).sort((a, b) => {
+                const ma = a.match(/(\d{4})年(\d{1,2})月/);
+                const mb = b.match(/(\d{4})年(\d{1,2})月/);
+                if (ma && mb) {
+                    const va = parseInt(ma[1]) * 100 + parseInt(ma[2]);
+                    const vb = parseInt(mb[1]) * 100 + parseInt(mb[2]);
+                    return vb - va;
+                }
+                return b.localeCompare(a, 'zh-CN');
+            });
+            // 三级分类名按降序排列
+            const categoryNames = Array.from(categoryMap.keys()).sort((a, b) => b.localeCompare(a, 'zh-CN'));
+
+            // ========== Sheet 1: 目录 ==========
+            const dirRows = [];
+            dirRows.push(['目录（点击分类名跳转到对应明细表）']);
+            dirRows.push(['序号', '三级分类名称', '指标数量']);
+            categoryNames.forEach((cat, idx) => {
+                const count = categoryMap.get(cat).length;
+                const safeName = cat.replace(/'/g, "''");
+                const linkCell = { f: `HYPERLINK("#'${safeName}'!A1","${cat}")`, t: 's', v: cat };
+                dirRows.push([idx + 1, linkCell, count]);
+            });
+            const dirWs = XLSX.utils.aoa_to_sheet(dirRows);
+            dirWs['!cols'] = [{ wch: 6 }, { wch: 50 }, { wch: 12 }];
+            dirWs['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 2 } }];
+            XLSX.utils.book_append_sheet(wb, dirWs, '目录');
+
+            // ========== Sheet 2: 汇总表 ==========
+            // 收集所有指标（去重），按"三级分类+指标名称"降序
+            const allIndicators = new Map(); // indicatorName -> { unit, parentName, timeValues: {} }
+            tableData.forEach(row => {
+                if (!allIndicators.has(row.indicatorName)) {
+                    allIndicators.set(row.indicatorName, { unit: row.unit, parentName: row.parentName, timeValues: {} });
+                }
+                if (row.value !== '') {
+                    allIndicators.get(row.indicatorName).timeValues[row.time] = row.value;
+                }
+            });
+            const sortedIndicators = Array.from(allIndicators.entries()).sort((a, b) => {
+                const catCmp = b[1].parentName.localeCompare(a[1].parentName, 'zh-CN');
+                if (catCmp !== 0) return catCmp;
+                return b[0].localeCompare(a[0], 'zh-CN');
+            });
+
+            const sumHeader = ['序号', '三级分类', '指标名称', ...times];
+            const sumRows = [sumHeader];
+            sortedIndicators.forEach(([name, info], idx) => {
+                const displayName = name;
+                const timeValues = times.map(t => info.timeValues[t] !== undefined ? info.timeValues[t] : '-');
+                sumRows.push([idx + 1, info.parentName, displayName, ...timeValues]);
+            });
+            const sumWs = XLSX.utils.aoa_to_sheet(sumRows);
+            sumWs['!cols'] = [
+                { wch: 6 },   // 序号
+                { wch: 30 },  // 三级分类
+                { wch: 45 },  // 指标名称（含单位）
+                ...times.map(() => ({ wch: 14 }))
+            ];
+            XLSX.utils.book_append_sheet(wb, sumWs, '汇总表');
+
+            // ========== Sheet 3+: 每个三级分类一个明细表 ==========
+            categoryNames.forEach(cat => {
+                const rows = categoryMap.get(cat);
+
+                // 按指标名称分组
+                const indMap = new Map();
+                rows.forEach(r => {
+                    if (!indMap.has(r.indicatorName)) indMap.set(r.indicatorName, []);
+                    indMap.get(r.indicatorName).push(r);
+                });
+                // 按指标名称降序排列
+                const indNames = Array.from(indMap.keys()).sort((a, b) => b.localeCompare(a, 'zh-CN'));
+
+                // 表头
+                const detailHeader = ['指标名称', ...times];
+                const detailRows = [detailHeader];
+
+                indNames.forEach(name => {
+                    const unit = indMap.get(name)[0].unit || '';
+                    const displayName = name;
+                    const timeValues = times.map(t => {
+                        const match = indMap.get(name).find(r => r.time === t);
+                        return (match && match.value !== '') ? match.value : '-';
+                    });
+                    detailRows.push([displayName, ...timeValues]);
+                });
+
+                const detailWs = XLSX.utils.aoa_to_sheet(detailRows);
+                detailWs['!cols'] = [
+                    { wch: 45 },  // 指标名称（含单位）
+                    ...times.map(() => ({ wch: 14 }))
+                ];
+
+                // Sheet 名称：限制 31 字符，去除非法字符，确保唯一
+                let sheetName = cat.replace(/[\\\/\?\*\[\]]/g, '').substring(0, 31);
+                let baseName = sheetName;
+                let counter = 1;
+                while (wb.SheetNames.includes(sheetName)) {
+                    sheetName = baseName.substring(0, 28) + `(${counter++})`;
+                }
+
+                XLSX.utils.book_append_sheet(wb, detailWs, sheetName);
+            });
+
+            const dateStr = new Date().toISOString().slice(0, 10);
+            XLSX.writeFile(wb, `国家统计局月度数据_${dateStr}.xlsx`);
+            showToast(`Excel 已导出（共 ${categoryNames.length + 2} 个工作表）`, 'success');
+        } catch (e) {
+            console.error('导出失败:', e);
+            showToast('导出失败: ' + e.message, 'error');
+        }
+    }
+
+    // ==================== 移动端抽屉 ====================
+    function toggleDrawer() {
+        const overlay = document.getElementById('drawer-overlay');
+        const drawer = document.getElementById('drawer');
+        overlay.classList.toggle('active');
+        drawer.classList.toggle('active');
+    }
+
+    // ==================== 工具函数 ====================
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    function formatDate(date) {
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    }
+
+    function showToast(message, type = 'info') {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = `toast ${type} show`;
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+    </script>
+</body>
+</html>

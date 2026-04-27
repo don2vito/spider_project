@@ -1,0 +1,57 @@
+[
+  {
+    "name": "上海",
+    "pinyin": "shanghai",
+    "is_main": true
+  },
+  {
+    "name": "闵行",
+    "pinyin": "minhang",
+    "is_main": false
+  },
+  {
+    "name": "宝山",
+    "pinyin": "shbaoshan",
+    "is_main": false
+  },
+  {
+    "name": "嘉定",
+    "pinyin": "jiading",
+    "is_main": false
+  },
+  {
+    "name": "浦东",
+    "pinyin": "pudong",
+    "is_main": false
+  },
+  {
+    "name": "金山",
+    "pinyin": "jinshan",
+    "is_main": false
+  },
+  {
+    "name": "松江",
+    "pinyin": "songjiang",
+    "is_main": false
+  },
+  {
+    "name": "青浦",
+    "pinyin": "qingpu",
+    "is_main": false
+  },
+  {
+    "name": "南汇",
+    "pinyin": "nanhui",
+    "is_main": false
+  },
+  {
+    "name": "奉贤",
+    "pinyin": "fengxian",
+    "is_main": false
+  },
+  {
+    "name": "崇明",
+    "pinyin": "chongming",
+    "is_main": false
+  }
+]

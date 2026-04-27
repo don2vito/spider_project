@@ -1,0 +1,138 @@
+[
+  {
+    "name": "北京",
+    "abbr": "bj"
+  },
+  {
+    "name": "天津",
+    "abbr": "tj"
+  },
+  {
+    "name": "河北",
+    "abbr": "hebei"
+  },
+  {
+    "name": "山西",
+    "abbr": "shanxi"
+  },
+  {
+    "name": "内蒙古",
+    "abbr": "neimenggu"
+  },
+  {
+    "name": "辽宁",
+    "abbr": "ln"
+  },
+  {
+    "name": "吉林",
+    "abbr": "jl"
+  },
+  {
+    "name": "黑龙江",
+    "abbr": "heilongjiang"
+  },
+  {
+    "name": "上海",
+    "abbr": "sh"
+  },
+  {
+    "name": "江苏",
+    "abbr": "jiangsu"
+  },
+  {
+    "name": "浙江",
+    "abbr": "zhejiang"
+  },
+  {
+    "name": "安徽",
+    "abbr": "anhui"
+  },
+  {
+    "name": "福建",
+    "abbr": "fujian"
+  },
+  {
+    "name": "江西",
+    "abbr": "jiangxi"
+  },
+  {
+    "name": "山东",
+    "abbr": "shandong"
+  },
+  {
+    "name": "河南",
+    "abbr": "henan"
+  },
+  {
+    "name": "湖北",
+    "abbr": "hubei"
+  },
+  {
+    "name": "湖南",
+    "abbr": "hunan"
+  },
+  {
+    "name": "广东",
+    "abbr": "guangdong"
+  },
+  {
+    "name": "广西",
+    "abbr": "guangxi"
+  },
+  {
+    "name": "海南",
+    "abbr": "hainan"
+  },
+  {
+    "name": "重庆",
+    "abbr": "cq"
+  },
+  {
+    "name": "四川",
+    "abbr": "sichuan"
+  },
+  {
+    "name": "贵州",
+    "abbr": "guizhou"
+  },
+  {
+    "name": "云南",
+    "abbr": "yunnan"
+  },
+  {
+    "name": "西藏",
+    "abbr": "xizang"
+  },
+  {
+    "name": "陕西",
+    "abbr": "sxi"
+  },
+  {
+    "name": "甘肃",
+    "abbr": "gansu"
+  },
+  {
+    "name": "青海",
+    "abbr": "qinghai"
+  },
+  {
+    "name": "宁夏",
+    "abbr": "ningxia"
+  },
+  {
+    "name": "新疆",
+    "abbr": "xinjiang"
+  },
+  {
+    "name": "台湾",
+    "abbr": "taiwan"
+  },
+  {
+    "name": "香港",
+    "abbr": "xg"
+  },
+  {
+    "name": "澳门",
+    "abbr": "am"
+  }
+]

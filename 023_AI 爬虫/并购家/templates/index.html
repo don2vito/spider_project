@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>行业报告速递 — IPOIPO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* ===== CSS 变量 ===== */
+        :root {
+            --bg-base: #0a0c10;
+            --bg-surface: #12151c;
+            --bg-elevated: #1a1e28;
+            --bg-hover: #222838;
+            --bg-active: #2a3040;
+            --text-primary: #e2e5ea;
+            --text-secondary: #8b919c;
+            --text-muted: #555d6e;
+            --accent: #00d4aa;
+            --accent-dim: rgba(0, 212, 170, 0.12);
+            --accent-hover: #00f0c0;
+            --accent-glow: rgba(0, 212, 170, 0.25);
+            --border: #1e2330;
+            --border-light: #2a3040;
+            --danger: #ff5c5c;
+            --warning: #ffb347;
+            --success: #00d4aa;
+            --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+            --font-sans: 'Noto Sans SC', -apple-system, 'Segoe UI', sans-serif;
+            --radius-sm: 4px;
+            --radius-md: 6px;
+            --radius-lg: 10px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ===== 全局重置 ===== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html {
+            font-size: 14px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* ===== 背景纹理 ===== */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(0, 212, 170, 0.03) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 50% at 80% 90%, rgba(0, 100, 200, 0.02) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ===== 布局容器 ===== */
+        .app-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ===== 顶部导航 ===== */
+        header {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 0;
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent), #0088cc);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 16px;
+            color: #fff;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .brand-text h1 {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .brand-text .subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent-glow);
+            margin-right: 6px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-dot.idle { background: var(--text-muted); box-shadow: none; animation: none; }
+        .status-dot.error { background: var(--danger); box-shadow: 0 0 8px rgba(255,92,92,0.3); }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* ===== 工具栏 ===== */
+        .toolbar {
+            padding: 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 240px;
+            max-width: 420px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 9px 14px 9px 38px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            font-size: 13px;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-box input::placeholder { color: var(--text-muted); }
+        .search-box input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-dim);
+        }
+
+        .search-box .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .toolbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            background: var(--bg-surface);
+            color: var(--text-secondary);
+            font-family: var(--font-sans);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--border-light);
+        }
+
+        .btn:active { transform: scale(0.97); }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+            color: #000;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 11px;
+        }
+
+        .sort-btn.active {
+            background: var(--accent-dim);
+            color: var(--accent);
+            border-color: rgba(0, 212, 170, 0.3);
+        }
+
+        /* ===== 统计栏 ===== */
+        .stats-bar {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 0;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .stat-value {
+            font-family: var(--font-mono);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .stat-divider {
+            width: 1px;
+            height: 20px;
+            background: var(--border);
+        }
+
+        /* ===== 数据表格 ===== */
+        .table-container {
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            padding: 10px 14px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+            font-family: var(--font-mono);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        tbody tr:hover {
+            background: var(--bg-hover);
+        }
+
+        tbody td {
+            padding: 12px 14px;
+            vertical-align: middle;
+        }
+
+        .col-index {
+            width: 50px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .col-date {
+            width: 110px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .col-title {
+            min-width: 300px;
+        }
+
+        .title-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.5;
+            transition: var(--transition);
+            display: block;
+        }
+
+        .title-link:hover {
+            color: var(--accent);
+        }
+
+        .title-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 4px;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .page-badge {
+            display: inline-block;
+            padding: 1px 6px;
+            background: var(--bg-active);
+            border-radius: 3px;
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        .views-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .col-pages {
+            width: 60px;
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .col-action {
+            width: 100px;
+            text-align: right;
+        }
+
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 14px;
+            background: transparent;
+            border: 1px solid var(--accent);
+            border-radius: var(--radius-sm);
+            color: var(--accent);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-download:hover {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 16px var(--accent-glow);
+        }
+
+        .btn-download:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            border-color: var(--text-muted);
+            color: var(--text-muted);
+        }
+
+        .btn-download:disabled:hover {
+            background: transparent;
+            color: var(--text-muted);
+            box-shadow: none;
+        }
+
+        .btn-download .dl-icon {
+            font-size: 12px;
+        }
+
+        /* ===== 加载状态 ===== */
+        .loading-overlay {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            gap: 20px;
+        }
+
+        .loader {
+            display: flex;
+            gap: 6px;
+        }
+
+        .loader span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: loader-bounce 1.2s ease-in-out infinite;
+        }
+
+        .loader span:nth-child(2) { animation-delay: 0.15s; }
+        .loader span:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes loader-bounce {
+            0%, 80%, 100% { transform: scale(0.4); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        .loading-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .loading-progress {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--accent);
+            min-height: 18px;
+        }
+
+        .loading-elapsed {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* ===== 错误状态 ===== */
+        .error-state {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            gap: 16px;
+        }
+
+        .error-state.visible { display: flex; }
+
+        .error-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 92, 92, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--danger);
+        }
+
+        .error-message {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 400px;
+        }
+
+        /* ===== 空状态 ===== */
+        .empty-state {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            gap: 12px;
+        }
+
+        .empty-state.visible { display: flex; }
+
+        .empty-icon {
+            font-size: 40px;
+            opacity: 0.3;
+        }
+
+        .empty-text {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* ===== 底部 ===== */
+        footer {
+            padding: 20px 0;
+            margin-top: 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        footer a:hover { color: var(--accent); }
+
+        /* ===== Toast 通知 ===== */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            padding: 10px 18px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 13px;
+            box-shadow: var(--shadow-lg);
+            animation: toast-in 0.3s ease-out;
+            max-width: 360px;
+        }
+
+        .toast.success { border-left: 3px solid var(--success); }
+        .toast.error { border-left: 3px solid var(--danger); }
+        .toast.info { border-left: 3px solid var(--accent); }
+
+        @keyframes toast-in {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* ===== 骨架屏 ===== */
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-surface) 25%, var(--bg-hover) 50%, var(--bg-surface) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-shimmer 1.5s infinite;
+            border-radius: var(--radius-sm);
+        }
+
+        @keyframes skeleton-shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .skeleton-row .sk-index { width: 30px; height: 14px; }
+        .skeleton-row .sk-date { width: 80px; height: 14px; }
+        .skeleton-row .sk-title { flex: 1; height: 14px; }
+        .skeleton-row .sk-action { width: 70px; height: 28px; }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 768px) {
+            .app-container { padding: 0 16px; }
+            .header-inner { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .search-box { max-width: none; }
+            .stats-bar { gap: 16px; flex-wrap: wrap; }
+            .col-pages, .col-index { display: none; }
+            .col-title { min-width: 200px; }
+            .col-date { width: 90px; }
+            thead th:nth-child(1), tbody td:nth-child(1),
+            thead th:nth-child(4), tbody td:nth-child(4) { display: none; }
+        }
+
+        /* ===== 滚动条 ===== */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        /* ===== 行入场动画 ===== */
+        .row-enter {
+            animation: row-fade-in 0.3s ease-out both;
+        }
+
+        @keyframes row-fade-in {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航 -->
+        <header>
+            <div class="header-inner">
+                <div class="brand">
+                    <div class="brand-icon">IP</div>
+                    <div class="brand-text">
+                        <h1>行业报告速递</h1>
+                        <div class="subtitle">IPOIPO Report Aggregator</div>
+                    </div>
+                </div>
+                <div class="header-meta">
+                    <span id="status-indicator">
+                        <span class="status-dot idle" id="status-dot"></span>
+                        <span id="status-text">就绪</span>
+                    </span>
+                    <span id="update-time">—</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 工具栏 -->
+        <div class="toolbar">
+            <div class="search-box">
+                <span class="search-icon">⌕</span>
+                <input type="text" id="search-input" placeholder="搜索报告标题..." autocomplete="off">
+            </div>
+            <div class="toolbar-actions">
+                <button class="btn sort-btn active" data-sort="date-desc" onclick="setSort('date-desc')">
+                    日期 ↓
+                </button>
+                <button class="btn sort-btn" data-sort="date-asc" onclick="setSort('date-asc')">
+                    日期 ↑
+                </button>
+                <button class="btn sort-btn" data-sort="title-asc" onclick="setSort('title-asc')">
+                    标题 A→Z
+                </button>
+                <button class="btn btn-primary" id="refresh-btn" onclick="refreshData()">
+                    ↻ 刷新数据
+                </button>
+            </div>
+        </div>
+
+        <!-- 统计栏 -->
+        <div class="stats-bar" id="stats-bar" style="display:none;">
+            <div class="stat-item">
+                <span class="stat-value" id="stat-total">0</span>
+                <span class="stat-label">报告总数</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-value" id="stat-dl">0</span>
+                <span class="stat-label">可下载</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-value" id="stat-filtered">0</span>
+                <span class="stat-label">当前显示</span>
+            </div>
+        </div>
+
+        <!-- 加载状态 -->
+        <div class="loading-overlay" id="loading">
+            <div class="loader">
+                <span></span><span></span><span></span>
+            </div>
+            <div class="loading-text">
+                正在抓取近 7 天行业报告数据...
+            </div>
+            <div class="loading-progress" id="loading-progress"></div>
+            <div class="loading-elapsed" id="loading-elapsed"></div>
+        </div>
+
+        <!-- 骨架屏 -->
+        <div id="skeleton" style="display:none;">
+            <div class="skeleton-row"><div class="skeleton sk-index"></div><div class="skeleton sk-date"></div><div class="skeleton sk-title"></div><div class="skeleton sk-action"></div></div>
+            <div class="skeleton-row"><div class="skeleton sk-index"></div><div class="skeleton sk-date"></div><div class="skeleton sk-title"></div><div class="skeleton sk-action"></div></div>
+            <div class="skeleton-row"><div class="skeleton sk-index"></div><div class="skeleton sk-date"></div><div class="skeleton sk-title"></div><div class="skeleton sk-action"></div></div>
+            <div class="skeleton-row"><div class="skeleton sk-index"></div><div class="skeleton sk-date"></div><div class="skeleton sk-title"></div><div class="skeleton sk-action"></div></div>
+            <div class="skeleton-row"><div class="skeleton sk-index"></div><div class="skeleton sk-date"></div><div class="skeleton sk-title"></div><div class="skeleton sk-action"></div></div>
+            <div class="skeleton-row"><div class="skeleton sk-index"></div><div class="skeleton sk-date"></div><div class="skeleton sk-title"></div><div class="skeleton sk-action"></div></div>
+        </div>
+
+        <!-- 错误状态 -->
+        <div class="error-state" id="error-state">
+            <div class="error-icon">!</div>
+            <div class="error-message" id="error-message">数据加载失败，请稍后重试</div>
+            <button class="btn btn-primary" onclick="refreshData()">重试</button>
+        </div>
+
+        <!-- 空状态 -->
+        <div class="empty-state" id="empty-state">
+            <div class="empty-icon">∅</div>
+            <div class="empty-text">没有找到匹配的报告</div>
+        </div>
+
+        <!-- 数据表格 -->
+        <div class="table-container" id="table-container" style="display:none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="col-index">#</th>
+                        <th class="col-date">日期</th>
+                        <th class="col-title">报告标题</th>
+                        <th class="col-pages">页数</th>
+                        <th class="col-action">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="report-tbody"></tbody>
+            </table>
+        </div>
+
+        <!-- 底部 -->
+        <footer id="footer" style="display:none;">
+            <span>数据来源 <a href="https://ipoipo.cn/category-6.html" target="_blank" rel="noopener">ipoipo.cn</a></span>
+            <span id="footer-count"></span>
+        </footer>
+    </div>
+
+    <!-- Toast 容器 -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+        // ===== 状态管理 =====
+        let allReports = [];
+        let filteredReports = [];
+        let currentSort = 'date-desc';
+        let searchTerm = '';
+        let isLoading = false;
+        let pollTimer = null;
+
+        // ===== 初始化 =====
+        document.addEventListener('DOMContentLoaded', () => {
+            // 搜索框防抖
+            let debounceTimer;
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    searchTerm = e.target.value.trim();
+                    applyFilters();
+                    renderTable();
+                }, 300);
+            });
+
+            // 自动加载数据
+            loadData();
+        });
+
+        // ===== 数据加载 =====
+        async function loadData() {
+            if (isLoading) return;
+            isLoading = true;
+            showLoading();
+            updateStatus('scraping', '抓取中...');
+
+            try {
+                const resp = await fetch('/api/reports');
+                const data = await resp.json();
+
+                // 如果正在爬取中，轮询状态
+                if (resp.status === 202 && data.status === 'scraping') {
+                    startPolling();
+                    return;
+                }
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                allReports = data.reports || [];
+                onDataLoaded(data);
+            } catch (err) {
+                console.error('数据加载失败:', err);
+                showError(err.message || '网络请求失败，请检查服务器是否运行');
+                updateStatus('error', '错误');
+            } finally {
+                isLoading = false;
+            }
+        }
+
+        // ===== 轮询爬取状态 =====
+        function startPolling() {
+            if (pollTimer) clearInterval(pollTimer);
+
+            pollTimer = setInterval(async () => {
+                try {
+                    const resp = await fetch('/api/status');
+                    const status = await resp.json();
+
+                    if (status.progress) {
+                        document.getElementById('loading-progress').textContent = status.progress;
+                    }
+                    if (status.elapsed) {
+                        document.getElementById('loading-elapsed').textContent = `已用时 ${status.elapsed}s`;
+                    }
+
+                    if (!status.is_scraping) {
+                        clearInterval(pollTimer);
+                        pollTimer = null;
+                        // 爬取完成，重新获取数据
+                        const dataResp = await fetch('/api/reports');
+                        const data = await dataResp.json();
+                        allReports = data.reports || [];
+                        onDataLoaded(data);
+                        isLoading = false;
+                    }
+                } catch (e) {
+                    console.error('状态轮询失败:', e);
+                }
+            }, 2000);
+        }
+
+        // ===== 数据加载完成 =====
+        function onDataLoaded(data) {
+            if (pollTimer) {
+                clearInterval(pollTimer);
+                pollTimer = null;
+            }
+
+            // 更新统计
+            document.getElementById('stat-total').textContent = data.total || 0;
+            const dlCount = allReports.filter(r => r.download_url).length;
+            document.getElementById('stat-dl').textContent = dlCount;
+            document.getElementById('update-time').textContent = data.updated_at || '—';
+
+            applyFilters();
+            renderTable();
+            hideLoading();
+            updateStatus('idle', '就绪');
+
+            showToast(`已加载 ${data.total} 条报告`, 'success');
+        }
+
+        // ===== 过滤和排序 =====
+        function applyFilters() {
+            filteredReports = allReports.filter(r => {
+                if (!searchTerm) return true;
+                return r.title.toLowerCase().includes(searchTerm.toLowerCase());
+            });
+
+            filteredReports.sort((a, b) => {
+                switch (currentSort) {
+                    case 'date-desc':
+                        return b.date.localeCompare(a.date) || a.title.localeCompare(b.title);
+                    case 'date-asc':
+                        return a.date.localeCompare(b.date) || a.title.localeCompare(b.title);
+                    case 'title-asc':
+                        return a.title.localeCompare(b.title) || b.date.localeCompare(a.date);
+                    default:
+                        return 0;
+                }
+            });
+
+            document.getElementById('stat-filtered').textContent = filteredReports.length;
+        }
+
+        function setSort(sort) {
+            currentSort = sort;
+            // 更新按钮状态
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.sort === sort);
+            });
+            applyFilters();
+            renderTable();
+        }
+
+        // ===== 渲染表格 =====
+        function renderTable() {
+            const tbody = document.getElementById('report-tbody');
+            const tableContainer = document.getElementById('table-container');
+            const emptyState = document.getElementById('empty-state');
+
+            if (filteredReports.length === 0) {
+                tableContainer.style.display = 'none';
+                emptyState.classList.add('visible');
+                return;
+            }
+
+            emptyState.classList.remove('visible');
+            tableContainer.style.display = 'block';
+            document.getElementById('stats-bar').style.display = 'flex';
+            document.getElementById('footer').style.display = 'flex';
+            document.getElementById('footer-count').textContent = `共 ${filteredReports.length} 条`;
+
+            tbody.innerHTML = filteredReports.map((report, idx) => {
+                const pages = extractPages(report.title);
+                const hasDownload = !!report.download_url;
+                const delay = Math.min(idx * 30, 300);
+
+                return `
+                    <tr class="row-enter" style="animation-delay: ${delay}ms">
+                        <td class="col-index">${idx + 1}</td>
+                        <td class="col-date">${report.date}</td>
+                        <td class="col-title">
+                            <a class="title-link" href="${report.link}" target="_blank" rel="noopener"
+                               title="${escapeHtml(report.title)}">${escapeHtml(report.title)}</a>
+                            <div class="title-meta">
+                                ${pages ? `<span class="page-badge">${pages} 页</span>` : ''}
+                                <span class="views-badge">👁 ${report.views || 0}</span>
+                            </div>
+                        </td>
+                        <td class="col-pages">${pages || '—'}</td>
+                        <td class="col-action">
+                            ${hasDownload
+                                ? `<a class="btn-download" href="/api/proxy/download?url=${encodeURIComponent(report.download_url)}&title=${encodeURIComponent(report.title)}" title="${escapeHtml(report.title)}.zip">
+                                       <span class="dl-icon">↓</span> 下载
+                                   </a>`
+                                : `<button class="btn-download" disabled title="暂无下载链接">
+                                       <span class="dl-icon">—</span> 无链接
+                                   </button>`
+                            }
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // ===== 工具函数 =====
+        function extractPages(title) {
+            const match = title.match(/（(\d+)页）/);
+            return match ? match[1] : null;
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ===== 刷新数据 =====
+        async function refreshData() {
+            if (isLoading) return;
+            isLoading = true;
+
+            const btn = document.getElementById('refresh-btn');
+            btn.disabled = true;
+            btn.textContent = '↻ 抓取中...';
+            showLoading();
+            updateStatus('scraping', '抓取中...');
+
+            try {
+                const resp = await fetch('/api/reports/refresh');
+                const data = await resp.json();
+
+                if (data.status === 'already_scraping') {
+                    startPolling();
+                    return;
+                }
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                allReports = data.reports || [];
+                onDataLoaded(data);
+            } catch (err) {
+                console.error('刷新失败:', err);
+                showError(err.message || '刷新失败');
+                updateStatus('error', '错误');
+            } finally {
+                isLoading = false;
+                btn.disabled = false;
+                btn.textContent = '↻ 刷新数据';
+            }
+        }
+
+        // ===== UI 状态切换 =====
+        function showLoading() {
+            document.getElementById('loading').style.display = 'flex';
+            document.getElementById('skeleton').style.display = 'block';
+            document.getElementById('table-container').style.display = 'none';
+            document.getElementById('error-state').classList.remove('visible');
+            document.getElementById('empty-state').classList.remove('visible');
+            document.getElementById('stats-bar').style.display = 'none';
+            document.getElementById('footer').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('skeleton').style.display = 'none';
+        }
+
+        function showError(message) {
+            hideLoading();
+            document.getElementById('error-state').classList.add('visible');
+            document.getElementById('error-message').textContent = message;
+            document.getElementById('table-container').style.display = 'none';
+            document.getElementById('stats-bar').style.display = 'none';
+            document.getElementById('footer').style.display = 'none';
+        }
+
+        function updateStatus(state, text) {
+            const dot = document.getElementById('status-dot');
+            const label = document.getElementById('status-text');
+            dot.className = 'status-dot' + (state === 'scraping' ? '' : state === 'error' ? ' error' : ' idle');
+            label.textContent = text;
+        }
+
+        // ===== Toast 通知 =====
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(20px)';
+                toast.style.transition = '0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

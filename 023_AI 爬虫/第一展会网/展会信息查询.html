@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026年国内展会信息查询</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<style>
+/* ============================================================
+   CSS Variables & Reset
+   ============================================================ */
+:root {
+  --bg-primary: #0f1117;
+  --bg-secondary: #1a1d27;
+  --bg-card: #1e2130;
+  --bg-card-hover: #252839;
+  --bg-input: #2a2d3e;
+  --border: #2e3148;
+  --border-light: #3a3d52;
+  --text-primary: #e8eaf0;
+  --text-secondary: #9ca3b4;
+  --text-muted: #6b7280;
+  --accent: #10b981;
+  --accent-light: #34d399;
+  --accent-dim: rgba(16,185,129,0.12);
+  --orange: #f59e0b;
+  --orange-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.3);
+  --font-cn: 'Noto Sans SC', sans-serif;
+  --font-en: 'DM Sans', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-cn);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================================
+   Background Atmosphere
+   ============================================================ */
+body::before {
+  content: '';
+  position: fixed;
+  top: -200px; right: -200px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(16,185,129,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -200px; left: -200px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(245,158,11,0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================================
+   Layout
+   ============================================================ */
+.app-container {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 24px 60px;
+}
+
+/* ============================================================
+   Header
+   ============================================================ */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.app-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.app-title .icon {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--accent), #059669);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #fff;
+  font-weight: 700;
+  font-family: var(--font-en);
+  box-shadow: 0 4px 16px rgba(16,185,129,0.3);
+}
+.app-title h1 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.app-title h1 span {
+  color: var(--accent);
+}
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-cn);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #059669);
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(16,185,129,0.3);
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(16,185,129,0.4);
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+.btn-secondary {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-light);
+}
+.btn-sm {
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+/* ============================================================
+   Progress Bar
+   ============================================================ */
+.progress-section {
+  margin-bottom: 28px;
+}
+.progress-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.progress-info .status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.progress-info .status .spinner {
+  width: 14px; height: 14px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.progress-bar-track {
+  width: 100%;
+  height: 6px;
+  background: var(--bg-input);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-light));
+  border-radius: 3px;
+  transition: width 0.4s ease;
+  width: 0%;
+}
+.progress-section.done .progress-bar-fill {
+  background: linear-gradient(90deg, var(--accent), var(--accent-light));
+}
+.progress-section.error .progress-bar-fill {
+  background: var(--red);
+}
+
+/* ============================================================
+   Stats Cards
+   ============================================================ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  transition: all 0.2s;
+}
+.stat-card:hover {
+  border-color: var(--border-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.stat-card .label {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.stat-card .label .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+}
+.stat-card .value {
+  font-family: var(--font-en);
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.stat-card.total .dot { background: var(--accent); }
+.stat-card.total .value { color: var(--accent); }
+.stat-card.shanghai .dot { background: var(--orange); }
+.stat-card.shanghai .value { color: var(--orange); }
+.stat-card.other .dot { background: var(--blue); }
+.stat-card.other .value { color: var(--blue); }
+.stat-card.current .dot { background: var(--red); }
+.stat-card.current .value { color: var(--red); }
+
+/* ============================================================
+   Tabs
+   ============================================================ */
+.tabs-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.tab-group {
+  display: flex;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+}
+.tab-btn {
+  padding: 8px 20px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-cn);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+.tab-btn:hover { color: var(--text-primary); }
+.tab-btn.active {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(16,185,129,0.3);
+}
+.search-box {
+  display: flex;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0 14px;
+  gap: 8px;
+}
+.search-box input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-family: var(--font-cn);
+  font-size: 14px;
+  padding: 9px 0;
+  width: 220px;
+}
+.search-box input::placeholder { color: var(--text-muted); }
+.search-box .search-icon { color: var(--text-muted); font-size: 16px; }
+
+/* ============================================================
+   Table
+   ============================================================ */
+.table-wrapper {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.table-scroll {
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+thead {
+  background: var(--bg-secondary);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+th {
+  padding: 14px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+  user-select: none;
+}
+td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+tr:last-child td { border-bottom: none; }
+tbody tr {
+  transition: background 0.15s;
+}
+tbody tr:hover {
+  background: var(--bg-card-hover);
+}
+
+/* Table cells */
+.cell-index {
+  width: 50px;
+  color: var(--text-muted);
+  font-family: var(--font-en);
+  font-size: 13px;
+}
+.cell-img {
+  width: 80px;
+}
+.cell-img img {
+  width: 72px;
+  height: 46px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: var(--bg-input);
+  display: block;
+}
+.cell-name {
+  max-width: 320px;
+}
+.cell-name a {
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 500;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.5;
+}
+.cell-name a:hover {
+  color: var(--accent);
+}
+.cell-date {
+  white-space: nowrap;
+  font-family: var(--font-en);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.cell-venue {
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cell-tag {
+  width: 60px;
+}
+.tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.tag-shanghai {
+  background: var(--orange-dim);
+  color: var(--orange);
+}
+.tag-other {
+  background: var(--blue-dim);
+  color: var(--blue);
+}
+.cell-area, .cell-people {
+  font-family: var(--font-en);
+  font-size: 13px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.cell-action a {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+}
+.cell-action a:hover { text-decoration: underline; }
+
+/* ============================================================
+   Empty & Loading States
+   ============================================================ */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-muted);
+}
+.empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+.empty-state p { font-size: 15px; }
+
+.skeleton-row {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+/* ============================================================
+   Table Footer
+   ============================================================ */
+.table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.pagination button {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font-en);
+  font-size: 13px;
+  transition: all 0.15s;
+}
+.pagination button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.pagination button.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   Toast Notification
+   ============================================================ */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 22px;
+  font-size: 14px;
+  color: var(--text-primary);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  z-index: 1000;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+.toast.success { border-left: 3px solid var(--accent); }
+.toast.error { border-left: 3px solid var(--red); }
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 900px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .app-header { flex-direction: column; align-items: flex-start; }
+  .search-box input { width: 160px; }
+}
+@media (max-width: 600px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat-card { padding: 14px; }
+  .stat-card .value { font-size: 24px; }
+  .tabs-section { flex-direction: column; align-items: stretch; }
+  .app-container { padding: 16px 12px 40px; }
+  .cell-name { max-width: 200px; }
+}
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Header -->
+  <header class="app-header">
+    <div class="app-title">
+      <div class="icon">Ex</div>
+      <h1>2026年<span>国内展会</span>信息查询</h1>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" id="btn-restart" onclick="restartCrawl()" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        重新抓取
+      </button>
+      <button class="btn btn-primary" id="btn-download" onclick="downloadExcel()" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        下载 Excel
+      </button>
+    </div>
+  </header>
+
+  <!-- Progress -->
+  <div class="progress-section" id="progress-section">
+    <div class="progress-info">
+      <div class="status" id="progress-status">
+        <div class="spinner"></div>
+        <span>准备中...</span>
+      </div>
+      <span id="progress-count">0 条展会</span>
+    </div>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progress-bar"></div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid" id="stats-grid">
+    <div class="stat-card total">
+      <div class="label"><span class="dot"></span>展会总数</div>
+      <div class="value" id="stat-total">--</div>
+    </div>
+    <div class="stat-card shanghai">
+      <div class="label"><span class="dot"></span>上海展会</div>
+      <div class="value" id="stat-shanghai">--</div>
+    </div>
+    <div class="stat-card other">
+      <div class="label"><span class="dot"></span>非上海展会</div>
+      <div class="value" id="stat-other">--</div>
+    </div>
+    <div class="stat-card current">
+      <div class="label"><span class="dot"></span>当前显示</div>
+      <div class="value" id="stat-current">--</div>
+    </div>
+  </div>
+
+  <!-- Tabs & Search -->
+  <div class="tabs-section">
+    <div class="tab-group">
+      <button class="tab-btn active" data-tab="all" onclick="switchTab('all')">全部展会</button>
+      <button class="tab-btn" data-tab="shanghai" onclick="switchTab('shanghai')">上海展会</button>
+      <button class="tab-btn" data-tab="other" onclick="switchTab('other')">非上海展会</button>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </span>
+      <input type="text" id="search-input" placeholder="搜索展会名称、展馆..." oninput="handleSearch()">
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrapper">
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th class="cell-index">#</th>
+            <th class="cell-name">展会名称</th>
+            <th class="cell-date">展会时间</th>
+            <th class="cell-venue">展馆名称</th>
+            <th class="cell-tag">地区</th>
+            <th class="cell-area">面积</th>
+            <th class="cell-people">参商</th>
+            <th class="cell-people">观众</th>
+            <th class="cell-action">操作</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <tr>
+            <td colspan="9">
+              <div class="empty-state">
+                <div class="icon">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--text-muted)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <p>正在抓取展会数据，请稍候...</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-footer">
+      <span id="footer-info">共 0 条</span>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// Configuration
+// ============================================================
+const BASE_URL = "https://www.onezh.com";
+const PROXY_URL = "https://api.codetabs.com/v1/proxy/?quest=";
+const PROXY_BACKUP = "https://corsproxy.io/?";
+const REQUEST_DELAY = 250; // ms between requests
+const PAGE_SIZE = 50;
+
+const MONTHS = [
+  { name: "1月",  start: "20260101", end: "20260131" },
+  { name: "2月",  start: "20260201", end: "20260228" },
+  { name: "3月",  start: "20260301", end: "20260331" },
+  { name: "4月",  start: "20260401", end: "20260430" },
+  { name: "5月",  start: "20260501", end: "20260531" },
+  { name: "6月",  start: "20260601", end: "20260630" },
+  { name: "7月",  start: "20260701", end: "20260731" },
+  { name: "8月",  start: "20260801", end: "20260831" },
+  { name: "9月",  start: "20260901", end: "20260930" },
+  { name: "10月", start: "20261001", end: "20261031" },
+  { name: "11月", start: "20261101", end: "20261130" },
+  { name: "12月", start: "20261201", end: "20261231" },
+];
+
+// ============================================================
+// State
+// ============================================================
+let allData = [];
+let filteredData = [];
+let currentTab = "all";
+let searchKeyword = "";
+let currentPage = 1;
+let isCrawling = false;
+let useBackupProxy = false;
+
+// ============================================================
+// Utility
+// ============================================================
+function sleep(ms) {
+  return new Promise(r => setTimeout(r, ms));
+}
+
+function showToast(msg, type = "success") {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "toast " + type + " show";
+  setTimeout(() => t.classList.remove("show"), 3000);
+}
+
+function escapeHtml(str) {
+  if (!str) return "";
+  return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+function extractStartDate(dateStr) {
+  // "2026年03月29日—03月31日" -> "2026-03-29"
+  const m = dateStr.match(/(\d{4})年(\d{2})月(\d{2})日/);
+  if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+  return "9999-99-99";
+}
+
+function isShanghai(venue) {
+  return venue && venue.includes("上海");
+}
+
+// ============================================================
+// Network
+// ============================================================
+async function fetchViaProxy(url) {
+  const proxyBase = useBackupProxy ? PROXY_BACKUP : PROXY_URL;
+  const proxyUrl = proxyBase + encodeURIComponent(url);
+  try {
+    const resp = await fetch(proxyUrl);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    return await resp.text();
+  } catch (e) {
+    // If primary proxy fails, try backup once
+    if (!useBackupProxy) {
+      useBackupProxy = true;
+      console.warn("Primary proxy failed, switching to backup:", e.message);
+      return fetchViaProxy(url);
+    }
+    throw e;
+  }
+}
+
+// ============================================================
+// HTML Parsing
+// ============================================================
+function getTotalPages(html) {
+  // Use regex (more robust than DOMParser for proxy HTML)
+  const m = html.match(/共(\d+)页/);
+  if (m) return parseInt(m[1]);
+  // Fallback: last page link
+  const lm = html.match(/<a[^>]*href=['"]\/zhanhui\/(\d+)_[^>]*>尾页<\/a>/);
+  if (lm) return parseInt(lm[1]);
+  return 1;
+}
+
+function parseExhibitions(html) {
+  // Clean leading whitespace that some proxies add
+  html = html.replace(/^[\r\n\s]+/, "");
+  const results = [];
+
+  // Use regex to extract exhibition blocks (more robust than DOMParser for proxy HTML)
+  // Match content between consecutive <div class='row'> or <div class='row'> and <div class='Page'
+  const blocks = html.split(/<div\s+class=['"]row['"]>/).slice(1);
+  for (const block of blocks) {
+    // Each block ends at the next <div class='row'> or <div class='Page'> or end
+    const endIdx = Math.min(
+      block.search(/<div\s+class=['"](?:row|Page)['"]/),
+      block.length
+    );
+    const content = block.substring(0, endIdx > 0 ? endIdx : block.length);
+
+    // Extract name and href from <strong><a>
+    const aMatch = content.match(/<strong><a[^>]*href=['"]([^'"]*)['"][^>]*title=['"]([^'"]*)['"]/);
+    const aMatch2 = content.match(/<strong><a[^>]*title=['"]([^'"]*)['"][^>]*href=['"]([^'"]*)['"]/);
+    const aMatch3 = content.match(/<strong><a[^>]*href=['"]([^'"]*)['"][^>]*>([^<]*)<\/a>/);
+    let name = "", href = "";
+    if (aMatch) { href = aMatch[1]; name = aMatch[2]; }
+    else if (aMatch2) { name = aMatch2[1]; href = aMatch2[2]; }
+    else if (aMatch3) { href = aMatch3[1]; name = aMatch3[2].trim(); }
+    if (!name) continue;
+    if (href && href.startsWith("/")) href = BASE_URL + href;
+
+    // Cover image - get the FIRST <img> with a real src (not /images/close.gif etc.)
+    // Use non-greedy match to get the FIRST src= attribute in the <img> tag
+    const imgTagMatch = content.match(/<img\s[^>]*?src=['"]([^'"]+)['"][^>]*>/);
+    let cover = "";
+    if (imgTagMatch) {
+      const src = imgTagMatch[1];
+      if (src.includes("img.onezh.com") || src.includes("Upload") || (src && !src.includes("/images/"))) {
+        cover = src.startsWith("http") ? src : (src.startsWith("/") ? BASE_URL + src : src);
+      }
+    }
+    // Fallback: find any img.onezh.com URL in the block
+    if (!cover) {
+      const anyImg = content.match(/https?:\/\/img\.onezh\.com\/[^\s'"]+/);
+      if (anyImg) cover = anyImg[0];
+    }
+
+    // Area, people
+    const areaM = content.match(/<div\s+class=['"]area['"]>([^<]*)<\/div>/);
+    const p1M = content.match(/<div\s+class=['"]people1['"]>([^<]*)<\/div>/);
+    const p2M = content.match(/<div\s+class=['"]people2['"]>([^<]*)<\/div>/);
+
+    // Description & time & venue from em.cgree1
+    const emMatches = [...content.matchAll(/<em\s+class=['"]cgree1['"]>([\s\S]*?)<\/em>/g)];
+    let desc = "", timeStr = "", venue = "";
+    if (emMatches.length >= 1) desc = emMatches[0][1].replace(/<[^>]+>/g, "").trim();
+    if (emMatches.length >= 2) {
+      const detailText = emMatches[emMatches.length - 1][1].replace(/<[^>]+>/g, "").trim();
+      const tm = detailText.match(/展会时间：(.+?)(?:&nbsp;|展馆)/);
+      if (tm) timeStr = tm[1].trim();
+      const vm = detailText.match(/展馆：(.+)/);
+      if (vm) venue = vm[1].trim();
+    }
+
+    results.push({
+      name, href, cover, desc, timeStr, venue,
+      area: areaM ? areaM[1].trim() : "",
+      people1: p1M ? p1M[1].trim() : "",
+      people2: p2M ? p2M[1].trim() : "",
+    });
+  }
+  return results;
+}
+
+// ============================================================
+// Crawler
+// ============================================================
+async function crawlMonth(month) {
+  const all = [];
+  const basePath = `/zhanhui/{page}_0_0_0_${month.start}/${month.end}/`;
+
+  // Page 1
+  const url1 = BASE_URL + basePath.replace("{page}", "1");
+  const html1 = await fetchViaProxy(url1);
+  const items1 = parseExhibitions(html1);
+  const totalPages = getTotalPages(html1);
+  all.push(...items1);
+
+  // Remaining pages
+  for (let p = 2; p <= totalPages; p++) {
+    await sleep(REQUEST_DELAY);
+    const url = BASE_URL + basePath.replace("{page}", String(p));
+    try {
+      const html = await fetchViaProxy(url);
+      const items = parseExhibitions(html);
+      all.push(...items);
+    } catch (e) {
+      console.error(`Failed page ${p} for ${month.name}:`, e);
+    }
+  }
+
+  // Add metadata
+  for (const item of all) {
+    item.month = month.name;
+    item.isShanghai = isShanghai(item.venue);
+    item.sortDate = extractStartDate(item.timeStr);
+  }
+
+  return all;
+}
+
+async function crawlAll() {
+  if (isCrawling) return;
+  isCrawling = true;
+  allData = [];
+  useBackupProxy = false;
+
+  const totalMonths = MONTHS.length;
+  const progressSection = document.getElementById("progress-section");
+  const progressBar = document.getElementById("progress-bar");
+  const progressStatus = document.getElementById("progress-status");
+  const progressCount = document.getElementById("progress-count");
+
+  document.getElementById("btn-restart").disabled = true;
+  document.getElementById("btn-download").disabled = true;
+  progressSection.className = "progress-section";
+
+  for (let i = 0; i < totalMonths; i++) {
+    const month = MONTHS[i];
+    progressStatus.innerHTML = `<div class="spinner"></div><span>正在抓取 ${month.name} (${i + 1}/${totalMonths})...</span>`;
+    progressCount.textContent = `${allData.length} 条展会`;
+    progressBar.style.width = `${((i) / totalMonths) * 100}%`;
+
+    try {
+      const items = await crawlMonth(month);
+      allData.push(...items);
+    } catch (e) {
+      console.error(`Failed to crawl ${month.name}:`, e);
+      progressSection.className = "progress-section error";
+    }
+
+    // Delay between months
+    if (i < totalMonths - 1) await sleep(REQUEST_DELAY);
+  }
+
+  // Sort by date ascending
+  allData.sort((a, b) => a.sortDate.localeCompare(b.sortDate));
+
+  // Done
+  isCrawling = false;
+  progressBar.style.width = "100%";
+  progressSection.className = "progress-section done";
+  progressStatus.innerHTML = `<span style="color:var(--accent)">✓ 抓取完成</span>`;
+  progressCount.textContent = `共 ${allData.length} 条展会`;
+
+  document.getElementById("btn-restart").disabled = false;
+  document.getElementById("btn-download").disabled = false;
+
+  // Render
+  updateStats();
+  switchTab(currentTab);
+  showToast(`成功抓取 ${allData.length} 条展会信息`);
+}
+
+function restartCrawl() {
+  if (isCrawling) return;
+  allData = [];
+  filteredData = [];
+  currentPage = 1;
+  searchKeyword = "";
+  document.getElementById("search-input").value = "";
+  updateStats();
+  renderTable();
+  crawlAll();
+}
+
+// ============================================================
+// Stats
+// ============================================================
+function updateStats() {
+  const total = allData.length;
+  const sh = allData.filter(d => d.isShanghai).length;
+  const other = total - sh;
+
+  document.getElementById("stat-total").textContent = total || "--";
+  document.getElementById("stat-shanghai").textContent = sh || "--";
+  document.getElementById("stat-other").textContent = other || "--";
+}
+
+// ============================================================
+// Tabs & Search
+// ============================================================
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll(".tab-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.tab === tab);
+  });
+  currentPage = 1;
+  applyFilter();
+}
+
+function handleSearch() {
+  searchKeyword = document.getElementById("search-input").value.trim().toLowerCase();
+  currentPage = 1;
+  applyFilter();
+}
+
+function applyFilter() {
+  let data = allData;
+
+  // Tab filter
+  if (currentTab === "shanghai") {
+    data = data.filter(d => d.isShanghai);
+  } else if (currentTab === "other") {
+    data = data.filter(d => !d.isShanghai);
+  }
+
+  // Search filter
+  if (searchKeyword) {
+    data = data.filter(d =>
+      d.name.toLowerCase().includes(searchKeyword) ||
+      d.venue.toLowerCase().includes(searchKeyword)
+    );
+  }
+
+  filteredData = data;
+  document.getElementById("stat-current").textContent = data.length || "--";
+  renderTable();
+}
+
+// ============================================================
+// Table Rendering
+// ============================================================
+function renderTable() {
+  const tbody = document.getElementById("table-body");
+  const footerInfo = document.getElementById("footer-info");
+  const paginationEl = document.getElementById("pagination");
+
+  if (filteredData.length === 0 && !isCrawling) {
+    tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state">
+      <div class="icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--text-muted)"><path d="M21 21l-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0z"/></svg>
+      </div>
+      <p>${allData.length === 0 ? "正在抓取展会数据，请稍候..." : "没有找到匹配的展会"}</p>
+    </div></td></tr>`;
+    footerInfo.textContent = "共 0 条";
+    paginationEl.innerHTML = "";
+    return;
+  }
+
+  const totalPages = Math.ceil(filteredData.length / PAGE_SIZE);
+  if (currentPage > totalPages) currentPage = totalPages || 1;
+
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const end = Math.min(start + PAGE_SIZE, filteredData.length);
+  const pageData = filteredData.slice(start, end);
+
+  let html = "";
+  pageData.forEach((item, idx) => {
+    const globalIdx = start + idx + 1;
+    const tagClass = item.isShanghai ? "tag-shanghai" : "tag-other";
+    const tagText = item.isShanghai ? "上海" : "其他";
+
+    html += `<tr>
+      <td class="cell-index">${globalIdx}</td>
+      <td class="cell-name"><a href="${escapeHtml(item.href)}" target="_blank" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</a></td>
+      <td class="cell-date">${escapeHtml(item.timeStr)}</td>
+      <td class="cell-venue" title="${escapeHtml(item.venue)}">${escapeHtml(item.venue)}</td>
+      <td class="cell-tag"><span class="tag ${tagClass}">${tagText}</span></td>
+      <td class="cell-area">${escapeHtml(item.area)}</td>
+      <td class="cell-people">${escapeHtml(item.people1)}</td>
+      <td class="cell-people">${escapeHtml(item.people2)}</td>
+      <td class="cell-action"><a href="${escapeHtml(item.href)}" target="_blank">详情 →</a></td>
+    </tr>`;
+  });
+
+  tbody.innerHTML = html;
+  footerInfo.textContent = `共 ${filteredData.length} 条，显示 ${start + 1}-${end}`;
+
+  // Pagination
+  renderPagination(totalPages);
+}
+
+function renderPagination(totalPages) {
+  const el = document.getElementById("pagination");
+  if (totalPages <= 1) { el.innerHTML = ""; return; }
+
+  let html = "";
+  html += `<button ${currentPage === 1 ? "disabled" : ""} onclick="goPage(${currentPage - 1})">‹</button>`;
+
+  const range = [];
+  if (totalPages <= 7) {
+    for (let i = 1; i <= totalPages; i++) range.push(i);
+  } else {
+    range.push(1);
+    if (currentPage > 3) range.push("...");
+    for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+      range.push(i);
+    }
+    if (currentPage < totalPages - 2) range.push("...");
+    range.push(totalPages);
+  }
+
+  for (const p of range) {
+    if (p === "...") {
+      html += `<button disabled>…</button>`;
+    } else {
+      html += `<button class="${p === currentPage ? "active" : ""}" onclick="goPage(${p})">${p}</button>`;
+    }
+  }
+
+  html += `<button ${currentPage === totalPages ? "disabled" : ""} onclick="goPage(${currentPage + 1})">›</button>`;
+  el.innerHTML = html;
+}
+
+function goPage(p) {
+  currentPage = p;
+  renderTable();
+  // Scroll to top of table
+  document.querySelector(".table-wrapper").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// ============================================================
+// Excel Download
+// ============================================================
+function downloadExcel() {
+  if (allData.length === 0) {
+    showToast("暂无数据可下载", "error");
+    return;
+  }
+
+  const shanghaiData = allData.filter(d => d.isShanghai);
+  const otherData = allData.filter(d => !d.isShanghai);
+
+  function makeSheet(data) {
+    return data.map(d => ({
+      "月份": d.month,
+      "展会名称": d.name,
+      "展会时间": d.timeStr,
+      "展馆名称": d.venue,
+      "展会面积": d.area,
+      "参商数量": d.people1,
+      "观众数量": d.people2,
+      "展会简介": d.desc,
+      "详情链接": d.href,
+    }));
+  }
+
+  const wb = XLSX.utils.book_new();
+
+  const ws1 = XLSX.utils.json_to_sheet(makeSheet(shanghaiData));
+  ws1["!cols"] = [
+    { wch: 8 }, { wch: 50 }, { wch: 30 }, { wch: 30 },
+    { wch: 15 }, { wch: 12 }, { wch: 12 }, { wch: 60 }, { wch: 50 }
+  ];
+  XLSX.utils.book_append_sheet(wb, ws1, "上海展会");
+
+  const ws2 = XLSX.utils.json_to_sheet(makeSheet(otherData));
+  ws2["!cols"] = [
+    { wch: 8 }, { wch: 50 }, { wch: 30 }, { wch: 30 },
+    { wch: 15 }, { wch: 12 }, { wch: 12 }, { wch: 60 }, { wch: 50 }
+  ];
+  XLSX.utils.book_append_sheet(wb, ws2, "非上海展会");
+
+  XLSX.writeFile(wb, "2026年展会信息.xlsx");
+  showToast("Excel 文件已开始下载");
+}
+
+// ============================================================
+// Init
+// ============================================================
+document.addEventListener("DOMContentLoaded", () => {
+  crawlAll();
+});
+</script>
+
+</body>
+</html>

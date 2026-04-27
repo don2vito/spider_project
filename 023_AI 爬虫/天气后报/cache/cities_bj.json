@@ -1,0 +1,57 @@
+[
+  {
+    "name": "北京",
+    "pinyin": "beijing",
+    "is_main": true
+  },
+  {
+    "name": "门头沟",
+    "pinyin": "mentougou",
+    "is_main": false
+  },
+  {
+    "name": "房山",
+    "pinyin": "fangshan",
+    "is_main": false
+  },
+  {
+    "name": "通州",
+    "pinyin": "tongzhou",
+    "is_main": false
+  },
+  {
+    "name": "顺义",
+    "pinyin": "shunyi",
+    "is_main": false
+  },
+  {
+    "name": "昌平",
+    "pinyin": "changping",
+    "is_main": false
+  },
+  {
+    "name": "大兴",
+    "pinyin": "daxing",
+    "is_main": false
+  },
+  {
+    "name": "怀柔",
+    "pinyin": "huairou",
+    "is_main": false
+  },
+  {
+    "name": "平谷",
+    "pinyin": "pinggu",
+    "is_main": false
+  },
+  {
+    "name": "密云",
+    "pinyin": "miyun",
+    "is_main": false
+  },
+  {
+    "name": "延庆",
+    "pinyin": "yanqing",
+    "is_main": false
+  }
+]

@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>惠买网 · 电视购物节目表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+/* ========== CSS Variables ========== */
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --bg-card: #1a1a26;
+  --bg-card-hover: #22222f;
+  --border: #2a2a3a;
+  --text-primary: #f0f0f5;
+  --text-secondary: #8888a0;
+  --text-muted: #55556a;
+  --accent-red: #E53935;
+  --accent-red-glow: rgba(229, 57, 53, 0.3);
+  --accent-gold: #FFB300;
+  --accent-gold-dim: rgba(255, 179, 0, 0.15);
+  --accent-green: #43A047;
+  --accent-blue: #1E88E5;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --font-body: 'Noto Sans SC', -apple-system, sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+/* ========== Reset ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ========== Background Atmosphere ========== */
+body::before {
+  content: '';
+  position: fixed;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(ellipse at 20% 20%, rgba(229,57,53,0.06) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 80%, rgba(255,179,0,0.04) 0%, transparent 50%),
+              radial-gradient(ellipse at 50% 50%, rgba(30,136,229,0.03) 0%, transparent 60%);
+  z-index: -1;
+  animation: bgDrift 20s ease-in-out infinite alternate;
+}
+@keyframes bgDrift {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  100% { transform: translate(-2%, -1%) rotate(1deg); }
+}
+
+/* ========== Header ========== */
+.app-header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10, 10, 15, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+}
+.header-inner {
+  max-width: 1280px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px; gap: 16px;
+}
+.logo-area { display: flex; align-items: center; gap: 12px; }
+.logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--accent-red), #FF6F00);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 900; color: #fff;
+  box-shadow: 0 2px 12px var(--accent-red-glow);
+}
+.logo-text { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+.logo-text span { color: var(--text-secondary); font-weight: 400; font-size: 13px; margin-left: 8px; }
+
+.header-actions { display: flex; align-items: center; gap: 10px; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 18px; border: none; border-radius: var(--radius-sm);
+  font-family: var(--font-body); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-red), #C62828);
+  color: #fff; box-shadow: 0 2px 12px var(--accent-red-glow);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 20px var(--accent-red-glow); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-secondary {
+  background: var(--bg-card); color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover { background: var(--bg-card-hover); border-color: var(--text-muted); }
+.btn-gold {
+  background: linear-gradient(135deg, var(--accent-gold), #FF8F00);
+  color: #1a1a26; font-weight: 700;
+  box-shadow: 0 2px 12px rgba(255,179,0,0.25);
+}
+.btn-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(255,179,0,0.35); }
+.btn-gold:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* ========== Progress Bar ========== */
+.progress-bar {
+  height: 3px; background: var(--border);
+  position: relative; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--accent-red), var(--accent-gold));
+  transition: width 0.3s ease;
+  border-radius: 0 2px 2px 0;
+}
+.progress-fill.complete { width: 100%; }
+
+/* ========== Main Content ========== */
+.app-main {
+  max-width: 1280px; margin: 0 auto;
+  padding: 24px;
+}
+
+/* ========== Stats Bar ========== */
+.stats-bar {
+  display: flex; align-items: center; gap: 24px;
+  padding: 16px 20px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.stat-item { display: flex; align-items: center; gap: 8px; }
+.stat-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+.stat-icon.red { background: rgba(229,57,53,0.15); color: var(--accent-red); }
+.stat-icon.gold { background: var(--accent-gold-dim); color: var(--accent-gold); }
+.stat-icon.blue { background: rgba(30,136,229,0.15); color: var(--accent-blue); }
+.stat-icon.green { background: rgba(67,160,71,0.15); color: var(--accent-green); }
+.stat-value { font-size: 20px; font-weight: 700; font-family: var(--font-mono); }
+.stat-label { font-size: 12px; color: var(--text-secondary); }
+
+/* ========== Channel Tabs ========== */
+.channel-tabs {
+  display: flex; gap: 4px;
+  padding: 4px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+  width: fit-content;
+}
+.tab-btn {
+  padding: 10px 24px; border: none; border-radius: var(--radius-sm);
+  background: transparent; color: var(--text-secondary);
+  font-family: var(--font-body); font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: all 0.2s;
+}
+.tab-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+.tab-btn.active {
+  background: var(--bg-card); color: var(--text-primary);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.tab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 20px; height: 20px; padding: 0 6px;
+  background: var(--border); border-radius: 10px;
+  font-size: 11px; font-family: var(--font-mono); font-weight: 500;
+  margin-left: 6px; color: var(--text-secondary);
+}
+.tab-btn.active .tab-badge { background: var(--accent-red); color: #fff; }
+
+/* ========== Date Group ========== */
+.date-group { margin-bottom: 32px; }
+.date-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 16px; padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.date-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 20px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  font-size: 14px; font-weight: 500;
+}
+.date-chip .weekday { color: var(--text-secondary); font-weight: 400; }
+.date-chip.today { border-color: var(--accent-red); background: rgba(229,57,53,0.1); }
+.date-chip.today::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent-red);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.5); }
+}
+.date-count { font-size: 12px; color: var(--text-muted); font-family: var(--font-mono); }
+
+/* ========== Program Grid ========== */
+.program-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 12px;
+}
+
+/* ========== Program Card ========== */
+.program-card {
+  display: flex; gap: 14px;
+  padding: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: all 0.25s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  overflow: hidden;
+  animation: cardIn 0.4s ease both;
+}
+.program-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--text-muted);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card-img {
+  width: 100px; min-width: 100px; height: 100px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  background: var(--bg-secondary);
+}
+.card-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.card-time {
+  font-family: var(--font-mono); font-size: 13px;
+  color: var(--accent-gold); font-weight: 500;
+}
+.card-name {
+  font-size: 14px; font-weight: 500;
+  line-height: 1.4;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+.card-price-row { display: flex; align-items: baseline; gap: 8px; margin-top: auto; }
+.card-price {
+  font-size: 20px; font-weight: 900; color: var(--accent-red);
+  font-family: var(--font-mono);
+}
+.card-price::before { content: '¥'; font-size: 13px; font-weight: 500; }
+.card-original-price {
+  font-size: 12px; color: var(--text-muted);
+  text-decoration: line-through; font-family: var(--font-mono);
+}
+.card-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.tag {
+  display: inline-block; padding: 2px 8px;
+  border-radius: 4px; font-size: 11px; font-weight: 500;
+}
+.tag-sale { background: rgba(229,57,53,0.15); color: var(--accent-red); }
+.tag-gift { background: rgba(67,160,71,0.15); color: var(--accent-green); }
+.tag-discount { background: rgba(30,136,229,0.15); color: var(--accent-blue); }
+.tag-live {
+  background: var(--accent-red); color: #fff;
+  animation: livePulse 1.5s ease-in-out infinite;
+}
+@keyframes livePulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--accent-red-glow); }
+  50% { box-shadow: 0 0 0 6px transparent; }
+}
+
+/* ========== Loading Skeleton ========== */
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 12px;
+}
+.skeleton-card {
+  display: flex; gap: 14px; padding: 14px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.skeleton-img {
+  width: 100px; min-width: 100px; height: 100px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--bg-card-hover) 50%, var(--bg-secondary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+.skeleton-body { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.skeleton-line {
+  height: 12px; border-radius: 6px;
+  background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--bg-card-hover) 50%, var(--bg-secondary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+.skeleton-line.w60 { width: 60%; }
+.skeleton-line.w80 { width: 80%; }
+.skeleton-line.w40 { width: 40%; }
+.skeleton-line.h20 { height: 20px; }
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ========== Status Messages ========== */
+.status-msg {
+  text-align: center; padding: 60px 20px;
+  color: var(--text-secondary);
+}
+.status-msg .icon { font-size: 48px; margin-bottom: 16px; }
+.status-msg .title { font-size: 18px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+.status-msg .desc { font-size: 14px; }
+
+/* ========== Footer ========== */
+.app-footer {
+  text-align: center; padding: 32px 24px;
+  color: var(--text-muted); font-size: 12px;
+  border-top: 1px solid var(--border);
+  margin-top: 40px;
+}
+.app-footer a { color: var(--text-secondary); text-decoration: none; }
+.app-footer a:hover { color: var(--accent-gold); }
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+  .header-inner { height: 56px; padding: 0 16px; }
+  .logo-text span { display: none; }
+  .btn { padding: 7px 12px; font-size: 12px; }
+  .app-main { padding: 16px; }
+  .stats-bar { gap: 16px; padding: 12px 16px; }
+  .program-grid, .skeleton-grid {
+    grid-template-columns: 1fr;
+  }
+  .channel-tabs { width: 100%; }
+  .tab-btn { flex: 1; text-align: center; padding: 8px 12px; font-size: 13px; }
+}
+
+/* ========== Scrollbar ========== */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ========== Toast ========== */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 999;
+  padding: 12px 20px; border-radius: var(--radius-sm);
+  background: var(--bg-card); border: 1px solid var(--border);
+  color: var(--text-primary); font-size: 13px;
+  box-shadow: var(--shadow);
+  transform: translateY(100px); opacity: 0;
+  transition: all 0.3s ease;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { border-color: var(--accent-green); }
+.toast.error { border-color: var(--accent-red); }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="app-header">
+  <div class="header-inner">
+    <div class="logo-area">
+      <div class="logo-icon">TV</div>
+      <div class="logo-text">惠买节目表<span>www.huimai.com.cn</span></div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" id="refreshBtn" onclick="refreshData()">
+        &#x21bb; 刷新数据
+      </button>
+      <button class="btn btn-gold" id="downloadBtn" onclick="exportToExcel()" disabled>
+        &#x2193; 下载 Excel
+      </button>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+</header>
+
+<!-- Main -->
+<main class="app-main">
+  <!-- Stats -->
+  <div class="stats-bar" id="statsBar" style="display:none;">
+    <div class="stat-item">
+      <div class="stat-icon red">&#x1F4FA;</div>
+      <div><div class="stat-value" id="statTotal">0</div><div class="stat-label">节目总数</div></div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-icon gold">&#x1F3AC;</div>
+      <div><div class="stat-value" id="statChannels">2</div><div class="stat-label">频道</div></div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-icon blue">&#x1F4C5;</div>
+      <div><div class="stat-value" id="statDays">7</div><div class="stat-label">天数</div></div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-icon green">&#x25CF;</div>
+      <div><div class="stat-value" id="statLive">0</div><div class="stat-label">正在直播</div></div>
+    </div>
+  </div>
+
+  <!-- Channel Tabs -->
+  <div class="channel-tabs" id="channelTabs" style="display:none;">
+    <button class="tab-btn active" data-channel="all" onclick="filterChannel('all', this)">
+      全部<span class="tab-badge" id="badgeAll">0</span>
+    </button>
+    <button class="tab-btn" data-channel="UGO1" onclick="filterChannel('UGO1', this)">
+      优购物<span class="tab-badge" id="badgeUGO1">0</span>
+    </button>
+    <button class="tab-btn" data-channel="BTV1" onclick="filterChannel('BTV1', this)">
+      爱家购物<span class="tab-badge" id="badgeBTV1">0</span>
+    </button>
+  </div>
+
+  <!-- Content Area -->
+  <div id="contentArea">
+    <div class="status-msg" id="loadingMsg">
+      <div class="icon">&#x1F50D;</div>
+      <div class="title">正在获取节目数据...</div>
+      <div class="desc">从 www.huimai.com.cn 抓取优购物和爱家购物最近 7 天的节目表</div>
+    </div>
+    <div class="skeleton-grid" id="skeletonGrid">
+      <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w60"></div><div class="skeleton-line w80"></div><div class="skeleton-line h20 w40"></div><div class="skeleton-line w60"></div></div></div>
+      <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w60"></div><div class="skeleton-line w80"></div><div class="skeleton-line h20 w40"></div><div class="skeleton-line w60"></div></div></div>
+      <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w60"></div><div class="skeleton-line w80"></div><div class="skeleton-line h20 w40"></div><div class="skeleton-line w60"></div></div></div>
+      <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w60"></div><div class="skeleton-line w80"></div><div class="skeleton-line h20 w40"></div><div class="skeleton-line w60"></div></div></div>
+      <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w60"></div><div class="skeleton-line w80"></div><div class="skeleton-line h20 w40"></div><div class="skeleton-line w60"></div></div></div>
+      <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w60"></div><div class="skeleton-line w80"></div><div class="skeleton-line h20 w40"></div><div class="skeleton-line w60"></div></div></div>
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="app-footer">
+  数据来源：<a href="https://www.huimai.com.cn/tvList" target="_blank">www.huimai.com.cn/tvList</a>
+  &nbsp;·&nbsp; 仅供学习研究使用
+</footer>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// Configuration
+// ============================================================
+// API endpoint: uses local proxy server to avoid CORS
+// Start the server: python3 huimai_server.py
+// Then open: http://localhost:8765/huimai_tvlist.html
+const API_ENDPOINT = '/api/tvlist';
+const CHANNELS = { UGO1: '优购物', BTV1: '爱家购物' };
+const DAYS = 7;
+
+// ============================================================
+// State
+// ============================================================
+let allPrograms = [];
+let currentFilter = 'all';
+
+// ============================================================
+// Utility Functions
+// ============================================================
+function getDateTimestamp(dateStr) {
+  // Convert YYYY-MM-DD to Unix timestamp (UTC+8 midnight)
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d, 0, 0, 0));
+  // Adjust for UTC+8: UTC midnight = UTC+8 08:00, so subtract 8h
+  return Math.floor(dt.getTime() / 1000) - 8 * 3600;
+}
+
+function getDateRange(days) {
+  const result = [];
+  const now = new Date();
+  // Get current date in UTC+8
+  const utc8 = new Date(now.getTime() + 8 * 3600 * 1000);
+  for (let i = 0; i < days; i++) {
+    const d = new Date(utc8.getTime() - i * 86400 * 1000);
+    const dateStr = d.toISOString().slice(0, 10);
+    const ts = getDateTimestamp(dateStr);
+    result.push({ dateStr, ts });
+  }
+  return result;
+}
+
+function getWeekdayName(dateStr) {
+  const names = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+  const d = new Date(dateStr + 'T00:00:00+08:00');
+  return names[d.getDay()];
+}
+
+function isToday(dateStr) {
+  const now = new Date();
+  const utc8 = new Date(now.getTime() + 8 * 3600 * 1000);
+  return dateStr === utc8.toISOString().slice(0, 10);
+}
+
+function formatDateCN(dateStr) {
+  const [y, m, d] = dateStr.split('-');
+  return `${parseInt(m)}月${parseInt(d)}日`;
+}
+
+// ============================================================
+// API Fetch — via local proxy server
+// ============================================================
+async function fetchAllData(onProgress) {
+  try {
+    const resp = await fetch(API_ENDPOINT);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const json = await resp.json();
+    if (json.success && json.programs) {
+      return json.programs;
+    }
+    return [];
+  } catch (e) {
+    console.error('Fetch error:', e);
+    return [];
+  }
+}
+
+// ============================================================
+// Sorting
+// ============================================================
+function sortPrograms(programs) {
+  const channelOrder = { 'UGO1': 0, 'BTV1': 1 };
+  return programs.sort((a, b) => {
+    // Channel order: UGO1 first
+    const chDiff = (channelOrder[a.channelKey] ?? 9) - (channelOrder[b.channelKey] ?? 9);
+    if (chDiff !== 0) return chDiff;
+    // Date ascending
+    const dateDiff = a.date.localeCompare(b.date);
+    if (dateDiff !== 0) return dateDiff;
+    // Time ascending
+    return a.begin.localeCompare(b.begin);
+  });
+}
+
+// ============================================================
+// Rendering
+// ============================================================
+function renderPrograms(programs) {
+  const container = document.getElementById('contentArea');
+  if (!programs || programs.length === 0) {
+    container.innerHTML = `
+      <div class="status-msg">
+        <div class="icon">&#x1F614;</div>
+        <div class="title">暂无节目数据</div>
+        <div class="desc">请检查网络连接后点击刷新</div>
+      </div>`;
+    return;
+  }
+
+  // Group by date
+  const groups = {};
+  for (const p of programs) {
+    const key = p.date;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(p);
+  }
+
+  let html = '';
+  for (const [date, items] of Object.entries(groups)) {
+    const todayClass = isToday(date) ? ' today' : '';
+    html += `<div class="date-group">`;
+    html += `<div class="date-header">
+      <div class="date-chip${todayClass}">${formatDateCN(date)} <span class="weekday">${getWeekdayName(date)}</span></div>
+      <div class="date-count">${items.length} 个节目</div>
+    </div>`;
+    html += `<div class="program-grid">`;
+
+    for (let i = 0; i < items.length; i++) {
+      const p = items[i];
+      const delay = Math.min(i * 0.05, 0.5);
+      const tags = renderTags(p);
+      const originalPrice = (p.shopPrice && p.shopPrice !== p.price)
+        ? `<span class="card-original-price">¥${p.shopPrice}</span>` : '';
+
+      html += `<a class="program-card" href="${p.goodsUrl}" target="_blank" rel="noopener"
+        style="animation-delay:${delay}s" title="${p.goodsName}">
+        <img class="card-img" src="${p.imageUrl}" alt="${p.goodsName}" loading="lazy"
+          onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect fill=%22%231a1a26%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2250%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%23555%22 font-size=%2212%22>暂无图</text></svg>'">
+        <div class="card-body">
+          <div class="card-time">${p.begin} ~ ${p.end}</div>
+          <div class="card-name">${p.goodsName}</div>
+          <div class="card-price-row">
+            <span class="card-price">${p.price}</span>
+            ${originalPrice}
+          </div>
+          <div class="card-tags">${tags}</div>
+        </div>
+      </a>`;
+    }
+    html += `</div></div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function renderTags(p) {
+  let tags = '';
+  if (p.isLiving) tags += '<span class="tag tag-live">&#x25CF; 直播中</span>';
+  if (p.actLabelDesc) {
+    const desc = p.actLabelDesc;
+    if (desc.includes('降价') || desc.includes('限时')) {
+      tags += `<span class="tag tag-sale">${desc}</span>`;
+    } else if (desc.includes('赠') || desc.includes('满')) {
+      tags += `<span class="tag tag-gift">${desc}</span>`;
+    } else {
+      tags += `<span class="tag tag-discount">${desc}</span>`;
+    }
+  }
+  return tags;
+}
+
+// ============================================================
+// Stats & Badges
+// ============================================================
+function updateStats(programs) {
+  const ugo = programs.filter(p => p.channelKey === 'UGO1');
+  const btv = programs.filter(p => p.channelKey === 'BTV1');
+  const live = programs.filter(p => p.isLiving);
+  const dates = [...new Set(programs.map(p => p.date))];
+
+  document.getElementById('statTotal').textContent = programs.length;
+  document.getElementById('statChannels').textContent = '2';
+  document.getElementById('statDays').textContent = dates.length;
+  document.getElementById('statLive').textContent = live.length;
+
+  document.getElementById('badgeAll').textContent = programs.length;
+  document.getElementById('badgeUGO1').textContent = ugo.length;
+  document.getElementById('badgeBTV1').textContent = btv.length;
+
+  document.getElementById('statsBar').style.display = 'flex';
+  document.getElementById('channelTabs').style.display = 'flex';
+}
+
+// ============================================================
+// Filter
+// ============================================================
+function filterChannel(channel, btn) {
+  currentFilter = channel;
+  // Update tab active state
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // Filter and render
+  const filtered = channel === 'all'
+    ? allPrograms
+    : allPrograms.filter(p => p.channelKey === channel);
+  renderPrograms(filtered);
+}
+
+// ============================================================
+// Excel Export
+// ============================================================
+function exportToExcel() {
+  if (!allPrograms || allPrograms.length === 0) {
+    showToast('暂无数据可导出', 'error');
+    return;
+  }
+
+  const exportData = allPrograms.map(p => ({
+    '日期': p.date,
+    '星期': p.weekday,
+    '频道': p.channel,
+    '开始时间': p.begin,
+    '结束时间': p.end,
+    '商品ID': p.goodsId,
+    '商品名称': p.goodsName,
+    '售价': p.price,
+    '原价': p.shopPrice,
+    '活动标签': p.actLabelDesc,
+    '是否直播': p.isLiving ? '是' : '否',
+    '商品链接': p.goodsUrl,
+  }));
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.json_to_sheet(exportData);
+
+  // Set column widths
+  ws['!cols'] = [
+    { wch: 12 }, { wch: 6 }, { wch: 10 }, { wch: 8 }, { wch: 8 },
+    { wch: 10 }, { wch: 40 }, { wch: 8 }, { wch: 8 }, { wch: 16 },
+    { wch: 8 }, { wch: 50 },
+  ];
+
+  XLSX.utils.book_append_sheet(wb, ws, '节目表');
+  const filename = `惠买节目表_${new Date().toISOString().slice(0, 10)}.xlsx`;
+  XLSX.writeFile(wb, filename);
+  showToast(`已导出 ${allPrograms.length} 条数据`, 'success');
+}
+
+// ============================================================
+// Toast
+// ============================================================
+function showToast(msg, type = '') {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = 'toast show ' + type;
+  setTimeout(() => { toast.className = 'toast'; }, 3000);
+}
+
+// ============================================================
+// Progress
+// ============================================================
+function updateProgress(current, total) {
+  const pct = Math.round((current / total) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+// ============================================================
+// Main Flow
+// ============================================================
+async function loadData() {
+  const skeleton = document.getElementById('skeletonGrid');
+  const loadingMsg = document.getElementById('loadingMsg');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const refreshBtn = document.getElementById('refreshBtn');
+
+  // Reset
+  skeleton.style.display = 'grid';
+  loadingMsg.style.display = 'block';
+  downloadBtn.disabled = true;
+  refreshBtn.disabled = true;
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('statsBar').style.display = 'none';
+  document.getElementById('channelTabs').style.display = 'none';
+
+  try {
+    const programs = await fetchAllData(updateProgress);
+
+    if (programs.length === 0) {
+      skeleton.style.display = 'none';
+      loadingMsg.innerHTML = `
+        <div class="icon">&#x26A0;</div>
+        <div class="title">数据获取失败</div>
+        <div class="desc">可能存在跨域限制或网络问题，请稍后重试</div>`;
+      return;
+    }
+
+    allPrograms = sortPrograms(programs);
+    updateStats(allPrograms);
+
+    skeleton.style.display = 'none';
+    loadingMsg.style.display = 'none';
+
+    // Reset filter to "all"
+    currentFilter = 'all';
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('.tab-btn[data-channel="all"]').classList.add('active');
+    renderPrograms(allPrograms);
+
+    downloadBtn.disabled = false;
+    showToast(`成功获取 ${allPrograms.length} 条节目数据`, 'success');
+  } catch (e) {
+    console.error('Load error:', e);
+    skeleton.style.display = 'none';
+    loadingMsg.innerHTML = `
+      <div class="icon">&#x274C;</div>
+      <div class="title">加载出错</div>
+      <div class="desc">${e.message}</div>`;
+  } finally {
+    refreshBtn.disabled = false;
+    document.getElementById('progressFill').classList.add('complete');
+    setTimeout(() => {
+      document.getElementById('progressFill').style.width = '0%';
+      document.getElementById('progressFill').classList.remove('complete');
+    }, 1000);
+  }
+}
+
+function refreshData() {
+  allPrograms = [];
+  loadData();
+}
+
+// ============================================================
+// Auto-load on page open
+// ============================================================
+document.addEventListener('DOMContentLoaded', loadData);
+</script>
+</body>
+</html>

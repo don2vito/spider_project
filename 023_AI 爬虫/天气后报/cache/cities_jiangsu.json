@@ -1,0 +1,547 @@
+[
+  {
+    "name": "南京",
+    "pinyin": "nanjing",
+    "is_main": true
+  },
+  {
+    "name": "玄武",
+    "pinyin": "xuanwu",
+    "is_main": false
+  },
+  {
+    "name": "秦淮",
+    "pinyin": "qinhuai",
+    "is_main": false
+  },
+  {
+    "name": "建邺",
+    "pinyin": "jianye",
+    "is_main": false
+  },
+  {
+    "name": "鼓楼",
+    "pinyin": "jsgulou",
+    "is_main": false
+  },
+  {
+    "name": "浦口",
+    "pinyin": "pukou",
+    "is_main": false
+  },
+  {
+    "name": "栖霞",
+    "pinyin": "jsqixia",
+    "is_main": false
+  },
+  {
+    "name": "雨花台",
+    "pinyin": "yuhuatai",
+    "is_main": false
+  },
+  {
+    "name": "江宁",
+    "pinyin": "jiangning",
+    "is_main": false
+  },
+  {
+    "name": "六合",
+    "pinyin": "jsliuhe",
+    "is_main": false
+  },
+  {
+    "name": "溧水",
+    "pinyin": "jslishui",
+    "is_main": false
+  },
+  {
+    "name": "高淳",
+    "pinyin": "gaochun",
+    "is_main": false
+  },
+  {
+    "name": "无锡",
+    "pinyin": "wuxi",
+    "is_main": true
+  },
+  {
+    "name": "锡山",
+    "pinyin": "xishan",
+    "is_main": false
+  },
+  {
+    "name": "惠山",
+    "pinyin": "huishan",
+    "is_main": false
+  },
+  {
+    "name": "滨湖",
+    "pinyin": "binhu",
+    "is_main": false
+  },
+  {
+    "name": "梁溪",
+    "pinyin": "liangxi",
+    "is_main": false
+  },
+  {
+    "name": "新吴",
+    "pinyin": "xinwu",
+    "is_main": false
+  },
+  {
+    "name": "江阴",
+    "pinyin": "jiangyin",
+    "is_main": false
+  },
+  {
+    "name": "宜兴",
+    "pinyin": "yixing",
+    "is_main": false
+  },
+  {
+    "name": "徐州",
+    "pinyin": "xuzhou",
+    "is_main": true
+  },
+  {
+    "name": "鼓楼",
+    "pinyin": "jsxzgulou",
+    "is_main": false
+  },
+  {
+    "name": "云龙",
+    "pinyin": "jsyunlong",
+    "is_main": false
+  },
+  {
+    "name": "贾汪",
+    "pinyin": "jiawang",
+    "is_main": false
+  },
+  {
+    "name": "泉山",
+    "pinyin": "quanshan",
+    "is_main": false
+  },
+  {
+    "name": "铜山",
+    "pinyin": "jstongshan",
+    "is_main": false
+  },
+  {
+    "name": "丰县",
+    "pinyin": "jsfengxian",
+    "is_main": false
+  },
+  {
+    "name": "沛县",
+    "pinyin": "peixian",
+    "is_main": false
+  },
+  {
+    "name": "睢宁",
+    "pinyin": "suining",
+    "is_main": false
+  },
+  {
+    "name": "新沂",
+    "pinyin": "xinyi",
+    "is_main": false
+  },
+  {
+    "name": "邳州",
+    "pinyin": "pizhou",
+    "is_main": false
+  },
+  {
+    "name": "常州",
+    "pinyin": "changzhou",
+    "is_main": true
+  },
+  {
+    "name": "天宁",
+    "pinyin": "tianning",
+    "is_main": false
+  },
+  {
+    "name": "钟楼",
+    "pinyin": "zhonglou",
+    "is_main": false
+  },
+  {
+    "name": "新北",
+    "pinyin": "xinbei",
+    "is_main": false
+  },
+  {
+    "name": "武进",
+    "pinyin": "wujin",
+    "is_main": false
+  },
+  {
+    "name": "金坛",
+    "pinyin": "jintan",
+    "is_main": false
+  },
+  {
+    "name": "溧阳",
+    "pinyin": "liyang",
+    "is_main": false
+  },
+  {
+    "name": "苏州",
+    "pinyin": "suzhou",
+    "is_main": true
+  },
+  {
+    "name": "虎丘",
+    "pinyin": "huqiu",
+    "is_main": false
+  },
+  {
+    "name": "吴中",
+    "pinyin": "jswuzhong",
+    "is_main": false
+  },
+  {
+    "name": "相城",
+    "pinyin": "jsxiangcheng",
+    "is_main": false
+  },
+  {
+    "name": "姑苏",
+    "pinyin": "gusu",
+    "is_main": false
+  },
+  {
+    "name": "吴江",
+    "pinyin": "wujiang",
+    "is_main": false
+  },
+  {
+    "name": "常熟",
+    "pinyin": "changshu",
+    "is_main": false
+  },
+  {
+    "name": "张家港",
+    "pinyin": "zhangjiagang",
+    "is_main": false
+  },
+  {
+    "name": "昆山",
+    "pinyin": "kunshan",
+    "is_main": false
+  },
+  {
+    "name": "太仓",
+    "pinyin": "taicang",
+    "is_main": false
+  },
+  {
+    "name": "南通",
+    "pinyin": "nantong",
+    "is_main": true
+  },
+  {
+    "name": "崇川",
+    "pinyin": "chongchuan",
+    "is_main": false
+  },
+  {
+    "name": "港闸",
+    "pinyin": "gangzha",
+    "is_main": false
+  },
+  {
+    "name": "通州",
+    "pinyin": "jstongzhou",
+    "is_main": false
+  },
+  {
+    "name": "海安",
+    "pinyin": "haian",
+    "is_main": false
+  },
+  {
+    "name": "如东",
+    "pinyin": "rudong",
+    "is_main": false
+  },
+  {
+    "name": "启东",
+    "pinyin": "qidong",
+    "is_main": false
+  },
+  {
+    "name": "如皋",
+    "pinyin": "rugao",
+    "is_main": false
+  },
+  {
+    "name": "海门",
+    "pinyin": "haimen",
+    "is_main": false
+  },
+  {
+    "name": "连云港",
+    "pinyin": "lianyungang",
+    "is_main": true
+  },
+  {
+    "name": "海州",
+    "pinyin": "jshaizhou",
+    "is_main": false
+  },
+  {
+    "name": "赣榆",
+    "pinyin": "ganyu",
+    "is_main": false
+  },
+  {
+    "name": "东海",
+    "pinyin": "donghai",
+    "is_main": false
+  },
+  {
+    "name": "灌云",
+    "pinyin": "guanyun",
+    "is_main": false
+  },
+  {
+    "name": "灌南",
+    "pinyin": "guannan",
+    "is_main": false
+  },
+  {
+    "name": "淮安",
+    "pinyin": "huaian",
+    "is_main": true
+  },
+  {
+    "name": "淮安区",
+    "pinyin": "huaianqu",
+    "is_main": false
+  },
+  {
+    "name": "淮阴区",
+    "pinyin": "huaiyinqu",
+    "is_main": false
+  },
+  {
+    "name": "清河",
+    "pinyin": "jsqinghe",
+    "is_main": false
+  },
+  {
+    "name": "清浦",
+    "pinyin": "jsqingpu",
+    "is_main": false
+  },
+  {
+    "name": "洪泽",
+    "pinyin": "hongze",
+    "is_main": false
+  },
+  {
+    "name": "涟水",
+    "pinyin": "lianshui",
+    "is_main": false
+  },
+  {
+    "name": "盱眙",
+    "pinyin": "xuyu",
+    "is_main": false
+  },
+  {
+    "name": "金湖",
+    "pinyin": "jinhu",
+    "is_main": false
+  },
+  {
+    "name": "盐城",
+    "pinyin": "yancheng",
+    "is_main": true
+  },
+  {
+    "name": "亭湖",
+    "pinyin": "tinghu",
+    "is_main": false
+  },
+  {
+    "name": "盐都",
+    "pinyin": "yandu",
+    "is_main": false
+  },
+  {
+    "name": "大丰",
+    "pinyin": "dafeng",
+    "is_main": false
+  },
+  {
+    "name": "响水",
+    "pinyin": "xiangshui",
+    "is_main": false
+  },
+  {
+    "name": "滨海",
+    "pinyin": "binhai",
+    "is_main": false
+  },
+  {
+    "name": "阜宁",
+    "pinyin": "jsfuning",
+    "is_main": false
+  },
+  {
+    "name": "射阳",
+    "pinyin": "sheyang",
+    "is_main": false
+  },
+  {
+    "name": "建湖",
+    "pinyin": "jianhu",
+    "is_main": false
+  },
+  {
+    "name": "东台",
+    "pinyin": "dongtai",
+    "is_main": false
+  },
+  {
+    "name": "扬州",
+    "pinyin": "yangzhou",
+    "is_main": true
+  },
+  {
+    "name": "广陵",
+    "pinyin": "jsguangling",
+    "is_main": false
+  },
+  {
+    "name": "邗江",
+    "pinyin": "jshanjiang",
+    "is_main": false
+  },
+  {
+    "name": "江都",
+    "pinyin": "jiangdu",
+    "is_main": false
+  },
+  {
+    "name": "宝应",
+    "pinyin": "baoying",
+    "is_main": false
+  },
+  {
+    "name": "仪征",
+    "pinyin": "yizheng",
+    "is_main": false
+  },
+  {
+    "name": "高邮",
+    "pinyin": "gaoyou",
+    "is_main": false
+  },
+  {
+    "name": "镇江",
+    "pinyin": "zhenjiang",
+    "is_main": true
+  },
+  {
+    "name": "京口",
+    "pinyin": "jingkou",
+    "is_main": false
+  },
+  {
+    "name": "润州",
+    "pinyin": "runzhou",
+    "is_main": false
+  },
+  {
+    "name": "丹徒",
+    "pinyin": "dantu",
+    "is_main": false
+  },
+  {
+    "name": "丹阳",
+    "pinyin": "danyang",
+    "is_main": false
+  },
+  {
+    "name": "扬中",
+    "pinyin": "yangzhong",
+    "is_main": false
+  },
+  {
+    "name": "句容",
+    "pinyin": "jurong",
+    "is_main": false
+  },
+  {
+    "name": "泰州",
+    "pinyin": "jstaizhou",
+    "is_main": true
+  },
+  {
+    "name": "海陵",
+    "pinyin": "hailing",
+    "is_main": false
+  },
+  {
+    "name": "高港",
+    "pinyin": "gaogang",
+    "is_main": false
+  },
+  {
+    "name": "姜堰",
+    "pinyin": "jiangyan",
+    "is_main": false
+  },
+  {
+    "name": "兴化",
+    "pinyin": "xinghua",
+    "is_main": false
+  },
+  {
+    "name": "靖江",
+    "pinyin": "jingjiang",
+    "is_main": false
+  },
+  {
+    "name": "泰兴",
+    "pinyin": "taixing",
+    "is_main": false
+  },
+  {
+    "name": "宿迁",
+    "pinyin": "suqian",
+    "is_main": true
+  },
+  {
+    "name": "宿城",
+    "pinyin": "sucheng",
+    "is_main": false
+  },
+  {
+    "name": "宿豫",
+    "pinyin": "suyu",
+    "is_main": false
+  },
+  {
+    "name": "沭阳",
+    "pinyin": "shuyang",
+    "is_main": false
+  },
+  {
+    "name": "泗阳",
+    "pinyin": "siyang",
+    "is_main": false
+  },
+  {
+    "name": "泗洪",
+    "pinyin": "sihong",
+    "is_main": false
+  }
+]

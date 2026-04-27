@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>历史天气数据查询系统</title>
+<style>
+/* ============================================================
+   CSS Variables & Reset
+   ============================================================ */
+:root {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    --bg-hover: #3b4c6b;
+    --accent: #f59e0b;
+    --accent-hover: #d97706;
+    --accent-subtle: rgba(245, 158, 11, 0.08);
+    --accent-glow: rgba(245, 158, 11, 0.25);
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --info: #06b6d4;
+    --table-header: #1a365d;
+    --table-row-even: #1a2332;
+    --table-row-odd: #0f172a;
+    --table-border: #2d3a4f;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.3);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,0.4);
+    --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 15px; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* ============================================================
+   Background Atmosphere
+   ============================================================ */
+body::before {
+    content: "";
+    position: fixed;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(ellipse at 20% 20%, rgba(245,158,11,0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(6,182,212,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(15,23,42,0.8) 0%, transparent 100%);
+    z-index: -1;
+    animation: bgDrift 30s ease-in-out infinite alternate;
+}
+
+@keyframes bgDrift {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(-2%, -1%) rotate(1deg); }
+}
+
+/* ============================================================
+   Layout
+   ============================================================ */
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+/* ============================================================
+   Header
+   ============================================================ */
+.header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    animation: fadeInDown 0.7s ease-out;
+}
+
+.header-icon {
+    font-size: 2.8rem;
+    display: inline-block;
+    animation: float 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 12px rgba(245,158,11,0.3));
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    margin: 0.5rem 0 0.3rem;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+}
+
+/* ============================================================
+   Card
+   ============================================================ */
+.card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--table-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: visible;
+    animation: fadeInUp 0.6s ease-out both;
+}
+
+/* Ensure card corners remain clipped for internal content */
+.card-header {
+    border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.card + .card { margin-top: 1.5rem; }
+
+.card-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--table-border);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.card-header .icon { font-size: 1.1rem; }
+
+.card-body { padding: 1.5rem; }
+
+/* ============================================================
+   Filter Bar
+   ============================================================ */
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    flex: 1;
+    min-width: 180px;
+}
+
+.filter-group label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* ============================================================
+   Select / Multi-Select Components
+   ============================================================ */
+.select-wrapper {
+    position: relative;
+}
+
+.select-wrapper select,
+.custom-select-trigger {
+    width: 100%;
+    padding: 0.6rem 2.2rem 0.6rem 0.9rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--table-border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: border-color var(--transition), box-shadow var(--transition);
+    outline: none;
+}
+
+.select-wrapper select:hover,
+.custom-select-trigger:hover {
+    border-color: var(--accent);
+}
+
+.select-wrapper select:focus,
+.custom-select-trigger.active {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-subtle);
+}
+
+.select-wrapper::after {
+    content: "▾";
+    position: absolute;
+    right: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+    font-size: 0.85rem;
+}
+
+/* Custom Multi-Select */
+.multi-select {
+    position: relative;
+}
+
+.multi-select-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 40px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.multi-select-trigger .placeholder { color: var(--text-muted); }
+.multi-select-trigger .count {
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.multi-select-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--bg-secondary);
+    border: 1px solid var(--table-border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg);
+    z-index: 100;
+    max-height: 320px;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transform: scaleY(0.95) translateY(-4px);
+    transform-origin: top;
+    pointer-events: none;
+    transition: opacity var(--transition), transform var(--transition);
+}
+
+.multi-select-dropdown.open {
+    opacity: 1;
+    transform: scaleY(1) translateY(0);
+    pointer-events: auto;
+}
+
+.dropdown-search {
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--table-border);
+}
+
+.dropdown-search input {
+    width: 100%;
+    padding: 0.45rem 0.7rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--table-border);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color var(--transition);
+}
+
+.dropdown-search input:focus {
+    border-color: var(--accent);
+}
+
+.dropdown-search input::placeholder { color: var(--text-muted); }
+
+.dropdown-options {
+    overflow-y: auto;
+    flex: 1;
+    padding: 0.3rem 0;
+}
+
+.dropdown-group-label {
+    padding: 0.4rem 0.9rem 0.2rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.dropdown-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+    transition: background var(--transition);
+    font-size: 0.88rem;
+}
+
+.dropdown-option:hover { background: var(--bg-hover); }
+
+.dropdown-option input[type="checkbox"] {
+    accent-color: var(--accent);
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+}
+
+.dropdown-actions {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-top: 1px solid var(--table-border);
+}
+
+.dropdown-actions button {
+    flex: 1;
+    padding: 0.35rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--table-border);
+    border-radius: 4px;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all var(--transition);
+    font-family: inherit;
+}
+
+.dropdown-actions button:hover {
+    background: var(--accent);
+    color: var(--bg-primary);
+    border-color: var(--accent);
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.4rem;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all var(--transition);
+    outline: none;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+    color: #0f172a;
+    box-shadow: 0 2px 8px rgba(245,158,11,0.2);
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(245,158,11,0.35);
+}
+
+.btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--table-border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: var(--bg-hover);
+    border-color: var(--accent);
+}
+
+.btn-secondary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.btn-export {
+    background: linear-gradient(135deg, var(--success), #059669);
+    color: white;
+    box-shadow: 0 2px 8px rgba(16,185,129,0.2);
+}
+
+.btn-export:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(16,185,129,0.35);
+}
+
+.btn-export:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.btn-cancel {
+    background: linear-gradient(135deg, var(--error), #dc2626);
+    color: white;
+}
+
+.btn-cancel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(239,68,68,0.35);
+}
+
+.action-bar {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* ============================================================
+   Progress Bar
+   ============================================================ */
+.progress-container {
+    margin-top: 1rem;
+    display: none;
+}
+
+.progress-container.visible { display: block; }
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+    font-size: 0.82rem;
+}
+
+.progress-text { color: var(--text-secondary); }
+.progress-percent { color: var(--accent); font-weight: 600; font-family: "SF Mono", Consolas, monospace; }
+
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background: var(--bg-primary);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--info));
+    border-radius: 3px;
+    transition: width 0.4s ease;
+    position: relative;
+}
+
+.progress-fill::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* ============================================================
+   Data Table
+   ============================================================ */
+.table-container {
+    overflow-x: auto;
+    max-height: 65vh;
+    overflow-y: auto;
+    border-radius: var(--radius-sm);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.88rem;
+}
+
+.data-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.data-table th {
+    background: var(--table-header);
+    color: #e2e8f0;
+    font-weight: 600;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.75rem 0.8rem;
+    text-align: center;
+    border-bottom: 2px solid var(--accent);
+    white-space: nowrap;
+}
+
+.data-table td {
+    padding: 0.6rem 0.8rem;
+    text-align: center;
+    border-bottom: 1px solid var(--table-border);
+    transition: background var(--transition);
+    white-space: nowrap;
+}
+
+.data-table tbody tr:nth-child(even) td { background: var(--table-row-even); }
+.data-table tbody tr:nth-child(odd) td { background: var(--table-row-odd); }
+
+.data-table tbody tr:hover td {
+    background: var(--bg-hover) !important;
+}
+
+.data-table .temp-neg { color: var(--error); font-weight: 600; }
+.data-table .temp-pos { color: var(--success); }
+.data-table .date-cell {
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.84rem;
+    color: var(--text-secondary);
+    text-align: left;
+}
+.data-table .city-cell {
+    font-weight: 600;
+    color: var(--accent);
+}
+.data-table .weather-cell { font-size: 0.9rem; }
+
+/* ============================================================
+   Empty State
+   ============================================================ */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-muted);
+}
+
+.empty-state .icon { font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.5; }
+.empty-state p { font-size: 0.95rem; }
+.empty-state .hint { font-size: 0.82rem; margin-top: 0.5rem; }
+
+/* ============================================================
+   Stats Bar
+   ============================================================ */
+.stats-bar {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    padding: 0.8rem 1.2rem;
+    background: var(--bg-primary);
+    border-radius: var(--radius-sm);
+    margin-top: 1rem;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.stat-value {
+    color: var(--accent);
+    font-weight: 700;
+    font-family: "SF Mono", Consolas, monospace;
+}
+
+/* ============================================================
+   Toast Notification
+   ============================================================ */
+.toast-container {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.toast {
+    padding: 0.7rem 1.2rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.88rem;
+    color: white;
+    box-shadow: var(--shadow-lg);
+    animation: toastIn 0.35s ease-out;
+    max-width: 360px;
+}
+
+.toast.success { background: var(--success); }
+.toast.error { background: var(--error); }
+.toast.info { background: var(--info); }
+.toast.warning { background: var(--warning); color: #0f172a; }
+
+.toast.hiding { animation: toastOut 0.3s ease-in forwards; }
+
+@keyframes toastIn {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toastOut {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(30px); }
+}
+
+/* ============================================================
+   Animations
+   ============================================================ */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes rowFadeIn {
+    from { opacity: 0; transform: translateX(-8px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* ============================================================
+   Loading Skeleton
+   ============================================================ */
+.skeleton-row {
+    display: flex;
+    gap: 0.8rem;
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid var(--table-border);
+}
+
+.skeleton-cell {
+    height: 16px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-hover) 50%, var(--bg-tertiary) 75%);
+    background-size: 200% 100%;
+    animation: skeletonShimmer 1.5s infinite;
+}
+
+@keyframes skeletonShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ============================================================
+   Scrollbar
+   ============================================================ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 768px) {
+    .container { padding: 1rem; }
+    .filter-bar { flex-direction: column; }
+    .filter-group { min-width: 100%; }
+    .header h1 { font-size: 1.5rem; }
+    .action-bar { flex-direction: column; }
+    .action-bar .btn { width: 100%; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="container">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-icon">🌤️</div>
+        <h1>历史天气数据查询系统</h1>
+        <p>数据来源：天气后报 tianqihoubao.com · 支持 2011 年至今</p>
+    </header>
+
+    <!-- Filter Card -->
+    <div class="card" style="animation-delay: 0.1s; position: relative; z-index: 10;">
+        <div class="card-header">
+            <span class="icon">🔍</span>
+            <span>数据筛选</span>
+        </div>
+        <div class="card-body">
+            <div class="filter-bar">
+                <!-- Year Select -->
+                <div class="filter-group">
+                    <label>年份</label>
+                    <div class="select-wrapper">
+                        <select id="yearSelect"></select>
+                    </div>
+                </div>
+
+                <!-- Province Select -->
+                <div class="filter-group">
+                    <label>一级地区</label>
+                    <div class="select-wrapper">
+                        <select id="provinceSelect">
+                            <option value="">加载中...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- City Multi-Select -->
+                <div class="filter-group" style="flex: 2;">
+                    <label>二级地区（可多选）</label>
+                    <div class="multi-select" id="citySelect">
+                        <div class="custom-select-trigger" id="cityTrigger" onclick="toggleCityDropdown()">
+                            <span class="placeholder" id="cityPlaceholder">请先选择一级地区</span>
+                            <span class="count" id="cityCount" style="display:none;"></span>
+                        </div>
+                        <div class="multi-select-dropdown" id="cityDropdown">
+                            <div class="dropdown-search">
+                                <input type="text" id="citySearch" placeholder="搜索城市..." oninput="filterCityOptions()">
+                            </div>
+                            <div class="dropdown-options" id="cityOptions"></div>
+                            <div class="dropdown-actions">
+                                <button onclick="selectAllCities()">全选</button>
+                                <button onclick="selectNoCities()">清空</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="filter-group" style="flex: 0; min-width: auto; justify-content: flex-end;">
+                    <label>&nbsp;</label>
+                    <div class="action-bar">
+                        <button class="btn btn-primary" id="queryBtn" onclick="startQuery()" disabled>
+                            <span>📊</span> 查询
+                        </button>
+                        <button class="btn btn-cancel" id="cancelBtn" onclick="cancelQuery()" style="display:none;">
+                            <span>✕</span> 取消
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress -->
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-info">
+                    <span class="progress-text" id="progressText">准备中...</span>
+                    <span class="progress-percent" id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Card -->
+    <div class="card" style="animation-delay: 0.2s;">
+        <div class="card-header">
+            <span class="icon">📋</span>
+            <span>查询结果</span>
+            <div style="margin-left: auto;">
+                <button class="btn btn-export" id="exportBtn" onclick="exportExcel()" disabled>
+                    <span>📥</span> 导出 Excel
+                </button>
+            </div>
+        </div>
+        <div class="card-body" style="padding: 0;">
+            <!-- Table -->
+            <div class="table-container" id="tableContainer">
+                <div class="empty-state" id="emptyState">
+                    <div class="icon">⛅</div>
+                    <p>选择年份、地区后点击查询</p>
+                    <p class="hint">数据将按月份逐批加载，已加载的数据会自动缓存</p>
+                </div>
+                <table class="data-table" id="dataTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>日期</th>
+                            <th>城市</th>
+                            <th>白天天气</th>
+                            <th>夜间天气</th>
+                            <th>最高气温</th>
+                            <th>最低气温</th>
+                            <th>白天风力风向</th>
+                            <th>夜间风力风向</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-bar" id="statsBar" style="display: none; margin: 0; border-top: 1px solid var(--table-border); border-radius: 0 0 var(--radius) var(--radius);">
+                <div class="stat-item">
+                    <span>📊 数据总量：</span>
+                    <span class="stat-value" id="statTotal">0</span>
+                    <span>条</span>
+                </div>
+                <div class="stat-item">
+                    <span>🏙️ 城市数：</span>
+                    <span class="stat-value" id="statCities">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>⏱️ 耗时：</span>
+                    <span class="stat-value" id="statTime">0s</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// State
+// ============================================================
+const state = {
+    provinces: [],
+    cities: [],
+    selectedYear: new Date().getFullYear(),
+    selectedProvince: null,
+    selectedCities: new Set(),
+    weatherData: [],
+    cityNames: {},
+    isLoading: false,
+    abortController: null,
+    startTime: 0,
+};
+
+// ============================================================
+// Weather Icons
+// ============================================================
+const weatherIcons = {
+    '晴': '☀️', '多云': '⛅', '阴': '☁️',
+    '小雨': '🌦️', '中雨': '🌧️', '大雨': '🌧️', '暴雨': '⛈️',
+    '雷阵雨': '⛈️', '阵雨': '🌦️',
+    '小雪': '🌨️', '中雪': '❄️', '大雪': '❄️', '暴雪': '❄️',
+    '雨夹雪': '🌨️', '阵雪': '🌨️',
+    '雾': '🌫️', '霾': '🌫️', '扬沙': '🌪️', '浮尘': '🌪️',
+    '沙尘暴': '🌪️', '龙卷风': '🌪️',
+};
+
+function getWeatherIcon(text) {
+    if (!text) return '';
+    for (const [key, icon] of Object.entries(weatherIcons)) {
+        if (text.includes(key)) return icon;
+    }
+    return '🌡️';
+}
+
+// ============================================================
+// Initialization
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+    initYearSelect();
+    loadProvinces();
+
+    // Close dropdown on outside click
+    document.addEventListener('click', (e) => {
+        const citySelect = document.getElementById('citySelect');
+        if (!citySelect.contains(e.target)) {
+            closeCityDropdown();
+        }
+    });
+});
+
+function initYearSelect() {
+    const select = document.getElementById('yearSelect');
+    const currentYear = new Date().getFullYear();
+    for (let y = currentYear; y >= 2011; y--) {
+        const opt = document.createElement('option');
+        opt.value = y;
+        opt.textContent = y + ' 年';
+        if (y === currentYear) opt.selected = true;
+        select.appendChild(opt);
+    }
+    select.addEventListener('change', () => {
+        state.selectedYear = parseInt(select.value);
+    });
+}
+
+async function loadProvinces() {
+    try {
+        const resp = await fetch('/api/provinces');
+        const data = await resp.json();
+        state.provinces = data.provinces || [];
+
+        const select = document.getElementById('provinceSelect');
+        select.innerHTML = '<option value="">-- 请选择 --</option>';
+        state.provinces.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.abbr;
+            opt.textContent = p.name;
+            select.appendChild(opt);
+        });
+
+        select.addEventListener('change', () => {
+            const abbr = select.value;
+            state.selectedProvince = abbr ? state.provinces.find(p => p.abbr === abbr) : null;
+            state.selectedCities.clear();
+            updateCityTrigger();
+            loadCities(abbr);
+            updateQueryButton();
+        });
+    } catch (e) {
+        showToast('加载省份列表失败: ' + e.message, 'error');
+    }
+}
+
+async function loadCities(provinceAbbr) {
+    if (!provinceAbbr) {
+        state.cities = [];
+        renderCityOptions();
+        document.getElementById('cityPlaceholder').textContent = '请先选择一级地区';
+        return;
+    }
+
+    document.getElementById('cityPlaceholder').textContent = '加载中...';
+    try {
+        const resp = await fetch(`/api/cities/${provinceAbbr}`);
+        const data = await resp.json();
+        state.cities = data.cities || [];
+
+        // Build city name map
+        state.cityNames = {};
+        state.cities.forEach(c => { state.cityNames[c.pinyin] = c.name; });
+
+        renderCityOptions();
+        document.getElementById('cityPlaceholder').textContent = `共 ${state.cities.length} 个地区`;
+    } catch (e) {
+        showToast('加载城市列表失败: ' + e.message, 'error');
+        document.getElementById('cityPlaceholder').textContent = '加载失败';
+    }
+}
+
+// ============================================================
+// City Multi-Select
+// ============================================================
+function renderCityOptions(filter = '') {
+    const container = document.getElementById('cityOptions');
+    container.innerHTML = '';
+    const lowerFilter = filter.toLowerCase();
+
+    const mainCities = state.cities.filter(c => c.is_main && (!filter || c.name.toLowerCase().includes(lowerFilter) || c.pinyin.toLowerCase().includes(lowerFilter)));
+    const subCities = state.cities.filter(c => !c.is_main && (!filter || c.name.toLowerCase().includes(lowerFilter) || c.pinyin.toLowerCase().includes(lowerFilter)));
+
+    if (mainCities.length > 0) {
+        const label = document.createElement('div');
+        label.className = 'dropdown-group-label';
+        label.textContent = '地级市';
+        container.appendChild(label);
+        mainCities.forEach(c => container.appendChild(createCityOption(c)));
+    }
+
+    if (subCities.length > 0) {
+        const label = document.createElement('div');
+        label.className = 'dropdown-group-label';
+        label.textContent = '区 / 县';
+        container.appendChild(label);
+        subCities.forEach(c => container.appendChild(createCityOption(c)));
+    }
+
+    if (mainCities.length === 0 && subCities.length === 0) {
+        const empty = document.createElement('div');
+        empty.style.cssText = 'padding: 1rem; text-align: center; color: var(--text-muted);';
+        empty.textContent = '无匹配结果';
+        container.appendChild(empty);
+    }
+}
+
+function createCityOption(city) {
+    const label = document.createElement('label');
+    label.className = 'dropdown-option';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.value = city.pinyin;
+    cb.checked = state.selectedCities.has(city.pinyin);
+    cb.addEventListener('change', () => {
+        if (cb.checked) state.selectedCities.add(city.pinyin);
+        else state.selectedCities.delete(city.pinyin);
+        updateCityTrigger();
+        updateQueryButton();
+    });
+    label.appendChild(cb);
+    label.appendChild(document.createTextNode(city.name));
+    return label;
+}
+
+function toggleCityDropdown() {
+    const dd = document.getElementById('cityDropdown');
+    const isOpen = dd.classList.contains('open');
+    if (isOpen) closeCityDropdown();
+    else {
+        dd.classList.add('open');
+        document.getElementById('cityTrigger').classList.add('active');
+        document.getElementById('citySearch').value = '';
+        renderCityOptions();
+        setTimeout(() => document.getElementById('citySearch').focus(), 100);
+    }
+}
+
+function closeCityDropdown() {
+    document.getElementById('cityDropdown').classList.remove('open');
+    document.getElementById('cityTrigger').classList.remove('active');
+}
+
+function filterCityOptions() {
+    const q = document.getElementById('citySearch').value;
+    renderCityOptions(q);
+}
+
+function selectAllCities() {
+    const q = document.getElementById('citySearch').value.toLowerCase();
+    state.cities.forEach(c => {
+        if (!q || c.name.toLowerCase().includes(q) || c.pinyin.toLowerCase().includes(q)) {
+            state.selectedCities.add(c.pinyin);
+        }
+    });
+    renderCityOptions(q);
+    updateCityTrigger();
+    updateQueryButton();
+}
+
+function selectNoCities() {
+    state.selectedCities.clear();
+    renderCityOptions(document.getElementById('citySearch').value);
+    updateCityTrigger();
+    updateQueryButton();
+}
+
+function updateCityTrigger() {
+    const count = state.selectedCities.size;
+    const placeholder = document.getElementById('cityPlaceholder');
+    const countEl = document.getElementById('cityCount');
+    if (count === 0) {
+        placeholder.style.display = '';
+        countEl.style.display = 'none';
+        if (state.cities.length > 0) placeholder.textContent = `共 ${state.cities.length} 个地区（未选择）`;
+    } else {
+        placeholder.style.display = 'none';
+        countEl.style.display = '';
+        countEl.textContent = `已选 ${count} 个地区`;
+    }
+}
+
+function updateQueryButton() {
+    const btn = document.getElementById('queryBtn');
+    btn.disabled = !(state.selectedProvince && state.selectedCities.size > 0);
+}
+
+// ============================================================
+// Query / Data Loading
+// ============================================================
+async function startQuery() {
+    if (state.isLoading) return;
+    if (!state.selectedProvince || state.selectedCities.size === 0) {
+        showToast('请选择年份、一级地区和至少一个二级地区', 'warning');
+        return;
+    }
+
+    state.isLoading = true;
+    state.weatherData = [];
+    state.startTime = Date.now();
+    state.abortController = new AbortController();
+
+    // UI updates
+    document.getElementById('queryBtn').style.display = 'none';
+    document.getElementById('cancelBtn').style.display = '';
+    document.getElementById('exportBtn').disabled = true;
+    document.getElementById('progressContainer').classList.add('visible');
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('dataTable').style.display = '';
+    document.getElementById('tableBody').innerHTML = '';
+    document.getElementById('statsBar').style.display = 'none';
+
+    const year = state.selectedYear;
+    const provinceName = state.selectedProvince.name;
+    const cities = Array.from(state.selectedCities);
+    const totalTasks = cities.length * 12;
+    let completedTasks = 0;
+
+    try {
+        for (const cityPinyin of cities) {
+            if (!state.isLoading) break;
+
+            for (let month = 1; month <= 12; month++) {
+                if (!state.isLoading) break;
+
+                const cityName = state.cityNames[cityPinyin] || cityPinyin;
+                updateProgress(completedTasks, totalTasks, `${cityName} ${month}月`);
+
+                try {
+                    const resp = await fetch(`/api/weather/month?year=${year}&month=${month}&city=${encodeURIComponent(cityPinyin)}`, {
+                        signal: state.abortController.signal
+                    });
+                    const data = await resp.json();
+
+                    if (data.records && data.records.length > 0) {
+                        data.records.forEach(rec => {
+                            state.weatherData.push({
+                                ...rec,
+                                city: cityName,
+                                city_pinyin: cityPinyin,
+                            });
+                        });
+                        sortAndRenderTable();
+                    }
+                } catch (e) {
+                    if (e.name === 'AbortError') break;
+                    console.warn(`Failed to fetch ${cityPinyin} ${year}-${month}:`, e);
+                }
+
+                completedTasks++;
+            }
+        }
+    } catch (e) {
+        if (e.name !== 'AbortError') {
+            showToast('查询出错: ' + e.message, 'error');
+        }
+    }
+
+    // Done
+    state.isLoading = false;
+    document.getElementById('queryBtn').style.display = '';
+    document.getElementById('cancelBtn').style.display = 'none';
+    document.getElementById('exportBtn').disabled = state.weatherData.length === 0;
+
+    if (state.weatherData.length > 0) {
+        const elapsed = ((Date.now() - state.startTime) / 1000).toFixed(1);
+        document.getElementById('statTotal').textContent = state.weatherData.length;
+        document.getElementById('statCities').textContent = cities.length;
+        document.getElementById('statTime').textContent = elapsed + 's';
+        document.getElementById('statsBar').style.display = '';
+        showToast(`查询完成！共 ${state.weatherData.length} 条数据`, 'success');
+    } else if (state.abortController.signal.aborted) {
+        showToast('查询已取消', 'info');
+    } else {
+        showToast('未查询到数据，请检查选择条件', 'warning');
+        document.getElementById('emptyState').style.display = '';
+        document.getElementById('dataTable').style.display = 'none';
+    }
+
+    document.getElementById('progressContainer').classList.remove('visible');
+}
+
+function cancelQuery() {
+    if (state.abortController) {
+        state.abortController.abort();
+    }
+    state.isLoading = false;
+}
+
+function updateProgress(current, total, text) {
+    const pct = total > 0 ? Math.round((current / total) * 100) : 0;
+    document.getElementById('progressText').textContent = text || '加载中...';
+    document.getElementById('progressPercent').textContent = pct + '%';
+    document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function sortAndRenderTable() {
+    state.weatherData.sort((a, b) => {
+        if (a.date !== b.date) return a.date.localeCompare(b.date);
+        return (a.city || '').localeCompare(b.city || '', 'zh-CN');
+    });
+    renderTable();
+}
+
+function renderTable() {
+    const tbody = document.getElementById('tableBody');
+    // Only append new rows (for performance)
+    const existingCount = tbody.children.length;
+    const newData = state.weatherData.slice(existingCount);
+
+    newData.forEach((rec, idx) => {
+        const tr = document.createElement('tr');
+        tr.style.animation = `rowFadeIn 0.3s ease-out ${idx * 0.02}s both`;
+
+        const tempHigh = rec.temp_high !== null && rec.temp_high !== undefined ? rec.temp_high : '-';
+        const tempLow = rec.temp_low !== null && rec.temp_low !== undefined ? rec.temp_low : '-';
+
+        tr.innerHTML = `
+            <td class="date-cell">${rec.date}</td>
+            <td class="city-cell">${rec.city || ''}</td>
+            <td class="weather-cell">${getWeatherIcon(rec.weather_day)} ${rec.weather_day || '-'}</td>
+            <td class="weather-cell">${getWeatherIcon(rec.weather_night)} ${rec.weather_night || '-'}</td>
+            <td class="${typeof tempHigh === 'number' ? (tempHigh < 0 ? 'temp-neg' : 'temp-pos') : ''}">${tempHigh}${typeof tempHigh === 'number' ? '℃' : ''}</td>
+            <td class="${typeof tempLow === 'number' ? (tempLow < 0 ? 'temp-neg' : 'temp-pos') : ''}">${tempLow}${typeof tempLow === 'number' ? '℃' : ''}</td>
+            <td>${rec.wind_day || '-'}</td>
+            <td>${rec.wind_night || '-'}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// ============================================================
+// Excel Export
+// ============================================================
+function exportExcel() {
+    if (state.weatherData.length === 0) {
+        showToast('没有可导出的数据', 'warning');
+        return;
+    }
+
+    const year = state.selectedYear;
+    const province = state.selectedProvince ? state.selectedProvince.name : '';
+    const cities = Array.from(state.selectedCities).join(',');
+
+    const params = new URLSearchParams({ year, province, province_abbr: state.selectedProvince.abbr, cities });
+    window.open(`/api/export?${params.toString()}`, '_blank');
+    showToast('正在生成 Excel 文件...', 'info');
+}
+
+// ============================================================
+// Toast
+// ============================================================
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('hiding');
+        setTimeout(() => toast.remove(), 300);
+    }, 3500);
+}
+</script>
+</body>
+</html>

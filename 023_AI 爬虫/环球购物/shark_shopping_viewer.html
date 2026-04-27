@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>聚鲨环球精选 · 节目表</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+/* ========== CSS Variables ========== */
+:root {
+  --bg-deep: #0a0a0f;
+  --bg-card: #13131a;
+  --bg-card-hover: #1a1a24;
+  --bg-surface: #1e1e2a;
+  --border: #2a2a3a;
+  --border-light: #3a3a4f;
+  --text-primary: #f0ece4;
+  --text-secondary: #9a96a6;
+  --text-muted: #6b6779;
+  --gold: #d4a853;
+  --gold-light: #f0d48a;
+  --gold-dark: #a07830;
+  --red: #e84057;
+  --red-soft: rgba(232, 64, 87, 0.15);
+  --green: #34d399;
+  --green-soft: rgba(52, 211, 153, 0.12);
+  --blue: #60a5fa;
+  --blue-soft: rgba(96, 165, 250, 0.12);
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --shadow-gold: 0 0 30px rgba(212, 168, 83, 0.15);
+}
+
+/* ========== Reset & Base ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; scroll-behavior: smooth; }
+body {
+  font-family: 'Noto Sans SC', sans-serif;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ========== Background Atmosphere ========== */
+body::before {
+  content: '';
+  position: fixed;
+  top: -30%; left: -10%;
+  width: 60vw; height: 60vw;
+  background: radial-gradient(circle, rgba(212,168,83,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -20%; right: -10%;
+  width: 50vw; height: 50vw;
+  background: radial-gradient(circle, rgba(232,64,87,0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ========== Header ========== */
+.app-header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,10,15,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+}
+.header-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.brand-icon {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  box-shadow: var(--shadow-gold);
+}
+.brand h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.brand-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.header-actions {
+  display: flex; align-items: center; gap: 10px;
+}
+
+/* ========== Buttons ========== */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 18px;
+  border: none; border-radius: var(--radius-sm);
+  font-family: inherit; font-size: 0.85rem; font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: #0a0a0f;
+  box-shadow: 0 2px 12px rgba(212,168,83,0.3);
+}
+.btn-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(212,168,83,0.45); }
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+.btn-ghost.active { border-color: var(--gold); color: var(--gold); background: rgba(212,168,83,0.08); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+
+/* ========== Main Container ========== */
+.app-main {
+  position: relative; z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem 3rem;
+}
+
+/* ========== Stats Bar ========== */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  display: flex; align-items: center; gap: 14px;
+  transition: border-color 0.2s;
+}
+.stat-card:hover { border-color: var(--border-light); }
+.stat-icon {
+  width: 42px; height: 42px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.stat-icon.gold { background: rgba(212,168,83,0.12); }
+.stat-icon.red { background: var(--red-soft); }
+.stat-icon.green { background: var(--green-soft); }
+.stat-icon.blue { background: var(--blue-soft); }
+.stat-value {
+  font-size: 1.5rem; font-weight: 700;
+  line-height: 1.2;
+}
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ========== Date Navigation ========== */
+.date-nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.date-nav::-webkit-scrollbar { height: 4px; }
+.date-nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.date-tab {
+  flex-shrink: 0;
+  padding: 7px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.date-tab:hover { border-color: var(--gold-dark); color: var(--text-primary); }
+.date-tab.active {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: #0a0a0f;
+  border-color: transparent;
+  font-weight: 700;
+  box-shadow: 0 2px 12px rgba(212,168,83,0.3);
+}
+.date-tab.today {
+  background: linear-gradient(135deg, var(--red), #c0392b);
+  color: #fff;
+  border-color: transparent;
+  font-weight: 700;
+  box-shadow: 0 2px 12px rgba(232,64,87,0.3);
+}
+
+/* ========== Progress Bar ========== */
+.progress-section {
+  margin-bottom: 1.5rem;
+  display: none;
+}
+.progress-section.visible { display: block; }
+.progress-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 8px;
+}
+.progress-text { font-size: 0.85rem; color: var(--text-secondary); }
+.progress-count { font-size: 0.85rem; color: var(--gold); font-weight: 600; }
+.progress-track {
+  height: 4px;
+  background: var(--bg-surface);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light));
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+/* ========== Data Table ========== */
+.table-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.table-toolbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.table-title {
+  font-size: 0.9rem; font-weight: 600;
+  color: var(--text-primary);
+}
+.table-title span { color: var(--text-muted); font-weight: 400; }
+.table-wrap {
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.table-wrap::-webkit-scrollbar { height: 6px; }
+.table-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+thead th {
+  position: sticky; top: 0;
+  background: var(--bg-surface);
+  padding: 11px 14px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+tbody tr {
+  border-bottom: 1px solid rgba(42,42,58,0.5);
+  transition: background 0.15s;
+}
+tbody tr:hover { background: var(--bg-card-hover); }
+tbody tr:last-child { border-bottom: none; }
+tbody td {
+  padding: 10px 14px;
+  white-space: nowrap;
+  color: var(--text-secondary);
+}
+tbody td.name-cell {
+  white-space: normal;
+  max-width: 280px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+tbody td.price-cell {
+  color: var(--red);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+tbody td.market-price {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  font-variant-numeric: tabular-nums;
+}
+tbody td.discount-cell {
+  color: var(--gold);
+  font-weight: 600;
+}
+tbody td.link-cell a {
+  color: var(--blue);
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+tbody td.link-cell a:hover { text-decoration: underline; }
+tbody td.img-cell {
+  padding: 6px 10px;
+  width: 64px;
+  min-width: 64px;
+}
+.goods-img {
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+.goods-img:hover {
+  transform: scale(2.2);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  z-index: 10;
+  position: relative;
+  border-radius: 8px;
+}
+.date-separator td {
+  background: var(--bg-surface);
+  padding: 8px 14px;
+  font-weight: 700;
+  color: var(--gold);
+  font-size: 0.82rem;
+  letter-spacing: 0.3px;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+/* ========== Loading State ========== */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 20px;
+}
+.spinner {
+  width: 48px; height: 48px;
+  border: 3px solid var(--border);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* ========== Error State ========== */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+}
+.error-icon { font-size: 2.5rem; }
+.error-msg { color: var(--text-secondary); font-size: 0.9rem; text-align: center; max-width: 400px; }
+
+/* ========== Footer ========== */
+.app-footer {
+  position: relative; z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.footer-info {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* ========== Animations ========== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-in { animation: fadeInUp 0.4s ease forwards; }
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+  .app-header { padding: 0 1rem; }
+  .app-main { padding: 1rem; }
+  .app-footer { padding: 0 1rem 1.5rem; flex-direction: column; gap: 12px; }
+  .header-inner { height: 56px; }
+  .brand h1 { font-size: 1.1rem; }
+  .stats-bar { grid-template-columns: repeat(2, 1fr); }
+  .brand-sub { display: none; }
+  .btn { padding: 7px 14px; font-size: 0.8rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ========== Header ========== -->
+<header class="app-header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-icon">📺</div>
+      <div>
+        <h1>聚鲨环球精选</h1>
+        <div class="brand-sub">SHARK SHOPPING PROGRAM GUIDE</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" id="btnRefresh" onclick="refreshData()" disabled>🔄 刷新数据</button>
+      <button class="btn btn-gold" id="btnExport" onclick="exportExcel()" disabled>📥 下载 Excel</button>
+    </div>
+  </div>
+</header>
+
+<!-- ========== Main ========== -->
+<main class="app-main">
+
+  <!-- Stats -->
+  <div class="stats-bar" id="statsBar" style="display:none;">
+    <div class="stat-card animate-in">
+      <div class="stat-icon gold">📺</div>
+      <div><div class="stat-value" id="statTotal">0</div><div class="stat-label">总节目数</div></div>
+    </div>
+    <div class="stat-card animate-in" style="animation-delay:0.05s">
+      <div class="stat-icon blue">📅</div>
+      <div><div class="stat-value" id="statDays">0</div><div class="stat-label">覆盖天数</div></div>
+    </div>
+    <div class="stat-card animate-in" style="animation-delay:0.1s">
+      <div class="stat-icon green">📂</div>
+      <div><div class="stat-value" id="statCats">0</div><div class="stat-label">节目分类</div></div>
+    </div>
+    <div class="stat-card animate-in" style="animation-delay:0.15s">
+      <div class="stat-icon red">🏷️</div>
+      <div><div class="stat-value" id="statDiscount">0</div><div class="stat-label">优惠节目</div></div>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-section" id="progressSection">
+    <div class="progress-header">
+      <span class="progress-text" id="progressText">正在获取节目数据...</span>
+      <span class="progress-count" id="progressCount">0/0</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <!-- Date Navigation -->
+  <nav class="date-nav" id="dateNav"></nav>
+
+  <!-- Table -->
+  <div class="table-section" id="tableSection">
+    <div class="table-toolbar">
+      <div class="table-title" id="tableTitle">节目数据</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost btn-sm" id="btnShowAll" onclick="filterDate('all')" style="display:none;">显示全部</button>
+      </div>
+    </div>
+    <div class="table-wrap" id="tableWrap">
+      <div class="loading-container" id="loadingState">
+        <div class="spinner"></div>
+        <div class="loading-text">正在连接服务器，获取节目数据...</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ========== Footer ========== -->
+<footer class="app-footer">
+  <div class="footer-info" id="footerInfo">数据来源：wp.sharkshopping.com</div>
+  <div class="footer-info" id="footerTime"></div>
+</footer>
+
+<!-- ========== JavaScript ========== -->
+<script>
+
+// 本地API基础地址（由 shark_server.py 提供）
+const API_BASE = window.location.origin;
+
+// ============================================================
+// 全局状态
+// ============================================================
+let allPrograms = [];      // 全部节目数据
+let availableDates = [];   // 可查询日期
+let currentFilter = "all"; // 当前筛选日期
+
+// ============================================================
+// 数据获取模块（通过本地服务器代理）
+// ============================================================
+async function localFetch(path) {
+  const resp = await fetch(API_BASE + path, {
+    headers: { "Accept": "application/json" },
+    signal: AbortSignal.timeout(120000) // 全量抓取可能需要较长时间
+  });
+  if (!resp.ok) {
+    const err = await resp.json().catch(() => ({}));
+    throw new Error(err.error || "请求失败 (" + resp.status + ")");
+  }
+  return resp.json();
+}
+
+async function fetchAvailableDates() {
+  const result = await localFetch("/api/dates");
+  if (result.success) return result.data;
+  throw new Error(result.error || "获取日期列表失败");
+}
+
+async function fetchProgramData(date) {
+  const result = await localFetch("/api/programs?date=" + date);
+  if (result.success) return result;
+  throw new Error(result.error || "获取节目数据失败");
+}
+
+async function fetchAllData(onProgress) {
+  // 1. 获取日期列表
+  const dates = await fetchAvailableDates();
+  if (!dates.length) throw new Error("无法获取日期列表");
+  availableDates = dates;
+
+  // 2. 逐日获取节目数据（通过本地代理，无需担心CORS）
+  const results = [];
+  for (let i = 0; i < dates.length; i++) {
+    const dateObj = dates[i];
+    const dateStr = dateObj.real_date;
+    if (onProgress) onProgress(i, dates.length, dateObj.show_date);
+    try {
+      const result = await fetchProgramData(dateStr);
+      if (result.programs) {
+        results.push(...result.programs);
+      }
+    } catch (e) {
+      console.warn("获取 " + dateStr + " 数据失败:", e);
+    }
+  }
+  // 按日期升序、开始时间升序排列
+  results.sort((a, b) => {
+    if (a["日期"] !== b["日期"]) return a["日期"].localeCompare(b["日期"]);
+    return a["开始时间"].localeCompare(b["开始时间"]);
+  });
+  return results;
+}
+
+// ============================================================
+// UI渲染模块
+// ============================================================
+function renderStats(programs) {
+  const bar = document.getElementById("statsBar");
+  bar.style.display = "";
+  document.getElementById("statTotal").textContent = programs.length;
+  const uniqueDates = [...new Set(programs.map(p => p.日期))];
+  document.getElementById("statDays").textContent = uniqueDates.length;
+  const uniqueCats = [...new Set(programs.map(p => p.分类))];
+  document.getElementById("statCats").textContent = uniqueCats.length;
+  const discountCount = programs.filter(p => p.优惠信息).length;
+  document.getElementById("statDiscount").textContent = discountCount;
+}
+
+function renderDateNav(dates, programs) {
+  const nav = document.getElementById("dateNav");
+  nav.innerHTML = "";
+  // "全部"标签
+  const allTab = document.createElement("button");
+  allTab.className = "date-tab active";
+  allTab.textContent = "📋 全部";
+  allTab.onclick = () => filterDate("all");
+  nav.appendChild(allTab);
+  // 日期标签
+  dates.forEach(d => {
+    const tab = document.createElement("button");
+    tab.className = "date-tab";
+    if (d.show_date === "今日") tab.classList.add("today");
+    tab.textContent = d.show_date === "今日"
+      ? d.real_date.slice(5).replace("-", "月") + "日 今日"
+      : d.show_date;
+    tab.dataset.date = d.real_date;
+    tab.onclick = () => filterDate(d.real_date);
+    nav.appendChild(tab);
+  });
+}
+
+function renderTable(programs) {
+  const wrap = document.getElementById("tableWrap");
+  const title = document.getElementById("tableTitle");
+  const btnAll = document.getElementById("btnShowAll");
+
+  if (!programs.length) {
+    wrap.innerHTML = '<div class="error-container"><div class="error-icon">📭</div><div class="error-msg">暂无节目数据</div></div>';
+    title.textContent = "节目数据";
+    btnAll.style.display = "none";
+    return;
+  }
+
+  const filtered = currentFilter === "all" ? programs : programs.filter(p => p.日期 === currentFilter);
+  title.innerHTML = "节目数据 <span>· " + filtered.length + " 条记录</span>";
+  btnAll.style.display = currentFilter === "all" ? "none" : "";
+
+  let html = '<table><thead><tr>';
+  html += '<th>日期</th><th>开始</th><th>结束</th><th>图片</th><th>分类</th><th>品牌</th><th>商品名称</th><th>手机价</th><th>市场价</th><th>优惠</th><th>链接</th>';
+  html += '</tr></thead><tbody>';
+
+  let lastDate = "";
+  for (const p of filtered) {
+    // 日期分隔行
+    if (p.日期 !== lastDate && currentFilter === "all") {
+      lastDate = p.日期;
+      const dayCount = filtered.filter(x => x.日期 === lastDate).length;
+      html += `<tr class="date-separator"><td colspan="11">📅 ${lastDate}（${dayCount} 个节目）</td></tr>`;
+    }
+    const name = p.商品名称.length > 24 ? p.商品名称.slice(0, 24) + "…" : p.商品名称;
+    const imgHtml = p.商品图片
+      ? `<img class="goods-img" src="${p.商品图片}" alt="${p.商品名称}" loading="lazy" onerror="this.style.display='none'">`
+      : '<span style="color:var(--text-muted)">-</span>';
+    html += "<tr>";
+    html += `<td>${currentFilter === "all" ? "" : p.日期}</td>`;
+    html += `<td>${p.开始时间}</td>`;
+    html += `<td>${p.结束时间}</td>`;
+    html += `<td class="img-cell">${imgHtml}</td>`;
+    html += `<td>${p.分类}</td>`;
+    html += `<td>${p.品牌}</td>`;
+    html += `<td class="name-cell" title="${p.商品名称}">${name}</td>`;
+    html += `<td class="price-cell">¥${p.手机价}</td>`;
+    html += `<td class="market-price">¥${p.市场价}</td>`;
+    html += `<td class="discount-cell">${p.优惠信息 || "-"}</td>`;
+    html += `<td class="link-cell">${p.商品链接 ? `<a href="${p.商品链接}" target="_blank">查看</a>` : "-"}</td>`;
+    html += "</tr>";
+  }
+  html += "</tbody></table>";
+  wrap.innerHTML = html;
+}
+
+function filterDate(date) {
+  currentFilter = date;
+  // 更新标签状态
+  document.querySelectorAll(".date-tab").forEach(tab => {
+    if (date === "all" && !tab.dataset.date) tab.classList.add("active");
+    else if (tab.dataset.date === date) tab.classList.add("active");
+    else tab.classList.remove("active");
+  });
+  renderTable(allPrograms);
+}
+
+function showProgress(current, total, label) {
+  const sec = document.getElementById("progressSection");
+  sec.classList.add("visible");
+  document.getElementById("progressText").textContent = "正在获取 " + label + " 的节目数据...";
+  document.getElementById("progressCount").textContent = current + "/" + total;
+  document.getElementById("progressFill").style.width = (current / total * 100) + "%";
+}
+
+function hideProgress() {
+  document.getElementById("progressSection").classList.remove("visible");
+}
+
+function showError(msg) {
+  document.getElementById("tableWrap").innerHTML =
+    '<div class="error-container"><div class="error-icon">⚠️</div><div class="error-msg">' + msg + '</div>' +
+    '<button class="btn btn-ghost" onclick="refreshData()">🔄 重试</button></div>';
+}
+
+// ============================================================
+// Excel导出模块
+// ============================================================
+function exportExcel() {
+  if (!allPrograms.length) return;
+  const filtered = currentFilter === "all" ? allPrograms : allPrograms.filter(p => p.日期 === currentFilter);
+  const headers = ["日期", "开始时间", "结束时间", "分类", "品牌", "商品名称", "SKU", "手机价", "市场价", "优惠信息", "商品链接", "一级分类", "二级分类", "三级分类"];
+  const rows = filtered.map(p => headers.map(h => p[h] || ""));
+  const wsData = [headers, ...rows];
+  const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+  // 设置列宽
+  ws["!cols"] = [
+    { wch: 12 }, { wch: 8 }, { wch: 8 }, { wch: 10 }, { wch: 10 },
+    { wch: 36 }, { wch: 14 }, { wch: 10 }, { wch: 10 }, { wch: 10 },
+    { wch: 40 }, { wch: 10 }, { wch: 10 }, { wch: 10 }
+  ];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "节目表");
+  const dateRange = currentFilter === "all"
+    ? allPrograms[0].日期 + "_" + allPrograms[allPrograms.length - 1].日期
+    : currentFilter;
+  XLSX.writeFile(wb, "聚鲨环球精选_节目表_" + dateRange + ".xlsx");
+}
+
+// ============================================================
+// 主流程
+// ============================================================
+async function refreshData() {
+  const btnRefresh = document.getElementById("btnRefresh");
+  const btnExport = document.getElementById("btnExport");
+  btnRefresh.disabled = true;
+  btnExport.disabled = true;
+  currentFilter = "all";
+  currentProxy = 0;
+
+  document.getElementById("tableWrap").innerHTML =
+    '<div class="loading-container"><div class="spinner"></div><div class="loading-text">正在连接服务器，获取节目数据...</div></div>';
+  document.getElementById("statsBar").style.display = "none";
+  document.getElementById("dateNav").innerHTML = "";
+
+  try {
+    allPrograms = await fetchAllData((i, total, label) => {
+      showProgress(i, total, label);
+    });
+    hideProgress();
+
+    if (!allPrograms.length) {
+      showError("未获取到任何节目数据，请稍后重试");
+      return;
+    }
+
+    // 渲染UI
+    renderStats(allPrograms);
+    renderDateNav(availableDates, allPrograms);
+    renderTable(allPrograms);
+
+    // 更新底部信息
+    const now = new Date();
+    document.getElementById("footerTime").textContent =
+      "更新时间：" + now.getFullYear() + "-" +
+      String(now.getMonth() + 1).padStart(2, "0") + "-" +
+      String(now.getDate()).padStart(2, "0") + " " +
+      String(now.getHours()).padStart(2, "0") + ":" +
+      String(now.getMinutes()).padStart(2, "0");
+
+    btnRefresh.disabled = false;
+    btnExport.disabled = false;
+
+  } catch (e) {
+    hideProgress();
+    showError("数据获取失败：" + e.message);
+    console.error(e);
+  }
+}
+
+// 页面加载时自动执行
+document.addEventListener("DOMContentLoaded", refreshData);
+</script>
+</body>
+</html>

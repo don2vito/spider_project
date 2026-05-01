@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>电子教材下载工具</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary: #1d4ed8;
+    --primary-light: #dbeafe;
+    --primary-hover: #1e40af;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #1e293b;
+    --text-secondary: #64748b;
+    --border: #e2e8f0;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --warning: #f59e0b;
+    --radius: 10px;
+    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,.1);
+  }
+
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── Header ─────────────────────────────── */
+  .header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #2563eb 100%);
+    color: #fff;
+    padding: 28px 32px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    top: -40%; right: -10%;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(255,255,255,.08) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: .5px;
+  }
+  .header p {
+    font-size: 14px;
+    opacity: .8;
+    margin-top: 4px;
+  }
+
+  /* ── Container ──────────────────────────── */
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px 24px 60px;
+  }
+
+  /* ── Card ───────────────────────────────── */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  /* ── Filters ────────────────────────────── */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .filter-group {
+    position: relative;
+    min-width: 160px;
+  }
+  .filter-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .select-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text);
+    transition: border-color .2s, box-shadow .2s;
+    user-select: none;
+    min-height: 38px;
+  }
+  .select-trigger:hover { border-color: var(--primary); }
+  .select-trigger.active {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(29,78,216,.12);
+  }
+  .select-trigger .arrow {
+    font-size: 10px;
+    color: var(--text-secondary);
+    transition: transform .2s;
+  }
+  .select-trigger.active .arrow { transform: rotate(180deg); }
+  .select-trigger .count {
+    background: var(--primary);
+    color: #fff;
+    font-size: 11px;
+    padding: 1px 6px;
+    border-radius: 10px;
+    margin-left: 6px;
+  }
+
+  .dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    margin-top: 4px;
+    max-height: 260px;
+    overflow-y: auto;
+    display: none;
+  }
+  .dropdown.show { display: block; }
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 7px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background .15s;
+  }
+  .dropdown-item:hover { background: var(--primary-light); }
+  .dropdown-item input[type="checkbox"] {
+    margin-right: 8px;
+    accent-color: var(--primary);
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+  }
+  .dropdown-item.select-all {
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  .btn-clear {
+    align-self: flex-end;
+    padding: 8px 18px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .2s;
+    margin-bottom: 0;
+    min-height: 38px;
+  }
+  .btn-clear:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+    background: #fef2f2;
+  }
+
+  /* ── Toolbar ────────────────────────────── */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .result-count {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  .result-count strong {
+    color: var(--primary);
+    font-weight: 700;
+  }
+  .th-sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: color .2s;
+    position: relative;
+    padding-right: 22px;
+  }
+  .th-sortable:hover { color: var(--primary); }
+  .th-sortable.active { color: var(--primary); }
+  .th-sortable::after {
+    content: '⇅';
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    opacity: .35;
+    transition: opacity .2s;
+  }
+  .th-sortable.active::after { opacity: 1; }
+  .th-sortable.asc::after { content: '▲'; }
+  .th-sortable.desc::after { content: '▼'; }
+
+  .btn-download-all {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 20px;
+    background: linear-gradient(135deg, var(--primary), #2563eb);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+    box-shadow: 0 2px 8px rgba(29,78,216,.3);
+  }
+  .btn-download-all:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(29,78,216,.4);
+  }
+  .btn-download-all:active { transform: translateY(0); }
+  .btn-download-all:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* ── Progress Bar ───────────────────────── */
+  .progress-bar-container {
+    display: none;
+    margin-top: 12px;
+  }
+  .progress-bar-container.show { display: block; }
+  .progress-info {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+  }
+  .progress-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), #60a5fa);
+    border-radius: 3px;
+    transition: width .3s ease;
+    width: 0%;
+  }
+
+  /* ── Table ──────────────────────────────── */
+  .table-wrapper {
+    overflow-x: auto;
+    margin-top: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  thead {
+    background: #f8fafc;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  th {
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  tr:nth-child(even) td { background: #fafbfc; }
+  tr:hover td { background: var(--primary-light); }
+  td.title-cell {
+    max-width: 360px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+  td.size-cell { white-space: nowrap; color: var(--text-secondary); font-size: 13px; }
+  td.provider-cell { max-width: 160px; color: var(--text-secondary); font-size: 13px; }
+  td.action-cell { white-space: nowrap; }
+
+  .btn-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 14px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-download:hover { background: var(--primary-hover); }
+  .btn-download.loading {
+    background: var(--text-secondary);
+    cursor: wait;
+    pointer-events: none;
+  }
+  .btn-download.done {
+    background: var(--success);
+    cursor: default;
+    pointer-events: none;
+  }
+  .btn-download.error {
+    background: var(--danger);
+    cursor: pointer;
+  }
+
+  /* ── Empty State ────────────────────────── */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-secondary);
+  }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; opacity: .4; }
+  .empty-state p { font-size: 15px; }
+
+  /* ── Loading Overlay ────────────────────── */
+  .loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,.85);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: opacity .3s;
+  }
+  .loading-overlay.hidden { display: none; }
+  .spinner {
+    width: 44px;
+    height: 44px;
+    border: 4px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text {
+    margin-top: 16px;
+    font-size: 15px;
+    color: var(--text-secondary);
+  }
+
+  /* ── Scrollbar ──────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+  /* ── Responsive ─────────────────────────── */
+  @media (max-width: 768px) {
+    .header { padding: 20px 16px; }
+    .header h1 { font-size: 20px; }
+    .container { padding: 16px 12px 40px; }
+    .card { padding: 16px; }
+    .filter-group { min-width: 140px; }
+    .toolbar { flex-direction: column; align-items: stretch; }
+    .toolbar-left { justify-content: space-between; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">正在加载教材数据...</div>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <h1>📚 电子教材下载工具</h1>
+  <p>国家中小学智慧教育平台 · 全量教材数据</p>
+</div>
+
+<div class="container">
+  <!-- Filter Card -->
+  <div class="card">
+    <div class="filter-bar" id="filterBar">
+      <!-- Filters will be rendered by JS -->
+    </div>
+  </div>
+
+  <!-- Table Card -->
+  <div class="card">
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <span class="result-count">共 <strong id="totalCount">0</strong> 条</span>
+        <span style="font-size:12px;color:var(--text-secondary)">点击表头可排序</span>
+      </div>
+      <button class="btn-download-all" id="downloadAllBtn" onclick="downloadAll()">
+        ⬇ 下载全部
+      </button>
+    </div>
+    <div class="progress-bar-container" id="progressContainer">
+      <div class="progress-info" id="progressInfo">准备下载...</div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+    <div class="table-wrapper" id="tableWrapper">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:50px">#</th>
+            <th class="th-sortable asc" data-field="title" onclick="handleSort('title')">标题</th>
+            <th class="th-sortable" data-field="xd" onclick="handleSort('xd')">学段</th>
+            <th class="th-sortable" data-field="xk" onclick="handleSort('xk')">学科</th>
+            <th class="th-sortable" data-field="bb" onclick="handleSort('bb')">版本</th>
+            <th class="th-sortable" data-field="nj" onclick="handleSort('nj')">年级</th>
+            <th class="th-sortable" data-field="cc" onclick="handleSort('cc')">册别</th>
+            <th class="th-sortable" data-field="size" onclick="handleSort('size')">大小</th>
+            <th class="th-sortable" data-field="provider" onclick="handleSort('provider')">出版社</th>
+            <th style="width:90px">操作</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+      </table>
+    </div>
+    <div class="empty-state" id="emptyState" style="display:none">
+      <div class="icon">📭</div>
+      <p>无匹配结果，请调整筛选条件</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────
+let allItems = [];
+let filteredItems = [];
+let sortField = 'title';
+let sortAsc = true;
+let downloading = false;
+let selectedFilters = {}; // { dimensionId: Set of selected names }
+
+const DIMENSION_IDS = ['zxxxd', 'zxxxk', 'zxxbb', 'zxxnj', 'zxxcc'];
+const DIMENSION_LABELS = { zxxxd:'学段', zxxxk:'学科', zxxbb:'版本', zxxnj:'年级', zxxcc:'册别' };
+const DIM_PARAMS = { zxxxd:'xd', zxxxk:'xk', zxxbb:'bb', zxxnj:'nj', zxxcc:'cc' };
+
+// ── Init ───────────────────────────────────────
+async function init() {
+  showLoading('正在加载筛选选项...');
+  try {
+    const resp = await fetch('/api/filters');
+    if (!resp.ok) throw new Error('Failed to load filters');
+    const data = await resp.json();
+    renderFilters(data.dimensions, data.options);
+    hideLoading();
+    await loadTextbooks();
+  } catch (e) {
+    hideLoading();
+    document.getElementById('loadingText').textContent = '加载失败，请刷新重试';
+    document.getElementById('loadingOverlay').classList.remove('hidden');
+    console.error(e);
+  }
+}
+
+// ── Filters ────────────────────────────────────
+function renderFilters(dimensions, options) {
+  const bar = document.getElementById('filterBar');
+  bar.innerHTML = '';
+
+  DIMENSION_IDS.forEach(dimId => {
+    const label = dimensions[dimId] || dimId;
+    const opts = options[dimId] || [];
+    selectedFilters[dimId] = new Set();
+
+    const group = document.createElement('div');
+    group.className = 'filter-group';
+    group.innerHTML = `
+      <label>${label}</label>
+      <div class="select-trigger" onclick="toggleDropdown('${dimId}', this)">
+        <span class="placeholder">全部${label}</span>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="dropdown" id="dropdown-${dimId}">
+        <div class="dropdown-item select-all">
+          <input type="checkbox" id="checkall-${dimId}" onchange="toggleAll('${dimId}', this.checked)">
+          <span>全选</span>
+        </div>
+        ${opts.map(opt => `
+          <div class="dropdown-item" onclick="toggleOption('${dimId}', '${escapeHtml(opt)}', this)">
+            <input type="checkbox" class="opt-check" data-dim="${dimId}" data-val="${escapeHtml(opt)}">
+            <span>${escapeHtml(opt)}</span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    bar.appendChild(group);
+  });
+
+  // Clear button
+  const clearBtn = document.createElement('button');
+  clearBtn.className = 'btn-clear';
+  clearBtn.textContent = '✕ 清除筛选';
+  clearBtn.onclick = clearAllFilters;
+  bar.appendChild(clearBtn);
+}
+
+function toggleDropdown(dimId, trigger) {
+  const dropdown = document.getElementById('dropdown-' + dimId);
+  const isOpen = dropdown.classList.contains('show');
+
+  // Close all dropdowns first
+  document.querySelectorAll('.dropdown.show').forEach(d => d.classList.remove('show'));
+  document.querySelectorAll('.select-trigger.active').forEach(t => t.classList.remove('active'));
+
+  if (!isOpen) {
+    dropdown.classList.add('show');
+    trigger.classList.add('active');
+  }
+}
+
+function toggleOption(dimId, value, item) {
+  const checkbox = item.querySelector('input[type="checkbox"]');
+  checkbox.checked = !checkbox.checked;
+
+  if (checkbox.checked) {
+    selectedFilters[dimId].add(value);
+  } else {
+    selectedFilters[dimId].delete(value);
+  }
+
+  updateTriggerLabel(dimId);
+  updateSelectAllState(dimId);
+  loadTextbooks();
+}
+
+function toggleAll(dimId, checked) {
+  const dropdown = document.getElementById('dropdown-' + dimId);
+  const checkboxes = dropdown.querySelectorAll('.opt-check');
+  selectedFilters[dimId] = new Set();
+
+  checkboxes.forEach(cb => {
+    cb.checked = checked;
+    if (checked) selectedFilters[dimId].add(cb.dataset.val);
+  });
+
+  updateTriggerLabel(dimId);
+  loadTextbooks();
+}
+
+function updateSelectAllState(dimId) {
+  const dropdown = document.getElementById('dropdown-' + dimId);
+  const checkboxes = dropdown.querySelectorAll('.opt-check');
+  const allCheck = document.getElementById('checkall-' + dimId);
+  const total = checkboxes.length;
+  const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+  allCheck.checked = checked === total;
+}
+
+function updateTriggerLabel(dimId) {
+  const group = document.querySelector(`.select-trigger[onclick*="${dimId}"]`);
+  if (!group) return;
+  const label = DIMENSION_LABELS[dimId];
+  const selected = selectedFilters[dimId];
+  const placeholder = group.querySelector('.placeholder');
+  const existingCount = group.querySelector('.count');
+
+  if (existingCount) existingCount.remove();
+
+  if (selected.size === 0) {
+    placeholder.textContent = '全部' + label;
+  } else if (selected.size === 1) {
+    placeholder.textContent = Array.from(selected)[0];
+  } else {
+    placeholder.textContent = label;
+    const countSpan = document.createElement('span');
+    countSpan.className = 'count';
+    countSpan.textContent = selected.size;
+    placeholder.after(countSpan);
+  }
+}
+
+function clearAllFilters() {
+  DIMENSION_IDS.forEach(dimId => {
+    selectedFilters[dimId] = new Set();
+    updateTriggerLabel(dimId);
+    const allCheck = document.getElementById('checkall-' + dimId);
+    if (allCheck) allCheck.checked = false;
+    const dropdown = document.getElementById('dropdown-' + dimId);
+    if (dropdown) {
+      dropdown.querySelectorAll('.opt-check').forEach(cb => cb.checked = false);
+    }
+  });
+  loadTextbooks();
+}
+
+// Close dropdowns on outside click
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.filter-group')) {
+    document.querySelectorAll('.dropdown.show').forEach(d => d.classList.remove('show'));
+    document.querySelectorAll('.select-trigger.active').forEach(t => t.classList.remove('active'));
+  }
+});
+
+// ── Textbooks ──────────────────────────────────
+async function loadTextbooks() {
+  const params = new URLSearchParams();
+  DIMENSION_IDS.forEach(dimId => {
+    const selected = selectedFilters[dimId];
+    if (selected.size > 0) {
+      params.set(DIM_PARAMS[dimId], Array.from(selected).join(','));
+    }
+  });
+
+  try {
+    const resp = await fetch('/api/textbooks?' + params.toString());
+    if (!resp.ok) throw new Error('Failed to load textbooks');
+    const data = await resp.json();
+    filteredItems = data.items;
+    applySortAndRender();
+  } catch (e) {
+    console.error('Error loading textbooks:', e);
+  }
+}
+
+function applySortAndRender() {
+  filteredItems.sort((a, b) => {
+    let va = a[sortField];
+    let vb = b[sortField];
+    let cmp;
+    if (sortField === 'size') {
+      cmp = (va || 0) - (vb || 0);
+    } else {
+      cmp = String(va || '').localeCompare(String(vb || ''), 'zh-CN');
+    }
+    return sortAsc ? cmp : -cmp;
+  });
+  renderTable();
+}
+
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  const emptyState = document.getElementById('emptyState');
+  const tableWrapper = document.getElementById('tableWrapper');
+  const totalCount = document.getElementById('totalCount');
+
+  totalCount.textContent = filteredItems.length;
+
+  if (filteredItems.length === 0) {
+    tableWrapper.style.display = 'none';
+    emptyState.style.display = 'block';
+    return;
+  }
+
+  tableWrapper.style.display = 'block';
+  emptyState.style.display = 'none';
+
+  tbody.innerHTML = filteredItems.map((item, idx) => {
+    const sizeMB = item.size ? (item.size / 1024 / 1024).toFixed(1) + ' MB' : '-';
+    return `
+      <tr>
+        <td>${idx + 1}</td>
+        <td class="title-cell" title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</td>
+        <td>${escapeHtml(item.xd)}</td>
+        <td>${escapeHtml(item.xk)}</td>
+        <td>${escapeHtml(item.bb)}</td>
+        <td>${escapeHtml(item.nj)}</td>
+        <td>${escapeHtml(item.cc)}</td>
+        <td class="size-cell">${sizeMB}</td>
+        <td class="provider-cell" title="${escapeHtml(item.provider)}">${escapeHtml(item.provider)}</td>
+        <td class="action-cell">
+          <button class="btn-download" id="dl-${item.id}" onclick="downloadOne('${item.id}', this)">
+            ⬇ 下载
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// ── Sort ───────────────────────────────────────
+function handleSort(field) {
+  if (sortField === field) {
+    sortAsc = !sortAsc;
+  } else {
+    sortField = field;
+    sortAsc = true;
+  }
+  // Update header styles
+  document.querySelectorAll('.th-sortable').forEach(th => {
+    th.classList.remove('active', 'asc', 'desc');
+  });
+  const activeTh = document.querySelector(`.th-sortable[data-field="${field}"]`);
+  if (activeTh) {
+    activeTh.classList.add('active', sortAsc ? 'asc' : 'desc');
+  }
+  applySortAndRender();
+}
+
+// ── Download ───────────────────────────────────
+async function downloadOne(contentId, btn) {
+  if (btn.classList.contains('loading') || btn.classList.contains('done')) return;
+
+  btn.classList.add('loading');
+  btn.innerHTML = '⏳ 获取中...';
+
+  try {
+    const resp = await fetch('/api/download/' + contentId);
+    if (!resp.ok) {
+      const errData = await resp.json().catch(() => ({}));
+      throw new Error(errData.error || 'Download failed');
+    }
+
+    // Get filename from Content-Disposition header
+    const disposition = resp.headers.get('Content-Disposition');
+    let filename = 'textbook.pdf';
+    if (disposition) {
+      const match = disposition.match(/filename\*=UTF-8''(.+)/);
+      if (match) filename = decodeURIComponent(match[1]);
+    }
+
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    btn.classList.remove('loading');
+    btn.classList.add('done');
+    btn.innerHTML = '✓ 完成';
+  } catch (e) {
+    console.error('Download error:', e);
+    btn.classList.remove('loading');
+    btn.classList.add('error');
+    btn.innerHTML = '✕ 重试';
+    btn.onclick = () => {
+      btn.classList.remove('error');
+      btn.innerHTML = '⬇ 下载';
+      btn.onclick = () => downloadOne(contentId, btn);
+    };
+  }
+}
+
+async function downloadAll() {
+  if (downloading || filteredItems.length === 0) return;
+  downloading = true;
+
+  const btn = document.getElementById('downloadAllBtn');
+  const progressContainer = document.getElementById('progressContainer');
+  const progressInfo = document.getElementById('progressInfo');
+  const progressFill = document.getElementById('progressFill');
+
+  btn.disabled = true;
+  btn.innerHTML = '⏳ 下载中...';
+  progressContainer.classList.add('show');
+
+  const total = filteredItems.length;
+  let completed = 0;
+  let failed = 0;
+
+  for (const item of filteredItems) {
+    completed++;
+    const pct = Math.round((completed / total) * 100);
+    progressInfo.textContent = `正在下载 ${completed}/${total}${failed > 0 ? ` (${failed} 失败)` : ''}...`;
+    progressFill.style.width = pct + '%';
+
+    const dlBtn = document.getElementById('dl-' + item.id);
+    if (dlBtn && !dlBtn.classList.contains('done')) {
+      try {
+        const dlResp = await fetch('/api/download/' + item.id);
+        if (!dlResp.ok) throw new Error('Download failed');
+        const blob = await dlResp.blob();
+
+        const disposition = dlResp.headers.get('Content-Disposition');
+        let filename = 'textbook.pdf';
+        if (disposition) {
+          const match = disposition.match(/filename\*=UTF-8''(.+)/);
+          if (match) filename = decodeURIComponent(match[1]);
+        }
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        if (dlBtn) {
+          dlBtn.classList.add('done');
+          dlBtn.innerHTML = '✓ 完成';
+        }
+      } catch (e) {
+        failed++;
+        if (dlBtn) {
+          dlBtn.classList.add('error');
+          dlBtn.innerHTML = '✕ 失败';
+        }
+      }
+    }
+
+    // Delay between downloads to avoid overwhelming the browser
+    await new Promise(r => setTimeout(r, 800));
+  }
+
+  progressInfo.textContent = `下载完成！共 ${total} 条，成功 ${total - failed}，失败 ${failed}`;
+  btn.disabled = false;
+  btn.innerHTML = '⬇ 下载全部';
+  downloading = false;
+
+  setTimeout(() => {
+    progressContainer.classList.remove('show');
+  }, 5000);
+}
+
+// ── Utilities ──────────────────────────────────
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function showLoading(text) {
+  document.getElementById('loadingText').textContent = text || '加载中...';
+  document.getElementById('loadingOverlay').classList.remove('hidden');
+}
+
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.add('hidden');
+}
+
+// ── Start ──────────────────────────────────────
+init();
+</script>
+</body>
+</html>

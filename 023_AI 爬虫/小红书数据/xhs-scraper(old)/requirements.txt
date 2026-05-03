@@ -1,0 +1,10 @@
+fastapi>=0.104.0
+uvicorn>=0.24.0
+python-multipart>=0.0.6
+xhs>=0.2.13
+flask>=3.0.0
+gevent>=23.9.0
+playwright>=1.40.0
+jieba>=0.42.1
+snownlp>=0.12.3
+requests>=2.31.0

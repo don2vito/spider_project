@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小红书数据采集系统</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/tofsjonas/sortable@latest/dist/sortable.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <style>
+        /* ========== CSS Variables ========== */
+        :root {
+            --xhs-red: #FF2442;
+            --xhs-red-hover: #E61E3A;
+            --xhs-red-light: #FF6B81;
+            --xhs-red-bg: #FFF0F2;
+            --xhs-gradient: linear-gradient(135deg, #FF2442, #FF6B81);
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-placeholder: #999999;
+            --text-white: #FFFFFF;
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F5F5F5;
+            --bg-card: #FFFFFF;
+            --border-color: #EEEEEE;
+            --border-radius: 8px;
+            --border-radius-lg: 12px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+            --font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+            --success: #52c41a;
+            --warning: #faad14;
+            --info: #1890ff;
+        }
+
+        /* ========== Reset & Base ========== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 14px; scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-family);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ========== Header ========== */
+        .header {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 24px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--xhs-red);
+        }
+        .header-logo .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--xhs-gradient);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: 900;
+        }
+        .header-actions { display: flex; align-items: center; gap: 12px; }
+
+        /* ========== Buttons ========== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: var(--font-family);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .btn-primary {
+            background: var(--xhs-gradient);
+            color: var(--text-white);
+            box-shadow: 0 2px 8px rgba(255, 36, 66, 0.3);
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(255, 36, 66, 0.4); }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-outline {
+            background: transparent;
+            color: var(--xhs-red);
+            border: 1px solid var(--xhs-red);
+        }
+        .btn-outline:hover { background: var(--xhs-red-bg); }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            padding: 8px 12px;
+        }
+        .btn-ghost:hover { background: var(--bg-secondary); color: var(--text-primary); }
+        .btn-sm { padding: 5px 14px; font-size: 12px; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { opacity: 0.9; }
+
+        /* ========== Login Status Badge ========== */
+        .login-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .login-badge.logged-in { background: #f6ffed; color: #52c41a; }
+        .login-badge.not-logged-in { background: #fff7e6; color: #faad14; }
+        .login-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .login-badge.logged-in .dot { background: #52c41a; }
+        .login-badge.not-logged-in .dot { background: #faad14; }
+
+        /* ========== Main Container ========== */
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px 24px; }
+
+        /* ========== Search Bar ========== */
+        .search-section {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 16px;
+        }
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .search-input {
+            flex: 1;
+            height: 44px;
+            padding: 0 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 22px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: var(--font-family);
+        }
+        .search-input:focus { border-color: var(--xhs-red); box-shadow: 0 0 0 3px rgba(255, 36, 66, 0.1); }
+        .search-input::placeholder { color: var(--text-placeholder); }
+        .search-hint {
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-placeholder);
+        }
+
+        /* ========== User Info Card ========== */
+        .user-info-card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-lg);
+            padding: 20px 24px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 16px;
+            display: none;
+        }
+        .user-info-card.visible { display: flex; align-items: center; gap: 20px; }
+        .user-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--xhs-red-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--xhs-red);
+            flex-shrink: 0;
+        }
+        .user-meta { flex: 1; }
+        .user-name { font-size: 18px; font-weight: 700; }
+        .user-desc { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+        .user-stats { display: flex; gap: 24px; margin-top: 8px; }
+        .user-stat { text-align: center; }
+        .user-stat-value { font-size: 16px; font-weight: 700; color: var(--xhs-red); }
+        .user-stat-label { font-size: 11px; color: var(--text-placeholder); }
+
+        /* ========== Toolbar ========== */
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .toolbar-left { display: flex; align-items: center; gap: 10px; }
+        .toolbar-right { display: flex; align-items: center; gap: 10px; }
+        .result-count { font-size: 13px; color: var(--text-secondary); }
+        .result-count strong { color: var(--xhs-red); font-weight: 700; }
+
+        /* ========== Sort Controls ========== */
+        .sort-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        .sort-btn {
+            padding: 4px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: var(--font-family);
+            transition: all 0.2s;
+        }
+        .sort-btn.active { border-color: var(--xhs-red); color: var(--xhs-red); background: var(--xhs-red-bg); }
+        .sort-btn:hover { border-color: var(--xhs-red); }
+
+        /* ========== Table ========== */
+        .table-container {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+        .table-scroll { overflow-x: auto; }
+        table.sortable {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table.sortable thead {
+            background: #FAFAFA;
+            border-bottom: 2px solid var(--border-color);
+        }
+        table.sortable th {
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            user-select: none;
+        }
+        table.sortable th[data-sort-default]::after { content: ' ↓'; opacity: 0.4; }
+        table.sortable th[aria-sort="ascending"]::after { content: ' ↑'; color: var(--xhs-red); }
+        table.sortable th[aria-sort="descending"]::after { content: ' ↓'; color: var(--xhs-red); }
+        table.sortable th.no-sort { cursor: default; }
+        table.sortable th.no-sort::after { content: ''; }
+        table.sortable td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #F5F5F5;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+        table.sortable tbody tr { transition: background 0.15s; }
+        table.sortable tbody tr:hover { background: #FAFAFA; }
+        table.sortable tbody tr:last-child td { border-bottom: none; }
+
+        /* Table cell styles */
+        .cell-index { width: 50px; text-align: center; color: var(--text-placeholder); font-size: 12px; }
+        .cell-cover { width: 80px; }
+        .cell-cover img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+            background: #F0F0F0;
+        }
+        .cell-cover .no-cover {
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-placeholder);
+            font-size: 20px;
+        }
+        .cell-title {
+            max-width: 300px;
+        }
+        .cell-title .title-text {
+            font-weight: 500;
+            color: var(--text-primary);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .cell-title .title-text:hover { color: var(--xhs-red); }
+        .cell-title .title-meta {
+            font-size: 11px;
+            color: var(--text-placeholder);
+            margin-top: 4px;
+            display: flex;
+            gap: 8px;
+        }
+        .cell-title .title-meta .tag {
+            padding: 1px 6px;
+            background: var(--xhs-red-bg);
+            color: var(--xhs-red);
+            border-radius: 3px;
+            font-size: 10px;
+        }
+        .cell-time { white-space: nowrap; font-size: 12px; color: var(--text-secondary); }
+        .cell-num { font-weight: 600; font-variant-numeric: tabular-nums; }
+        .cell-num.likes { color: var(--xhs-red); }
+        .cell-num.collects { color: #FF8C00; }
+        .cell-num.comments { color: var(--info); }
+        .cell-actions { white-space: nowrap; }
+
+        /* ========== Empty State ========== */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-placeholder);
+        }
+        .empty-state .empty-icon { font-size: 64px; margin-bottom: 16px; }
+        .empty-state .empty-title { font-size: 16px; font-weight: 500; margin-bottom: 8px; color: var(--text-secondary); }
+        .empty-state .empty-desc { font-size: 13px; }
+
+        /* ========== Analysis Section ========== */
+        .analysis-section {
+            margin-top: 20px;
+            display: none;
+        }
+        .analysis-section.visible { display: block; }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .analysis-title {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-sm);
+            padding: 20px;
+            overflow: hidden;
+        }
+        .analysis-card.full-width { grid-column: 1 / -1; }
+        .analysis-card-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .chart-container { width: 100%; height: 350px; }
+        .chart-container.tall { height: 450px; }
+
+        /* Summary stats */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+        .summary-item {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            text-align: center;
+        }
+        .summary-value { font-size: 24px; font-weight: 800; color: var(--xhs-red); }
+        .summary-label { font-size: 12px; color: var(--text-placeholder); margin-top: 4px; }
+
+        /* ========== Loading Overlay ========== */
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .loading-overlay.active { display: flex; }
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 4px solid #F0F0F0;
+            border-top-color: var(--xhs-red);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { font-size: 14px; color: var(--text-secondary); }
+        .loading-progress {
+            width: 200px;
+            height: 4px;
+            background: #F0F0F0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .loading-progress .bar {
+            height: 100%;
+            background: var(--xhs-gradient);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* ========== Toast ========== */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+        .toast {
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: white;
+            font-size: 13px;
+            box-shadow: var(--shadow-md);
+            animation: toastIn 0.3s ease;
+            pointer-events: auto;
+            max-width: 400px;
+            text-align: center;
+        }
+        .toast.removing { animation: toastOut 0.3s ease forwards; }
+        .toast-success { background: var(--success); }
+        .toast-error { background: var(--xhs-red); }
+        .toast-info { background: var(--info); }
+        .toast-warning { background: var(--warning); }
+        @keyframes toastIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes toastOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-20px); } }
+
+        /* ========== Login Modal ========== */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 500;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 420px;
+            max-width: 90vw;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            animation: modalIn 0.3s ease;
+        }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .modal-title { font-size: 16px; font-weight: 700; }
+        .modal-close {
+            width: 32px; height: 32px;
+            border: none; background: none;
+            cursor: pointer;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--text-placeholder);
+            transition: all 0.2s;
+        }
+        .modal-close:hover { background: var(--bg-secondary); color: var(--text-primary); }
+        .modal-body { padding: 24px; }
+
+        /* Login Tabs */
+        .login-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .login-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: var(--font-family);
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+        .login-tab.active { color: var(--xhs-red); border-bottom-color: var(--xhs-red); }
+        .login-tab:hover { color: var(--xhs-red); }
+        .login-panel { display: none; }
+        .login-panel.active { display: block; }
+
+        /* Form */
+        .form-group { margin-bottom: 16px; }
+        .form-label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: var(--text-secondary); }
+        .form-input {
+            width: 100%;
+            height: 42px;
+            padding: 0 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: var(--font-family);
+        }
+        .form-input:focus { border-color: var(--xhs-red); box-shadow: 0 0 0 2px rgba(255, 36, 66, 0.1); }
+        .form-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            resize: vertical;
+            font-family: monospace;
+            transition: border-color 0.2s;
+        }
+        .form-textarea:focus { border-color: var(--xhs-red); box-shadow: 0 0 0 2px rgba(255, 36, 66, 0.1); }
+        .form-hint { font-size: 11px; color: var(--text-placeholder); margin-top: 4px; }
+
+        /* QR Code placeholder */
+        .qr-container {
+        text-align: center;
+        padding: 20px;
+    }
+    .qr-hint { font-size: 12px; color: var(--text-placeholder); }
+
+        /* ========== Download Progress ========== */
+        .download-progress {
+            display: none;
+            margin: 12px 0;
+        }
+        .download-progress.visible { display: block; }
+        .progress-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: #F0F0F0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--xhs-gradient);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        .progress-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        /* ========== Responsive ========== */
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            .search-bar { flex-direction: column; }
+            .search-input { width: 100%; }
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .toolbar-left, .toolbar-right { justify-content: center; }
+            .analysis-grid { grid-template-columns: 1fr; }
+            .user-info-card.visible { flex-direction: column; text-align: center; }
+            .user-stats { justify-content: center; }
+            table.sortable th, table.sortable td { padding: 8px 10px; }
+            .cell-cover img { width: 40px; height: 40px; }
+        }
+
+        /* ========== Scrollbar ========== */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #DDD; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #BBB; }
+    </style>
+</head>
+<body>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">加载中...</div>
+    <div class="loading-progress" id="loadingProgress" style="display:none">
+        <div class="bar" id="loadingProgressBar"></div>
+    </div>
+</div>
+
+<!-- Login Modal -->
+<div class="modal-overlay" id="loginModal">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="modal-title">登录小红书</span>
+            <button class="modal-close" onclick="closeLoginModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="login-tabs">
+                <button class="login-tab active" onclick="switchLoginTab('cookie')">Cookie配置</button>
+                <button class="login-tab" onclick="switchLoginTab('password')">账号密码</button>
+                <button class="login-tab" onclick="switchLoginTab('qrcode')">扫码登录</button>
+            </div>
+
+            <!-- Cookie Login -->
+            <div class="login-panel active" id="panelCookie">
+                <div id="sessionDiagnostics" style="margin-bottom:16px;padding:12px;background:#F5F5F5;border-radius:8px;"></div>
+                <div class="form-group">
+                    <label class="form-label">浏览器Cookie字符串</label>
+                    <textarea class="form-textarea" id="cookieInput" placeholder="从浏览器开发者工具中复制Cookie字符串粘贴到此处...&#10;&#10;步骤：&#10;1. 用Chrome登录 xiaohongshu.com&#10;2. F12打开开发者工具 → Network&#10;3. 刷新页面，找到任意请求&#10;4. 复制Request Headers中的Cookie值"></textarea>
+                    <div class="form-hint">Cookie中需包含 a1 和 web_session 字段</div>
+                </div>
+                <button class="btn btn-primary" style="width:100%" onclick="submitCookie()">确认设置</button>
+            </div>
+
+            <!-- Password Login -->
+            <div class="login-panel" id="panelPassword">
+                <div class="form-group">
+                    <label class="form-label">手机号</label>
+                    <input type="tel" class="form-input" id="phoneInput" placeholder="请输入手机号">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">密码</label>
+                    <input type="password" class="form-input" id="passwordInput" placeholder="请输入密码">
+                </div>
+                <button class="btn btn-primary" style="width:100%" onclick="submitPassword()">登录</button>
+                <div class="form-hint" style="margin-top:12px;text-align:center">注意：可能需要处理验证码，建议优先使用Cookie方式</div>
+            </div>
+
+            <!-- QR Code Login -->
+            <div class="login-panel" id="panelQrcode">
+                <div class="qr-container">
+                    <div id="qrCodeWrapper" style="display:inline-block;padding:12px;background:white;border-radius:12px;border:1px solid #eee;">
+                        <div id="qrCodeImg" style="width:200px;height:200px;display:flex;align-items:center;justify-content:center;color:#999;font-size:13px;">
+                            点击下方按钮生成二维码
+                        </div>
+                    </div>
+                    <p id="qrStatusText" style="margin-top:12px;font-size:13px;color:var(--text-secondary);min-height:20px;"></p>
+                    <button class="btn btn-primary btn-sm" id="refreshQrBtn" onclick="createQRCode()" style="margin-top:8px;">
+                        🔄 生成二维码
+                    </button>
+                    <div class="qr-hint" style="margin-top:8px;">请使用小红书APP扫描二维码登录</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Header -->
+<header class="header">
+    <div class="header-logo">
+        <div class="logo-icon">RED</div>
+        <span>数据采集系统</span>
+    </div>
+    <div class="header-actions">
+        <div class="login-badge not-logged-in" id="loginBadge">
+            <span class="dot"></span>
+            <span id="loginBadgeText">未登录</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="openLoginModal()">登录设置</button>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main class="container">
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="search-bar">
+            <input type="text" class="search-input" id="authorIdInput" placeholder="请输入小红书作者ID（24位字符串，如 5bcdcc713487de0001ef6490）">
+            <button class="btn btn-primary" id="searchBtn" onclick="startSearch()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                搜索笔记
+            </button>
+        </div>
+        <div class="search-hint">提示：作者ID可在小红书个人主页URL中找到，格式为 /user/profile/<strong>作者ID</strong></div>
+    </section>
+
+    <!-- User Info Card -->
+    <section class="user-info-card" id="userInfoCard">
+        <div class="user-avatar">U</div>
+        <div class="user-meta">
+            <div class="user-name" id="userName">-</div>
+            <div class="user-desc" id="userDesc">-</div>
+            <div class="user-stats">
+                <div class="user-stat">
+                    <div class="user-stat-value" id="userFans">0</div>
+                    <div class="user-stat-label">粉丝</div>
+                </div>
+                <div class="user-stat">
+                    <div class="user-stat-value" id="userFollows">0</div>
+                    <div class="user-stat-label">关注</div>
+                </div>
+                <div class="user-stat">
+                    <div class="user-stat-value" id="userInteraction">0</div>
+                    <div class="user-stat-label">获赞与收藏</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Toolbar -->
+    <section class="toolbar" id="toolbar" style="display:none">
+        <div class="toolbar-left">
+            <span class="result-count">共 <strong id="totalCount">0</strong> 条笔记</span>
+            <div class="sort-control">
+                <span>排序：</span>
+                <button class="sort-btn active" data-sort="time_desc" onclick="setSort('time_desc')">最新优先</button>
+                <button class="sort-btn" data-sort="time_asc" onclick="setSort('time_asc')">最早优先</button>
+                <button class="sort-btn" data-sort="likes_desc" onclick="setSort('likes_desc')">点赞最多</button>
+                <button class="sort-btn" data-sort="collects_desc" onclick="setSort('collects_desc')">收藏最多</button>
+            </div>
+        </div>
+        <div class="toolbar-right">
+            <button class="btn btn-outline btn-sm" onclick="downloadAll()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                下载全部
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="analyzeData()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+                数据分析
+            </button>
+        </div>
+    </section>
+
+    <!-- Download Progress -->
+    <div class="download-progress" id="downloadProgress">
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="downloadProgressBar"></div>
+        </div>
+        <div class="progress-text" id="downloadProgressText">准备下载...</div>
+    </div>
+
+    <!-- Table -->
+    <section class="table-container" id="tableContainer" style="display:none">
+        <div class="table-scroll">
+            <table class="sortable" id="notesTable">
+                <thead>
+                    <tr>
+                        <th class="no-sort cell-index">#</th>
+                        <th class="no-sort cell-cover">封面</th>
+                        <th>标题</th>
+                        <th data-sort="string">发布时间</th>
+                        <th data-sort="float">点赞</th>
+                        <th data-sort="float">收藏</th>
+                        <th data-sort="float">评论</th>
+                        <th class="no-sort cell-actions">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="notesTableBody">
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Empty State -->
+    <section class="table-container" id="emptyState">
+        <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <div class="empty-title">输入作者ID开始搜索</div>
+            <div class="empty-desc">搜索结果将在此处展示</div>
+        </div>
+    </section>
+
+    <!-- Analysis Section -->
+    <section class="analysis-section" id="analysisSection">
+        <div class="analysis-header">
+            <div class="analysis-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--xhs-red)" stroke-width="2.5" stroke-linecap="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+                数据分析报告
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="closeAnalysis()">✕ 关闭</button>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="analysis-card" style="margin-bottom:16px">
+            <div class="analysis-card-title">📊 概览统计</div>
+            <div class="summary-grid" id="summaryGrid"></div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="analysis-grid">
+            <div class="analysis-card">
+                <div class="analysis-card-title">📈 互动数据趋势</div>
+                <div class="chart-container" id="chartTrend"></div>
+            </div>
+            <div class="analysis-card">
+                <div class="analysis-card-title">🎯 内容类型分布</div>
+                <div class="chart-container" id="chartType"></div>
+            </div>
+            <div class="analysis-card">
+                <div class="analysis-card-title">🔥 点赞 TOP 10</div>
+                <div class="chart-container" id="chartTopLikes"></div>
+            </div>
+            <div class="analysis-card">
+                <div class="analysis-card-title">⭐ 收藏 TOP 10</div>
+                <div class="chart-container" id="chartTopCollects"></div>
+            </div>
+            <div class="analysis-card">
+                <div class="analysis-card-title">📅 发布时间分布（星期）</div>
+                <div class="chart-container" id="chartWeekday"></div>
+            </div>
+            <div class="analysis-card">
+                <div class="analysis-card-title">🕐 发布时间分布（小时）</div>
+                <div class="chart-container" id="chartHour"></div>
+            </div>
+            <div class="analysis-card full-width">
+                <div class="analysis-card-title">🏷️ 高频标签 TOP 20</div>
+                <div class="chart-container" id="chartTags"></div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/gh/tofsjonas/sortable@latest/dist/sortable.min.js"></script>
+<script>
+// ============================================================
+// State
+// ============================================================
+let currentNotes = [];
+let currentSort = 'time_desc';
+let analysisData = null;
+const API = '';
+
+// ============================================================
+// Toast
+// ============================================================
+function showToast(message, type = 'info', duration = 3000) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => {
+        toast.classList.add('removing');
+        setTimeout(() => toast.remove(), 300);
+    }, duration);
+}
+
+// ============================================================
+// Loading
+// ============================================================
+function showLoading(text = '加载中...', showProgress = false) {
+    const overlay = document.getElementById('loadingOverlay');
+    document.getElementById('loadingText').textContent = text;
+    const progress = document.getElementById('loadingProgress');
+    progress.style.display = showProgress ? 'block' : 'none';
+    if (!showProgress) document.getElementById('loadingProgressBar').style.width = '0%';
+    overlay.classList.add('active');
+}
+
+function updateLoadingProgress(percent, text) {
+    document.getElementById('loadingProgressBar').style.width = percent + '%';
+    if (text) document.getElementById('loadingText').textContent = text;
+}
+
+function hideLoading() {
+    document.getElementById('loadingOverlay').classList.remove('active');
+}
+
+// ============================================================
+// QR Code Login
+// ============================================================
+let qrPollingTimer = null;
+let qrId = '';
+let qrCode = '';
+
+async function createQRCode() {
+    const qrContainer = document.getElementById('qrCodeImg');
+    const statusText = document.getElementById('qrStatusText');
+    const refreshBtn = document.getElementById('refreshQrBtn');
+
+    // Clear previous polling
+    if (qrPollingTimer) {
+        clearInterval(qrPollingTimer);
+        qrPollingTimer = null;
+    }
+
+    // Clear previous QR code
+    qrContainer.innerHTML = '';
+    statusText.textContent = '正在生成二维码...';
+    statusText.style.color = 'var(--text-secondary)';
+    refreshBtn.disabled = true;
+
+    try {
+        const res = await fetch(API + '/api/login/qr');
+        const data = await res.json();
+
+        if (data.status !== 'ok') {
+            statusText.textContent = '生成失败: ' + (data.message || '未知错误');
+            statusText.style.color = 'var(--xhs-red)';
+            refreshBtn.disabled = false;
+            return;
+        }
+
+        qrId = data.qr_id;
+        qrCode = data.code;
+        const qrUrl = data.qr_url;
+
+        if (!qrUrl) {
+            statusText.textContent = '未获取到二维码URL，请尝试Cookie方式登录';
+            statusText.style.color = 'var(--xhs-red)';
+            refreshBtn.disabled = false;
+            return;
+        }
+
+        // Render QR code using QRCode.js
+        new QRCode(qrContainer, {
+            text: qrUrl,
+            width: 200,
+            height: 200,
+            colorDark: '#333333',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.M,
+        });
+
+        statusText.textContent = '请使用小红书APP扫描二维码';
+        statusText.style.color = 'var(--text-secondary)';
+        refreshBtn.disabled = false;
+
+        // Start polling
+        qrPollingTimer = setInterval(() => pollQRStatus(), 3000);
+
+    } catch (e) {
+        statusText.textContent = '生成失败: ' + e.message;
+        statusText.style.color = 'var(--xhs-red)';
+        refreshBtn.disabled = false;
+    }
+}
+
+async function pollQRStatus() {
+    if (!qrId) return;
+
+    try {
+        const res = await fetch(API + `/api/login/qr/status?qr_id=${encodeURIComponent(qrId)}&code=${encodeURIComponent(qrCode)}`);
+        const data = await res.json();
+        const statusText = document.getElementById('qrStatusText');
+
+        if (data.status === 'scanned') {
+            statusText.textContent = '✅ 已扫码，请在手机上确认登录';
+            statusText.style.color = 'var(--info)';
+        } else if (data.status === 'success') {
+            // Stop polling
+            if (qrPollingTimer) {
+                clearInterval(qrPollingTimer);
+                qrPollingTimer = null;
+            }
+            statusText.textContent = '🎉 登录成功！';
+            statusText.style.color = 'var(--success)';
+            showToast('扫码登录成功！', 'success');
+            checkLoginStatus();
+            // Close modal after a short delay
+            setTimeout(() => closeLoginModal(), 1500);
+        } else if (data.status === 'expired') {
+            if (qrPollingTimer) {
+                clearInterval(qrPollingTimer);
+                qrPollingTimer = null;
+            }
+            statusText.textContent = '⏰ 二维码已过期，请点击刷新';
+            statusText.style.color = 'var(--warning)';
+        } else if (data.status === 'error') {
+            if (qrPollingTimer) {
+                clearInterval(qrPollingTimer);
+                qrPollingTimer = null;
+            }
+            statusText.textContent = '❌ 查询失败: ' + (data.message || '');
+            statusText.style.color = 'var(--xhs-red)';
+        }
+        // status === 'waiting' -> continue polling silently
+    } catch (e) {
+        console.error('QR poll error:', e);
+    }
+}
+
+// Auto-create QR code when switching to QR tab
+const originalSwitchLoginTab = switchLoginTab;
+switchLoginTab = function(tab) {
+    originalSwitchLoginTab(tab);
+    if (tab === 'qrcode') {
+        // Auto-generate QR code when tab is activated
+        setTimeout(() => {
+            const qrContainer = document.getElementById('qrCodeImg');
+            if (qrContainer && qrContainer.children.length === 0) {
+                createQRCode();
+            }
+        }, 300);
+    } else {
+        // Stop polling when switching away
+        if (qrPollingTimer) {
+            clearInterval(qrPollingTimer);
+            qrPollingTimer = null;
+        }
+    }
+};
+
+// ============================================================
+// Login Modal
+// ============================================================
+function openLoginModal() {
+    document.getElementById('loginModal').classList.add('active');
+}
+
+function closeLoginModal() {
+    document.getElementById('loginModal').classList.remove('active');
+}
+
+function switchLoginTab(tab) {
+    document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.login-panel').forEach(p => p.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+}
+
+async function submitCookie() {
+    const cookieStr = document.getElementById('cookieInput').value.trim();
+    if (!cookieStr) { showToast('请输入Cookie字符串', 'warning'); return; }
+    try {
+        showLoading('正在设置Cookie...');
+        const res = await fetch(API + '/api/session/set', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cookie_str: cookieStr })
+        });
+        const data = await res.json();
+        hideLoading();
+        if (data.has_a1) {
+            showToast('Cookie设置成功！' + (data.logged_in ? '已登录' : '未检测到登录态'), data.logged_in ? 'success' : 'warning');
+            updateLoginBadge(data);
+            if (data.logged_in) closeLoginModal();
+        } else {
+            showToast('Cookie中缺少a1字段，请确认复制完整', 'error');
+        }
+    } catch (e) {
+        hideLoading();
+        showToast('设置失败: ' + e.message, 'error');
+    }
+}
+
+async function submitPassword() {
+    const phone = document.getElementById('phoneInput').value.trim();
+    const password = document.getElementById('passwordInput').value.trim();
+    if (!phone || !password) { showToast('请输入手机号和密码', 'warning'); return; }
+    try {
+        showLoading('正在登录...');
+        const res = await fetch(API + '/api/login/password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone, password })
+        });
+        const data = await res.json();
+        hideLoading();
+        if (data.status === 'ok') {
+            showToast('登录请求已发送', 'success');
+            checkLoginStatus();
+        } else {
+            showToast(data.message || '登录失败', 'error');
+        }
+    } catch (e) {
+        hideLoading();
+        showToast('登录失败: ' + e.message, 'error');
+    }
+}
+
+async function checkLoginStatus() {
+    try {
+        const res = await fetch(API + '/api/session/status');
+        const data = await res.json();
+        updateLoginBadge(data);
+        // Show diagnostic info in login modal
+        updateSessionDiagnostics(data);
+    } catch (e) { /* silent */ }
+}
+
+function updateSessionDiagnostics(data) {
+    const el = document.getElementById('sessionDiagnostics');
+    if (!el) return;
+    const items = [];
+    items.push(`Cookie数量: ${data.cookie_count}`);
+    items.push(`设备标识(a1): ${data.has_a1 ? '✅ 已配置' : '❌ 未配置'}`);
+    items.push(`登录凭证(web_session): ${data.has_web_session ? '✅ 已配置' : '❌ 未配置'}`);
+    items.push(`签名引擎: ${data.browser_ready ? '✅ 浏览器就绪' : '⏳ 等待初始化'}`);
+    if (data.cookie_keys && data.cookie_keys.length > 0) {
+        items.push(`Cookie字段: ${data.cookie_keys.join(', ')}`);
+    }
+    el.innerHTML = items.map(i => `<div style="font-size:12px;color:#666;margin:2px 0">${i}</div>`).join('');
+}
+
+function updateLoginBadge(data) {
+    const badge = document.getElementById('loginBadge');
+    const text = document.getElementById('loginBadgeText');
+    if (data.logged_in) {
+        badge.className = 'login-badge logged-in';
+        text.textContent = '已登录';
+    } else {
+        badge.className = 'login-badge not-logged-in';
+        text.textContent = data.has_a1 ? '仅设备态' : '未登录';
+    }
+}
+
+// ============================================================
+// Search
+// ============================================================
+async function startSearch() {
+    const userId = document.getElementById('authorIdInput').value.trim();
+    if (!userId) { showToast('请输入作者ID', 'warning'); return; }
+
+    showLoading('正在搜索笔记...', true);
+    document.getElementById('searchBtn').disabled = true;
+
+    try {
+        const res = await fetch(API + '/api/search', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId })
+        });
+
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({ detail: '请求失败' }));
+            throw new Error(err.detail || `HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        hideLoading();
+
+        if (data.total === 0) {
+            showToast('未找到该作者的笔记', 'warning');
+            return;
+        }
+
+        currentNotes = data.notes;
+        showToast(`成功获取 ${data.total} 条笔记`, 'success');
+
+        // Show data warning if detail enrichment failed
+        if (data.data_warning) {
+            showToast(data.data_warning, 'warning', 8000);
+        }
+
+        // Show user info
+        if (data.user_info) {
+            const ui = data.user_info;
+            document.getElementById('userName').textContent = ui.nickname || userId;
+            document.getElementById('userDesc').textContent = ui.desc || '';
+            document.getElementById('userFans').textContent = formatNum(ui.fans);
+            document.getElementById('userFollows').textContent = formatNum(ui.follows);
+            document.getElementById('userInteraction').textContent = formatNum(ui.interaction);
+            document.getElementById('userInfoCard').classList.add('visible');
+        }
+
+        // Show toolbar and table
+        document.getElementById('toolbar').style.display = 'flex';
+        document.getElementById('totalCount').textContent = data.total;
+        document.getElementById('emptyState').style.display = 'none';
+        document.getElementById('tableContainer').style.display = 'block';
+
+        // Apply current sort and render
+        applySortAndRender();
+
+        // Hide analysis if visible
+        document.getElementById('analysisSection').classList.remove('visible');
+
+    } catch (e) {
+        hideLoading();
+        const msg = e.message || '';
+        // Auto-open login modal on authentication errors
+        if (msg.includes('Cookie') || msg.includes('登录') || msg.includes('认证') || msg.includes('a1') || msg.includes('web_session')) {
+            showToast(msg, 'error');
+            setTimeout(() => openLoginModal(), 1500);
+        } else if (msg.includes('频繁') || msg.includes('429') || msg.includes('3000')) {
+            showToast(msg, 'warning');
+        } else {
+            showToast('搜索失败: ' + msg, 'error');
+        }
+    } finally {
+        document.getElementById('searchBtn').disabled = false;
+    }
+}
+
+// ============================================================
+// Table Rendering
+// ============================================================
+function applySortAndRender() {
+    let sorted = [...currentNotes];
+
+    switch (currentSort) {
+        case 'time_desc':
+            sorted.sort((a, b) => (b.time || 0) - (a.time || 0));
+            break;
+        case 'time_asc':
+            sorted.sort((a, b) => (a.time || 0) - (b.time || 0));
+            break;
+        case 'likes_desc':
+            sorted.sort((a, b) => parseNum(b.liked_count) - parseNum(a.liked_count));
+            break;
+        case 'collects_desc':
+            sorted.sort((a, b) => parseNum(b.collected_count) - parseNum(a.collected_count));
+            break;
+    }
+
+    renderTable(sorted);
+}
+
+function renderTable(notes) {
+    const tbody = document.getElementById('notesTableBody');
+    tbody.innerHTML = '';
+
+    notes.forEach((note, idx) => {
+        const tr = document.createElement('tr');
+        const typeTag = note.has_video
+            ? '<span class="tag">视频</span>'
+            : (note.image_count > 1 ? `<span class="tag">${note.image_count}图</span>` : '<span class="tag">图文</span>');
+
+        tr.innerHTML = `
+            <td class="cell-index">${idx + 1}</td>
+            <td class="cell-cover">
+                ${note.cover_url
+                    ? `<img src="${note.cover_url}" alt="封面" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'no-cover\\'>📷</div>'">`
+                    : '<div class="no-cover">📷</div>'}
+            </td>
+            <td class="cell-title">
+                <div class="title-text" onclick="window.open('${note.note_url}', '_blank')" title="${escapeHtml(note.title)}">${escapeHtml(note.title || '无标题')}</div>
+                <div class="title-meta">
+                    ${typeTag}
+                    <span>${note.author || ''}</span>
+                </div>
+            </td>
+            <td class="cell-time" data-sort="${note.time || 0}">${note.time_str && note.time_str !== 'N/A' ? note.time_str : '-'}</td>
+            <td class="cell-num likes" data-sort="${parseNum(note.liked_count)}">${formatNum(note.liked_count)}</td>
+            <td class="cell-num collects" data-sort="${parseNum(note.collected_count)}">${formatNum(note.collected_count)}</td>
+            <td class="cell-num comments" data-sort="${parseNum(note.comment_count)}">${formatNum(note.comment_count)}</td>
+            <td class="cell-actions">
+                <button class="btn btn-outline btn-sm" onclick="downloadNote('${note.note_id}')">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    下载
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function setSort(sort) {
+    currentSort = sort;
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.sort-btn[data-sort="${sort}"]`).classList.add('active');
+    applySortAndRender();
+}
+
+// ============================================================
+// Download
+// ============================================================
+async function downloadNote(noteId) {
+    showToast('正在打包下载，请稍候...', 'info');
+    try {
+        const res = await fetch(API + `/api/download/${noteId}`, { method: 'POST' });
+        if (!res.ok) throw new Error('下载失败');
+        const blob = await res.blob();
+        triggerDownload(blob, `note_${noteId}.zip`);
+        showToast('下载完成', 'success');
+    } catch (e) {
+        showToast('下载失败: ' + e.message, 'error');
+    }
+}
+
+async function downloadAll() {
+    if (!currentNotes.length) { showToast('暂无数据可下载', 'warning'); return; }
+
+    const progressEl = document.getElementById('downloadProgress');
+    const bar = document.getElementById('downloadProgressBar');
+    const text = document.getElementById('downloadProgressText');
+    progressEl.classList.add('visible');
+    bar.style.width = '0%';
+    text.textContent = '正在打包全部笔记（含图片、视频、评论），请耐心等待...';
+
+    try {
+        const res = await fetch(API + '/api/download_all', { method: 'POST' });
+        if (!res.ok) throw new Error('下载失败');
+
+        const contentLength = res.headers.get('Content-Length');
+        const reader = res.body.getReader();
+        let received = 0;
+        const chunks = [];
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            chunks.push(value);
+            received += value.length;
+            if (contentLength) {
+                const pct = Math.round((received / parseInt(contentLength)) * 100);
+                bar.style.width = pct + '%';
+                text.textContent = `下载中... ${formatSize(received)} / ${formatSize(parseInt(contentLength))} (${pct}%)`;
+            } else {
+                text.textContent = `下载中... ${formatSize(received)}`;
+            }
+        }
+
+        const blob = new Blob(chunks);
+        triggerDownload(blob, 'xhs_all_notes.zip');
+        bar.style.width = '100%';
+        text.textContent = '下载完成！';
+        showToast('全部下载完成', 'success');
+        setTimeout(() => progressEl.classList.remove('visible'), 2000);
+    } catch (e) {
+        showToast('下载失败: ' + e.message, 'error');
+        progressEl.classList.remove('visible');
+    }
+}
+
+function triggerDownload(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+
+// ============================================================
+// Data Analysis
+// ============================================================
+async function analyzeData() {
+    if (!currentNotes.length) { showToast('暂无数据可分析', 'warning'); return; }
+
+    showLoading('正在进行数据分析...', true);
+    updateLoadingProgress(10, '正在分析数据...');
+
+    try {
+        const res = await fetch(API + '/api/analyze', { method: 'POST' });
+        if (!res.ok) throw new Error('分析失败');
+        const data = await res.json();
+
+        if (data.error) {
+            hideLoading();
+            showToast(data.error, 'warning');
+            return;
+        }
+
+        updateLoadingProgress(50, '正在渲染图表...');
+        analysisData = data;
+
+        // Show analysis section
+        document.getElementById('analysisSection').classList.add('visible');
+        document.getElementById('analysisSection').scrollIntoView({ behavior: 'smooth' });
+
+        // Render summary
+        renderSummary(data.summary);
+
+        updateLoadingProgress(70, '渲染图表...');
+
+        // Render charts
+        setTimeout(() => {
+            renderTrendChart(data.monthly_trend);
+            renderTypeChart(data.content_type);
+            renderTopChart('chartTopLikes', data.top_likes, 'liked_count', '点赞数');
+            renderTopChart('chartTopCollects', data.top_collects, 'collected_count', '收藏数');
+            renderWeekdayChart(data.weekday_distribution);
+            renderHourChart(data.hour_distribution);
+            renderTagsChart(data.top_tags);
+
+            updateLoadingProgress(100, '分析完成');
+            setTimeout(hideLoading, 500);
+            showToast('数据分析完成', 'success');
+        }, 100);
+
+    } catch (e) {
+        hideLoading();
+        showToast('分析失败: ' + e.message, 'error');
+    }
+}
+
+function closeAnalysis() {
+    document.getElementById('analysisSection').classList.remove('visible');
+}
+
+function renderSummary(summary) {
+    const grid = document.getElementById('summaryGrid');
+    const items = [
+        { label: '笔记总数', value: summary.total_notes },
+        { label: '总点赞', value: formatNum(summary.total_likes) },
+        { label: '总收藏', value: formatNum(summary.total_collects) },
+        { label: '总评论', value: formatNum(summary.total_comments) },
+        { label: '平均点赞', value: formatNum(summary.avg_likes) },
+        { label: '平均收藏', value: formatNum(summary.avg_collects) },
+        { label: '视频笔记', value: summary.video_count },
+        { label: '图文笔记', value: summary.image_note_count },
+    ];
+    if (summary.earliest_note) {
+        items.push({ label: '时间跨度', value: summary.date_span_days + '天' });
+    }
+    grid.innerHTML = items.map(i => `
+        <div class="summary-item">
+            <div class="summary-value">${i.value}</div>
+            <div class="summary-label">${i.label}</div>
+        </div>
+    `).join('');
+}
+
+function renderTrendChart(data) {
+    if (!data || !data.length) return;
+    const chart = echarts.init(document.getElementById('chartTrend'));
+    chart.setOption({
+        tooltip: { trigger: 'axis' },
+        legend: { data: ['点赞', '收藏', '评论', '笔记数'], top: 0 },
+        grid: { top: 40, right: 20, bottom: 30, left: 50 },
+        xAxis: { type: 'category', data: data.map(d => d.month), axisLabel: { rotate: 30 } },
+        yAxis: [
+            { type: 'value', name: '互动量' },
+            { type: 'value', name: '笔记数', position: 'right' }
+        ],
+        series: [
+            { name: '点赞', type: 'line', data: data.map(d => d.liked_count), smooth: true, itemStyle: { color: '#FF2442' }, areaStyle: { color: 'rgba(255,36,66,0.1)' } },
+            { name: '收藏', type: 'line', data: data.map(d => d.collected_count), smooth: true, itemStyle: { color: '#FF8C00' } },
+            { name: '评论', type: 'line', data: data.map(d => d.comment_count), smooth: true, itemStyle: { color: '#1890ff' } },
+            { name: '笔记数', type: 'bar', yAxisIndex: 1, data: data.map(d => d.note_count), itemStyle: { color: '#FF6B81', borderRadius: [4, 4, 0, 0] } }
+        ]
+    });
+    window.addEventListener('resize', () => chart.resize());
+}
+
+function renderTypeChart(data) {
+    if (!data) return;
+    const chart = echarts.init(document.getElementById('chartType'));
+    chart.setOption({
+        tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+        legend: { bottom: 10 },
+        series: [{
+            type: 'pie',
+            radius: ['40%', '70%'],
+            center: ['50%', '45%'],
+            data: [
+                { value: data.image_notes, name: '图文笔记', itemStyle: { color: '#FF2442' } },
+                { value: data.video_notes, name: '视频笔记', itemStyle: { color: '#FF6B81' } }
+            ],
+            label: { formatter: '{b}\n{c}篇' },
+            emphasis: { itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.2)' } }
+        }]
+    });
+    window.addEventListener('resize', () => chart.resize());
+}
+
+function renderTopChart(containerId, data, field, label) {
+    if (!data || !data.length) return;
+    const chart = echarts.init(document.getElementById(containerId));
+    const reversed = [...data].reverse();
+    chart.setOption({
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        grid: { top: 10, right: 30, bottom: 10, left: 120 },
+        xAxis: { type: 'value' },
+        yAxis: { type: 'category', data: reversed.map(d => truncate(d.title, 15)), axisLabel: { width: 100, overflow: 'truncate' } },
+        series: [{
+            type: 'bar',
+            data: reversed.map(d => d[field]),
+            itemStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                    { offset: 0, color: '#FF2442' },
+                    { offset: 1, color: '#FF6B81' }
+                ]),
+                borderRadius: [0, 4, 4, 0]
+            },
+            barMaxWidth: 20
+        }]
+    });
+    window.addEventListener('resize', () => chart.resize());
+}
+
+function renderWeekdayChart(data) {
+    if (!data || !data.length) return;
+    const chart = echarts.init(document.getElementById('chartWeekday'));
+    chart.setOption({
+        tooltip: { trigger: 'axis' },
+        grid: { top: 20, right: 20, bottom: 30, left: 40 },
+        xAxis: { type: 'category', data: data.map(d => d.day) },
+        yAxis: { type: 'value', name: '笔记数' },
+        series: [{
+            type: 'bar',
+            data: data.map(d => d.count),
+            itemStyle: {
+                color: function(params) {
+                    const colors = ['#FFB6C1', '#FFB6C1', '#FF6B81', '#FF2442', '#FF2442', '#FF6B81', '#FFB6C1'];
+                    return colors[params.dataIndex] || '#FF2442';
+                },
+                borderRadius: [4, 4, 0, 0]
+            },
+            barMaxWidth: 40
+        }]
+    });
+    window.addEventListener('resize', () => chart.resize());
+}
+
+function renderHourChart(data) {
+    if (!data || !data.length) return;
+    const chart = echarts.init(document.getElementById('chartHour'));
+    chart.setOption({
+        tooltip: { trigger: 'axis', formatter: '{b}:00 - {c}篇' },
+        grid: { top: 20, right: 20, bottom: 30, left: 40 },
+        xAxis: { type: 'category', data: data.map(d => d.hour + ':00') },
+        yAxis: { type: 'value', name: '笔记数' },
+        series: [{
+            type: 'bar',
+            data: data.map(d => d.count),
+            itemStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: '#FF2442' },
+                    { offset: 1, color: '#FF6B81' }
+                ]),
+                borderRadius: [4, 4, 0, 0]
+            },
+            barMaxWidth: 25
+        }]
+    });
+    window.addEventListener('resize', () => chart.resize());
+}
+
+function renderTagsChart(data) {
+    if (!data || !data.length) return;
+    const chart = echarts.init(document.getElementById('chartTags'));
+    const reversed = [...data].reverse();
+    chart.setOption({
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        grid: { top: 10, right: 30, bottom: 10, left: 80 },
+        xAxis: { type: 'value' },
+        yAxis: { type: 'category', data: reversed.map(d => d.tag), axisLabel: { width: 70, overflow: 'truncate' } },
+        series: [{
+            type: 'bar',
+            data: reversed.map(d => d.count),
+            itemStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                    { offset: 0, color: '#FF2442' },
+                    { offset: 1, color: '#FFB6C1' }
+                ]),
+                borderRadius: [0, 4, 4, 0]
+            },
+            barMaxWidth: 18
+        }]
+    });
+    window.addEventListener('resize', () => chart.resize());
+}
+
+// ============================================================
+// Utilities
+// ============================================================
+function parseNum(val) {
+    if (typeof val === 'number') return val;
+    if (typeof val === 'string') {
+        val = val.replace(/,/g, '');
+        if (val.endsWith('万')) return parseFloat(val) * 10000;
+        if (val.endsWith('亿')) return parseFloat(val) * 100000000;
+        return parseInt(val) || 0;
+    }
+    return 0;
+}
+
+function formatNum(val) {
+    if (val === undefined || val === null || val === '') return '-';
+    if (typeof val === 'string') {
+        if (val === '0' || val === '-1') return '-';
+        val = val.replace(/,/g, '');
+        if (val.endsWith('万')) return parseFloat(val) * 10000;
+        if (val.endsWith('亿')) return parseFloat(val) * 100000000;
+        const n = parseInt(val) || 0;
+        if (n === 0) return '-';
+        if (n >= 100000000) return (n / 100000000).toFixed(1) + '亿';
+        if (n >= 10000) return (n / 10000).toFixed(1) + '万';
+        return n.toLocaleString();
+    }
+    const n = parseInt(val) || 0;
+    if (n === 0) return '-';
+    if (n >= 100000000) return (n / 100000000).toFixed(1) + '亿';
+    if (n >= 10000) return (n / 10000).toFixed(1) + '万';
+    return n.toLocaleString();
+}
+
+function formatSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+    if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + ' MB';
+    return (bytes / 1073741824).toFixed(2) + ' GB';
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+function truncate(str, len) {
+    if (!str) return '';
+    return str.length > len ? str.slice(0, len) + '...' : str;
+}
+
+// ============================================================
+// Init
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+    checkLoginStatus();
+
+    // Enter key to search
+    document.getElementById('authorIdInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') startSearch();
+    });
+
+    // Close modal on overlay click
+    document.getElementById('loginModal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeLoginModal();
+    });
+});
+</script>
+</body>
+</html>

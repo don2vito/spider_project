@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML晨报</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="lib/xlsx.full.min.js"></script>
+    <script src="lib/html2canvas.min.js"></script>
+    <script src="lib/jspdf.min.js"></script>
+</head>
+<body>
+    <!-- 上传页面 -->
+    <div id="uploadPage" class="page active">
+        <div class="container">
+            <div class="upload-card">
+                <h1 class="title">HTML晨报生成器</h1>
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">&#128202;</div>
+                    <p class="upload-text">点击或拖拽上传Excel文件</p>
+                    <p class="upload-hint">支持 .xlsx 格式文件</p>
+                    <input type="file" id="fileInput" accept=".xlsx" hidden>
+                </div>
+                <div class="file-info" id="fileInfo" style="display: none;">
+                    <span class="file-name"></span>
+                    <button class="btn btn-primary" id="generateBtn">生成报表</button>
+                </div>
+                <div class="sample-data">
+                    <p>或使用示例数据：<button class="btn btn-link" id="useSampleBtn">加载示例数据</button></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 报表页面 -->
+    <div id="reportPage" class="page">
+        <!-- 顶部导航 -->
+        <header class="header">
+            <div class="header-left">
+                <button class="btn btn-back" id="backBtn">&#8592; 返回</button>
+                <h2 class="header-title">HTML晨报</h2>
+            </div>
+            <div class="header-center">
+                <div class="date-selector">
+                    <label>统计日期：</label>
+                    <select id="dateSelect">
+                        <option value="">请选择日期</option>
+                    </select>
+                    <span class="date-info" id="dateInfo"></span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-export" id="exportExcelBtn">导出Excel</button>
+                <button class="btn btn-export" id="exportJpgBtn">导出JPG</button>
+                <button class="btn btn-export" id="exportPdfBtn">导出PDF</button>
+            </div>
+        </header>
+
+        <!-- 报表内容 -->
+        <main class="report-content" id="reportContent">
+            <!-- 表1：主要指标 -->
+            <section class="table-section" id="table1Section">
+                <div class="section-header">
+                    <h3 class="section-title" id="table1Title">主要指标</h3>
+                    <div class="gmv-summary" id="gmvSummary"></div>
+                </div>
+                <div class="table-container" id="table1Container"></div>
+            </section>
+
+            <!-- 表2：业绩复盘 -->
+            <section class="table-section" id="table2Section">
+                <div class="section-header">
+                    <h3 class="section-title" id="table2Title">业绩复盘</h3>
+                </div>
+                <div class="table-container" id="table2Container"></div>
+            </section>
+
+            <!-- 备注说明 -->
+            <section class="notes-section">
+                <h4>备注说明：</h4>
+                <ol>
+                    <li>总GMV = 购物零售(含定制类)+旅行社+全球购+私域第三方+移动端；金条还原已计入；利润不含移动端；</li>
+                    <li>白玉兰直播间GMV = 账号 + 私厨店铺，私厨店铺在月报中体现；</li>
+                    <li>本表中自营供应链统计范围，目前仅包括自有品牌（私厨故事）、自营保健（好当家、神象）；1-4月等同于达成、5-12月目标暂按业务版本；</li>
+                    <li>2026年5月，东方购物日均订购目标 337.7万、白玉兰直播间日均GMV目标178.2万。</li>
+                </ol>
+                <p class="confidential">内部数据，请勿外传！</p>
+            </section>
+        </main>
+    </div>
+
+    <!-- 加载提示 -->
+    <div id="loading" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>正在处理数据...</p>
+    </div>
+
+    <script src="js/dataProcessor.js"></script>
+    <script src="js/tableRenderer.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,520 @@
+/* 基础样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* 页面切换 */
+.page {
+    display: none;
+    min-height: 100vh;
+}
+
+.page.active {
+    display: block;
+}
+
+/* 上传页面 */
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.upload-card {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.title {
+    text-align: center;
+    color: #c00000;
+    font-size: 28px;
+    margin-bottom: 30px;
+    font-weight: bold;
+}
+
+.upload-area {
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.upload-area:hover,
+.upload-area.dragover {
+    border-color: #c00000;
+    background-color: #fff5f5;
+}
+
+.upload-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.upload-text {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.upload-hint {
+    font-size: 12px;
+    color: #999;
+}
+
+.file-info {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f8f8;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.file-name {
+    color: #333;
+    font-weight: 500;
+}
+
+.sample-data {
+    margin-top: 20px;
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+}
+
+/* 按钮样式 */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+    font-family: inherit;
+}
+
+.btn-primary {
+    background-color: #c00000;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #a00000;
+}
+
+.btn-link {
+    background: none;
+    color: #c00000;
+    text-decoration: underline;
+    padding: 0;
+}
+
+.btn-back {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.btn-export {
+    background-color: #c00000;
+    color: white;
+    margin-left: 10px;
+}
+
+/* 报表页面头部 */
+.header {
+    background: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-title {
+    color: #c00000;
+    font-size: 20px;
+}
+
+.header-center {
+    display: flex;
+    align-items: center;
+}
+
+.date-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-selector label {
+    font-weight: 500;
+}
+
+.date-selector select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+    min-width: 150px;
+}
+
+.date-info {
+    color: #666;
+    font-size: 14px;
+}
+
+/* 报表内容 */
+.report-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+.table-section {
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.section-header {
+    background: #c00000;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.gmv-summary {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.table-container {
+    padding: 20px;
+    overflow-x: auto;
+}
+
+/* 表格样式 - 匹配参考图片 */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.data-table th,
+.data-table td {
+    padding: 8px 10px;
+    text-align: center;
+    border: 1px solid #d0d0d0;
+}
+
+/* 红色表头 - 东方购物区域 */
+.red-header th {
+    background-color: #c00000;
+    color: white;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* 黄色表头 - 定制类/私域第三方 */
+.yellow-header th {
+    background-color: #ffc000;
+    color: #333;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* 深蓝色表头 - 自营供应链/白玉兰直播间 */
+.blue-header th {
+    background-color: #2f5496;
+    color: white;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* 渠道名称列 */
+.data-table td:first-child {
+    font-weight: 600;
+    text-align: center;
+    background-color: #f8f8f8;
+    min-width: 120px;
+}
+
+/* 指标名称列 */
+.data-table td:nth-child(2) {
+    font-weight: 500;
+    text-align: center;
+    min-width: 80px;
+}
+
+/* 子项缩进 */
+.indent {
+    padding-left: 30px !important;
+}
+
+/* 数值样式 */
+.number {
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-weight: 500;
+}
+
+/* 达成率样式 */
+.achievement-rate {
+    font-weight: bold;
+}
+
+.achievement-rate.high {
+    color: #c00000;
+}
+
+.achievement-rate.medium {
+    color: #ff6600;
+}
+
+.achievement-rate.low {
+    color: #009900;
+}
+
+/* 偏差样式 */
+.deviation {
+    font-weight: bold;
+}
+
+.deviation.positive {
+    color: #009900;
+}
+
+.deviation.negative {
+    color: #c00000;
+}
+
+/* 百分比样式 */
+.percentage {
+    font-weight: 500;
+}
+
+/* 高亮行 */
+.highlight-row {
+    background-color: #fffbeb !important;
+}
+
+.highlight-row td:first-child {
+    background-color: #f5f5f5 !important;
+}
+
+/* 表2特殊样式 */
+.table2 td:first-child {
+    background-color: #f0f0f0;
+    font-weight: 600;
+}
+
+.table2 .indent td:first-child {
+    padding-left: 40px;
+    font-weight: normal;
+    background-color: #f8f8f8;
+}
+
+/* 表2特定渠道不加粗：私域、仅电视端及APP */
+.table2 tr.no-bold td:first-child {
+    font-weight: normal;
+    background-color: #f8f8f8;
+}
+
+/* 进度颜色 */
+.progress-high {
+    color: #c00000;
+    font-weight: bold;
+}
+
+.progress-medium {
+    color: #ff8c00;
+    font-weight: bold;
+}
+
+.progress-low {
+    color: #28a745;
+    font-weight: bold;
+}
+
+/* 值红色 */
+.value-red {
+    color: #c00000;
+    font-weight: bold;
+}
+
+/* 备注说明 */
+.notes-section {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.notes-section h4 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.notes-section ol {
+    margin-left: 20px;
+    color: #666;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.notes-section li {
+    margin-bottom: 5px;
+}
+
+.confidential {
+    color: #c00000;
+    font-weight: bold;
+    text-align: right;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+/* 加载提示 */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    color: white;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+    .report-content {
+        padding: 20px;
+    }
+    
+    .header {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .header-center {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px 15px;
+    }
+    
+    .upload-card {
+        padding: 25px;
+    }
+    
+    .title {
+        font-size: 22px;
+    }
+    
+    .header {
+        padding: 10px 15px;
+    }
+    
+    .header-title {
+        font-size: 16px;
+    }
+    
+    .report-content {
+        padding: 15px;
+    }
+    
+    .data-table {
+        font-size: 11px;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 6px 8px;
+    }
+    
+    .btn {
+        padding: 8px 15px;
+        font-size: 12px;
+    }
+}
+
+/* 打印样式 */
+@media print {
+    .header {
+        position: static;
+        box-shadow: none;
+    }
+    
+    .btn-back,
+    .btn-export {
+        display: none;
+    }
+    
+    .table-section {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        page-break-inside: avoid;
+    }
+    
+    .notes-section {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+}

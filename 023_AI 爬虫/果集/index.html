@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>果集数据报告爬虫系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .toolbar {
+            background: white;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .stats span {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd6;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8f9fa;
+        }
+
+        th {
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            color: #666;
+            border-bottom: 2px solid #e9ecef;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .checkbox-col {
+            width: 40px;
+            text-align: center;
+        }
+
+        .cover-col {
+            width: 120px;
+        }
+
+        .title-col {
+            min-width: 300px;
+        }
+
+        .link-col {
+            width: 200px;
+        }
+
+        .action-col {
+            width: 100px;
+            text-align: center;
+        }
+
+        .cover-img {
+            width: 100px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .cover-img:hover {
+            transform: scale(1.1);
+        }
+
+        .report-title {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.5;
+            max-width: 400px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .report-link {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 13px;
+            word-break: break-all;
+        }
+
+        .report-link:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e9ecef;
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .modal p {
+            margin-bottom: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 2000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.success {
+            background: #28a745;
+        }
+
+        .toast.error {
+            background: #dc3545;
+        }
+
+        .search-box {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 250px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            gap: 10px;
+        }
+
+        .page-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .page-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .page-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .page-info {
+            font-size: 13px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>果集数据报告爬虫系统</h1>
+        <p>自动抓取 guoji.pro 全量数据报告，支持浏览和下载</p>
+    </div>
+
+    <div class="container">
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <div class="stats">
+                    共 <span id="totalCount">0</span> 条报告，已选择 <span id="selectedCount">0</span> 条
+                </div>
+                <input type="text" class="search-box" id="searchInput" placeholder="搜索报告名称...">
+            </div>
+            <div class="toolbar-right">
+                <button class="btn btn-warning" onclick="refreshData()" id="refreshBtn">
+                    🔄 刷新数据
+                </button>
+                <button class="btn btn-primary" onclick="selectAll()" id="selectAllBtn">
+                    ☑️ 全选
+                </button>
+                <button class="btn btn-success" onclick="batchDownload()" id="batchBtn" disabled>
+                    📦 批量下载
+                </button>
+                <button class="btn btn-danger" onclick="downloadAll()" id="downloadAllBtn">
+                    📥 全量下载
+                </button>
+            </div>
+        </div>
+
+        <div id="progressContainer" style="display:none;">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <p style="text-align:center; margin-top:10px; font-size:13px; color:#666;" id="progressText"></p>
+        </div>
+
+        <div class="table-container">
+            <div id="loadingState" class="loading">
+                <div class="loading-spinner"></div>
+                <p>正在加载数据，请稍候...</p>
+                <p style="font-size:12px; color:#999; margin-top:10px;">首次加载需要抓取全量数据，可能需要几分钟</p>
+            </div>
+
+            <div id="emptyState" class="empty-state" style="display:none;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="12" y1="18" x2="12" y2="12"></line>
+                    <line x1="9" y1="15" x2="15" y2="15"></line>
+                </svg>
+                <p>暂无数据</p>
+            </div>
+
+            <div id="tableWrapper" class="table-wrapper" style="display:none;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="checkbox-col">
+                                <input type="checkbox" id="checkAll" onchange="toggleAll(this)">
+                            </th>
+                            <th class="cover-col">封面图片</th>
+                            <th class="title-col">报告名称</th>
+                            <th class="link-col">报告链接</th>
+                            <th class="action-col">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportTableBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="pagination" class="pagination" style="display:none;">
+                <button class="page-btn" onclick="changePage('prev')">上一页</button>
+                <span class="page-info" id="pageInfo">第 1 页</span>
+                <button class="page-btn" onclick="changePage('next')">下一页</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="downloadModal">
+        <div class="modal">
+            <h3>下载确认</h3>
+            <p id="modalMessage">确定要下载选中的报告吗？</p>
+            <div class="modal-actions">
+                <button class="btn" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="confirmDownload()">确认下载</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const API_BASE = '';
+        let allReports = [];
+        let filteredReports = [];
+        let selectedIds = new Set();
+        let currentPage = 1;
+        const pageSize = 20;
+        let downloadCallback = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadReports();
+            document.getElementById('searchInput').addEventListener('input', debounce(filterReports, 300));
+        });
+
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        async function loadReports() {
+            showLoading(true);
+            try {
+                const resp = await fetch(`${API_BASE}/api/reports`);
+                const data = await resp.json();
+                if (data.success) {
+                    allReports = data.data;
+                    filteredReports = [...allReports];
+                    updateStats();
+                    renderTable();
+                } else {
+                    showToast('加载失败: ' + (data.error || '未知错误'), 'error');
+                }
+            } catch (e) {
+                showToast('网络错误，请确保服务器已启动', 'error');
+                console.error(e);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function refreshData() {
+            const btn = document.getElementById('refreshBtn');
+            btn.disabled = true;
+            btn.textContent = '刷新中...';
+            showProgress(true, 0, '正在刷新数据...');
+
+            try {
+                const resp = await fetch(`${API_BASE}/api/refresh`);
+                const data = await resp.json();
+                if (data.success) {
+                    allReports = data.data;
+                    filteredReports = [...allReports];
+                    selectedIds.clear();
+                    updateStats();
+                    renderTable();
+                    showToast(`刷新成功，共 ${data.total} 条报告`, 'success');
+                }
+            } catch (e) {
+                showToast('刷新失败', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔄 刷新数据';
+                showProgress(false);
+            }
+        }
+
+        function filterReports() {
+            const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+            if (!keyword) {
+                filteredReports = [...allReports];
+            } else {
+                filteredReports = allReports.filter(r => r.title.toLowerCase().includes(keyword));
+            }
+            currentPage = 1;
+            renderTable();
+            updateStats();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('reportTableBody');
+            const tableWrapper = document.getElementById('tableWrapper');
+            const emptyState = document.getElementById('emptyState');
+            const pagination = document.getElementById('pagination');
+
+            if (filteredReports.length === 0) {
+                tableWrapper.style.display = 'none';
+                emptyState.style.display = 'block';
+                pagination.style.display = 'none';
+                return;
+            }
+
+            tableWrapper.style.display = 'block';
+            emptyState.style.display = 'none';
+
+            const totalPages = Math.ceil(filteredReports.length / pageSize);
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const pageData = filteredReports.slice(start, end);
+
+            tbody.innerHTML = pageData.map(report => `
+                <tr>
+                    <td class="checkbox-col">
+                        <input type="checkbox" 
+                            class="report-checkbox" 
+                            value="${report.marketingId}"
+                            ${selectedIds.has(report.marketingId) ? 'checked' : ''}
+                            onchange="toggleSelect(this)">
+                    </td>
+                    <td class="cover-col">
+                        ${report.coverImage ? 
+                            `<img class="cover-img" 
+                                src="${API_BASE}/api/proxy-image?url=${encodeURIComponent(report.coverImage)}" 
+                                alt="封面"
+                                onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjYwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iNjAiIGZpbGw9IiNlOWVjZWYiLz48dGV4dCB4PSI1MCIgeT0iMzUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+Tm8gSW1hZ2U8L3RleHQ+PC9zdmc+'" 
+                                onclick="window.open('${report.url}', '_blank')">` :
+                            '<div style="width:100px;height:60px;background:#e9ecef;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px">无封面</div>'
+                        }
+                    </td>
+                    <td class="title-col">
+                        <div class="report-title" title="${report.title}">${report.title}</div>
+                    </td>
+                    <td class="link-col">
+                        <a class="report-link" href="${report.url}" target="_blank" title="${report.url}">查看详情</a>
+                    </td>
+                    <td class="action-col">
+                        <button class="btn btn-primary btn-sm" data-id="${report.marketingId}" data-title="${report.title.replace(/"/g, '&quot;')}" onclick="downloadSingle(this.dataset.id, this.dataset.title)">
+                            📥 下载
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            if (totalPages > 1) {
+                pagination.style.display = 'flex';
+                document.getElementById('pageInfo').textContent = `第 ${currentPage} 页 / 共 ${totalPages} 页`;
+            } else {
+                pagination.style.display = 'none';
+            }
+
+            updateCheckAllState();
+        }
+
+        function toggleSelect(checkbox) {
+            const id = checkbox.value;
+            if (checkbox.checked) {
+                selectedIds.add(id);
+            } else {
+                selectedIds.delete(id);
+            }
+            updateStats();
+            updateCheckAllState();
+        }
+
+        function toggleAll(checkbox) {
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const pageData = filteredReports.slice(start, end);
+
+            pageData.forEach(report => {
+                if (checkbox.checked) {
+                    selectedIds.add(report.marketingId);
+                } else {
+                    selectedIds.delete(report.marketingId);
+                }
+            });
+
+            document.querySelectorAll('.report-checkbox').forEach(cb => {
+                cb.checked = checkbox.checked;
+            });
+
+            updateStats();
+        }
+
+        function selectAll() {
+            if (selectedIds.size === filteredReports.length) {
+                selectedIds.clear();
+            } else {
+                filteredReports.forEach(r => selectedIds.add(r.marketingId));
+            }
+            renderTable();
+            updateStats();
+        }
+
+        function updateCheckAllState() {
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const pageData = filteredReports.slice(start, end);
+            const checkAll = document.getElementById('checkAll');
+
+            if (pageData.length === 0) {
+                checkAll.checked = false;
+                checkAll.indeterminate = false;
+                return;
+            }
+
+            const checkedCount = pageData.filter(r => selectedIds.has(r.marketingId)).length;
+            checkAll.checked = checkedCount === pageData.length;
+            checkAll.indeterminate = checkedCount > 0 && checkedCount < pageData.length;
+        }
+
+        function updateStats() {
+            document.getElementById('totalCount').textContent = filteredReports.length;
+            document.getElementById('selectedCount').textContent = selectedIds.size;
+            document.getElementById('batchBtn').disabled = selectedIds.size === 0;
+        }
+
+        function changePage(direction) {
+            const totalPages = Math.ceil(filteredReports.length / pageSize);
+            if (direction === 'prev' && currentPage > 1) {
+                currentPage--;
+            } else if (direction === 'next' && currentPage < totalPages) {
+                currentPage++;
+            }
+            renderTable();
+            window.scrollTo(0, 0);
+        }
+
+        async function downloadSingle(marketingId, title) {
+            showToast('正在生成PDF，请稍候...', 'info');
+            try {
+                const resp = await fetch(`${API_BASE}/api/download-pdf/${marketingId}`);
+                if (resp.ok) {
+                    const blob = await resp.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    const safeTitle = (title || `report_${marketingId}`).replace(/[<>:"/\\|?*]/g, '_');
+                    a.download = `${safeTitle}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    showToast('下载成功', 'success');
+                } else {
+                    const data = await resp.json();
+                    showToast('下载失败: ' + (data.error || '未知错误'), 'error');
+                }
+            } catch (e) {
+                showToast('下载失败: ' + e.message, 'error');
+            }
+        }
+
+        function batchDownload() {
+            if (selectedIds.size === 0) {
+                showToast('请先选择要下载的报告', 'error');
+                return;
+            }
+            showModal(`确定要下载选中的 ${selectedIds.size} 条报告吗？`, () => {
+                executeBatchDownload([...selectedIds]);
+            });
+        }
+
+        function downloadAll() {
+            showModal(`确定要下载全部 ${filteredReports.length} 条报告吗？这可能需要较长时间。`, () => {
+                executeBatchDownload(filteredReports.map(r => r.marketingId));
+            });
+        }
+
+        async function executeBatchDownload(marketingIds) {
+            showToast('正在批量下载，请耐心等待...', 'info');
+            const btn = document.getElementById('batchBtn');
+            const allBtn = document.getElementById('downloadAllBtn');
+            btn.disabled = true;
+            allBtn.disabled = true;
+
+            showProgress(true, 0, '准备下载...');
+
+            try {
+                const resp = await fetch(`${API_BASE}/api/download-batch`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ marketingIds })
+                });
+
+                if (resp.ok) {
+                    const blob = await resp.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'reports_batch.zip';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    showToast('批量下载完成', 'success');
+                } else {
+                    const data = await resp.json();
+                    showToast('下载失败: ' + (data.error || '未知错误'), 'error');
+                }
+            } catch (e) {
+                showToast('下载失败: ' + e.message, 'error');
+            } finally {
+                btn.disabled = false;
+                allBtn.disabled = false;
+                showProgress(false);
+            }
+        }
+
+        function showModal(message, callback) {
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('downloadModal').classList.add('active');
+            downloadCallback = callback;
+        }
+
+        function closeModal() {
+            document.getElementById('downloadModal').classList.remove('active');
+            downloadCallback = null;
+        }
+
+        function confirmDownload() {
+            if (downloadCallback) {
+                downloadCallback();
+            }
+            closeModal();
+        }
+
+        function showLoading(show) {
+            document.getElementById('loadingState').style.display = show ? 'block' : 'none';
+            if (show) {
+                document.getElementById('tableWrapper').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'none';
+            }
+        }
+
+        function showProgress(show, percent, text) {
+            const container = document.getElementById('progressContainer');
+            const fill = document.getElementById('progressFill');
+            const textEl = document.getElementById('progressText');
+
+            container.style.display = show ? 'block' : 'none';
+            if (show) {
+                fill.style.width = percent + '%';
+                textEl.textContent = text || '';
+            }
+        }
+
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + (type || '');
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>
